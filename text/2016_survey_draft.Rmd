@@ -1,0 +1,97 @@
+---
+title: "2016 Statewide Weathervane Scallop Survey Summary"
+author:
+  - name: Benjamin C. Williams and Katie Palof
+    email: ben.williams@alaska.gov
+    affiliation: Alaska Department of Fish and Game, Juneau, AK
+  - name: Josh Mumm
+    affiliation: Alaska Department of Fish and Game, Homer, AK
+
+date: ''
+output:
+  html_document:
+    toc: true
+bibliography: scallop_survey_bibfile.bib
+csl: canjfas.csl
+css: markdown4.css
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error=FALSE, message=FALSE)
+```
+
+#ABSTRACT  
+
+#INTRODUCTION  
+
+#GENERAL BIOLOGY  
+
+#OBJECTIVES  
+##Primary  
+ 1. Estimate catch rates and abundnace of scallops by survey area with a coefficient of variation (CV) ≤ 20%.
+ 2. Collection of biological data (e.g., shell height, meat weight, age) for estimation of growth, mortality, and biomass.  
+
+##Secondary  
+ 1. Record incidental catch (numbers and weight) of commercially important species and scallop predators.
+ 
+##Tertiary  
+ 1. Address particular area management concerns.
+ 2. Special short term projects.
+ 
+#METHODS  
+
+Scallop abundance estimation based upno area-swept calculations where scallop density $d_i$ is calculated as:
+
+$$d_i=\frac{c_i}{a_i},$$  
+where  
+$$a_i=l_i\cdot dW\cdot Q,$$  
+and  
+$$\bar d = \frac{1}{s}\sum_{i=1}^{s} d_i.$$
+
+Density variance is calculated as  
+
+\begin{eqnarray} \label{eq:density} 
+\hat{\sigma }^{2}_{\bar d} = \frac{1}{s-1}\sum \left ( d_i-\bar{d} \right )^2
+\end{eqnarray}
+
+And 95% confidence intervals calculated as:  
+
+\begin{eqnarray} \label{eq:ci} 
+ci = \pm t_{\alpha=0.05}, n=df-1\frac{\hat{\sigma}_d}{\sqrt{s}}
+\end{eqnarray}
+
+where: 
+
+$c_i$ = the catch of a species, either as abundance or weight, in sample haul *i*,  
+$a_i$ = the nmi^2^ sampled in haul *i*,  
+$l_i$ = the nmi towed for sample haul *i*,  
+*dw* = the dredge width in nmi,   
+*Q* = dredge efficency, and   
+*s* = the number of stations sampled.  
+
+An estimate of the surveyed population $\hat{N}$ will be calculated by expanding $\bar{d}$ over the defined bed area *A* encompassing all grid cells as: 
+
+\begin{eqnarray} \label{eq:N} 
+\hat{N}=A\bar{d}.
+\end{eqnarray}
+
+Variance of the surveyed population was estimated [@Seber1982] by
+
+\begin{eqnarray} \label{eq:var} 
+\hat{\sigma }^{2}_{\hat{N}}=S^2\frac{s^2}{s}(1-(\frac{s}{S})),
+\end{eqnarray}
+
+where:  
+
+\begin{eqnarray} 
+S=\frac{A}{\bar{a} }.
+\end{eqnarray}
+
+A preliminary *Q* of 0.83 calculated from the Kayak ISland beds in 2004 [Gustafson2012] was used in lieu of bed specific efficiencies. 
+
+#RESULTS  
+
+#DISCUSSION  
+
+#REFERENCES
+
+

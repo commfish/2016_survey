@@ -86,7 +86,7 @@ where:
 S=\frac{A}{\bar{a} }.
 \end{eqnarray}
 
-A preliminary *Q* of 0.83 calculated from the Kayak ISland beds in 2004 [Gustafson2012] was used in lieu of bed specific efficiencies. 
+A preliminary *Q* of 0.83 calculated from the Kayak ISland beds in 2004 [@Gustafson2012] was used in lieu of bed specific efficiencies. 
 
 #RESULTS  
 

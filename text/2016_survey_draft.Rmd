@@ -15,10 +15,6 @@ bibliography: scallop_survey_bibfile.bib
 csl: canjfas.csl
 css: markdown4.css
 ---
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error=FALSE, message=FALSE)
-```
-
 #ABSTRACT  
 
 #INTRODUCTION  

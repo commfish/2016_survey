@@ -39,7 +39,7 @@ Scallop abundance estimation based upno area-swept calculations where scallop de
 
 $$d_i=\frac{c_i}{a_i},$$  
 where  
-$$a_i=l_i\cdot dW\cdot Q,$$  
+$$a_i=l_i\cdot dw\cdot Q,$$  
 and  
 $$\bar d = \frac{1}{s}\sum_{i=1}^{s} d_i.$$
 

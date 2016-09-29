@@ -1,0 +1,49 @@
+Captain Name,Registration area,Vessel name,Management district,ADF&G Number,Dredge code,Bed code,Station type,Station number,Set date,Haul number,Set Latitude,Set Longitude,Retrieval Latitude,Retrieval Longitude,Compass heading,Start depth (fathoms),Time Haul Start,Tow cable out (fathoms),Average haul speed (knots),Beaufort scale,Swell,Surface temp  ?C,Max Depth (fathoms),Min Depth (fathoms),Inclenometer,Logger,Camera,End depth (fathoms),Time Haul End,Haul Duration,Haul distance,Haul distance (calculated),Gear performance code,COMMENTS
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,G34,2016-4-14,1,59.820,-144.800,59.836,-144.800,359,52,11:15,175,3.6,5,4,7.00,65,54,Y,N,N,65,11:31,0:16,0.91,0.962,1,Downhill tow - streamed to 225 .6 mi into tow
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,H32,2016-4-14,2,59.803,-144.872,59.807,-144.842,70,86,12:57,275,3.4,5,4,6.83,86,73,Y,N,N,73,13:14,0:17,0.91,0.941,1,
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,L31,2016-4-16,3,59.737,-144.887,59.748,-144.908,332,55,10:47,175,3.7,4,4,6.72,65,55,Y,N,N,65,11:02,0:15,0.90,0.919,1,Increased scope to 200 Fa @ .6 mi into tow. Towed downhill due to seas
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,H35,2016-4-17,4,59.825,-144.721,59.815,-144.745,235,37,8:26,130,3.8,3,3,6.78,37,37,Y,N,N,37,8:41,0:15,0.94,0.944,1,Overestimated deploy time - set 1/2 way into adjacent station!
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,I35,2016-4-17,5,59.800,-144.741,59.791,-144.763,230,35,9:32,125,3.6,3,3,6.83,35,35,Y,N,N,35,9:47,0:15,0.90,0.859,1,
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,J35,2016-4-17,6,59.781,-144.742,59.768,-144.758,220,33,10:27,118,3.8,3,3,6.89,33,31,Y,N,N,31,10:42,0:15,0.91,0.920,1,Small tow
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,K35,2016-4-17,7,59.763,-144.745,59.751,-144.764,226,31,11:10,110,3.9,3,3,7.00,33,31,Y,N,N,33,11:24,0:14,0.90,0.924,1,Very little bycatch - few scallops
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,L34,2016-4-17,8,59.731,-144.801,59.741,-144.778,35,43,11:55,150,3.9,2,3,7.06,43,40,Y,N,N,40,12:10,0:15,0.90,0.922,1,
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,M33,2016-4-17,9,59.715,-144.818,59.728,-144.833,351,46,13:00,160,3.7,3,3,7.28,46,45,Y,N,N,45,13:15,0:15,0.90,0.905,1,
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,N33,2016-4-17,10,59.701,-144.827,59.716,-144.833,353,54,14:12,200,3.7,3,3,6.94,54,50,Y,N,N,50,14:27,0:15,0.90,0.921,1,
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,O32,2016-4-17,11,59.686,-144.870,59.691,-144.842,63,68,15:14,250,3.6,3,4,7.50,70,68,Y,N,N,70,15:29,0:15,0.90,0.903,1,
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,N30,2016-4-17,12,59.710,-144.935,59.706,-144.906,93,64,16:15,225,3.9,2,2,7.61,64,62,Y,N,N,62,16:29,0:14,0.90,0.914,5,Re-do. 2 scallops and some mud on top of dredge yoke. 
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,N30,2016-4-17,13,59.713,-144.925,59.706,-144.901,116,62,17:00,225,3.7,2,2,7.78,62,62,Y,N,N,62,17:15,0:15,0.90,0.842,1,"Second tow N30, few scallops"
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,M30,2016-4-17,14,59.724,-144.928,59.733,-144.904,60,62,17:47,225,3.8,2,2,7.22,62,61.5,Y,N,N,61.5,18:02,0:15,0.93,0.908,1,
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,I32,2016-4-18,15,59.799,-144.846,59.790,-144.868,222,71,8:13,250,3.8,4,4,7.00,77,71,Y,N,N,77,8:28,0:15,0.95,0.859,1,Changed tow path to SW due to sea state. Difficult to maintain speed
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,J32,2016-4-18,16,59.774,-144.863,59.784,-144.840,47,61,9:16,205,3.7,4,4,7.22,,,Y,N,N,63,9:31,0:15,0.92,0.921,1,
+Dave Anderson,E,Solstice,WKI,99945,C,WK1,Standard,K32,2016-4-18,17,59.766,-144.854,59.753,-144.868,189,51,10:07,179,3.7,4,4,7.44,52,51,Y,N,N,52,10:22,0:15,0.92,0.890,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,K07,2019-4-18,18,59.761,-144.405,59.762,-144.375,93,53,13:01,184,3.8,3,4,,54,53,Y,N,N,54,13:15,0:14,0.92,0.912,1,Very muddy
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,L07,2016-4-18,19,59.745,-144.403,59.745,-144.371,92,60,14:07,210,3.9,3,4,7.28,60,59,Y,N,N,59,14:22,0:15,0.93,0.972,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,K10,2016-4-18,20,59.755,-144.295,59.735,-144.371,91,56,15:19,200,4.1,3,4,7.44,58,56,Y,N,N,58,15:32,0:13,0.91,1.470,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,J08,2016-4-18,21,59.772,-144.368,59.774,-144.338,72,49,16:22,175,3.8,2,3,7.22,49,49,Y,N,N,49,16:37,0:15,0.92,0.918,1,Muddy - sea stars. Still!
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,K04,2016-4-19,22,59.761,-144.498,59.767,-144.471,73,51,8:45,183,3.7,3,3,7.22,51,49,Y,N,N,49,9:00,0:15,0.92,0.895,1,Muddy
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,J05,2016-4-19,23,59.775,-144.469,59.782,-144.442,,46,9:38,,3.8,3,3,7.22,46,44,Y,N,N,44,9:53,0:15,0.92,0.921,1,Muddy
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,I06,2016-4-19,24,59.786,-144.422,59.798,-144.404,39,43,10:41,154,3.8,3,3,7.22,43,41,Y,N,N,41,10:56,0:15,0.93,0.905,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,H07,2016-4-19,25,59.802,-144.387,59.814,-144.384,,39,11:33,135,3.7,3,3,6.94,39,37,Y,N,N,37,11:48,0:15,0.92,0.728,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,G09,2016-4-19,26,59.819,-144.331,59.827,-144.304,55,37,12:31,130,3.9,4,3,7.22,37,36,Y,N,N,36,12:45,0:14,0.91,0.949,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,F09,2016-4-19,27,59.836,-144.320,59.849,-144.300,35,33,13:20,125,3.8,4,3,7.22,33,32,Y,N,N,32,13:55,0:35,0.93,0.989,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,E10,2016-4-19,28,59.850,-144.299,59.854,-144.270,,31,14:08,,3.8,5,4,7.22,32,31,Y,N,N,32,14:23,0:15,0.93,0.910,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,H13,2016-4-19,29,59.814,-144.206,59.805,-144.183,,43,15:21,154,3.6,5,3,7.22,46,43,Y,N,N,46,15:36,0:15,0.90,0.883,1,"Miscalculated, tow started in adjacent station"
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,I09,2016-4-20,30,59.789,-144.331,59.799,-144.306,72,43,9:25,165,3.7,2,3,7.06,43,43,Y,N,N,43,9:40,0:15,0.91,0.968,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,H10,2016-4-20,31,59.803,-144.294,59.814,-144.271,54,42,10:09,150,3.7,2,3,7.22,42,40,Y,N,N,40,10:24,0:15,0.91,0.961,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,G12,2016-4-20,32,59.824,-144.229,59.833,-144.205,67,39,10:51,140,3.6,2,3,7.22,39,39,Y,N,N,39,11:06,0:15,0.90,0.906,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,F12,2016-4-20,33,59.837,-144.233,59.844,-144.205,79,36,11:36,,3.8,1,2,7.22,37,36,Y,N,N,37,11:50,0:14,0.91,0.906,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,E13,2016-4-20,34,59.856,-144.199,59.864,-144.172,65,35,12:20,125,3.8,1,2,7.11,35,34,Y,N,N,34,12:35,0:15,0.92,0.948,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,E16,2016-4-20,35,59.856,-144.096,59.864,-144.070,50,39,13:20,138,3.8,1,2,7.78,39,35,Y,N,N,39,13:34,0:14,0.92,0.922,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,F18,2016-4-20,36,59.836,-144.023,59.846,-144.000,55,46,14:24,165,3.9,1,2,7.72,47,46,Y,N,N,47,14:38,0:14,0.91,0.920,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,G18,2016-4-20,37,59.832,-144.003,59.824,-144.030,241,50,15:13,175,3.6,1,2,7.78,50,49,Y,N,N,49,15:28,0:15,0.90,0.949,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,H16,2016-4-20,38,59.816,-144.067,59.807,-144.093,238,49,16:01,,3.9,1,2,7.56,49.6,49,Y,N,N,49.6,16:16,0:15,0.92,0.956,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,L04,2016-4-21,39,59.744,-144.495,59.749,-144.466,75,60,8:52,210,3.6,2,1,7.28,60,57,Y,N,N,57,9:07,0:15,0.91,0.930,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,J11,2016-4-21,40,59.773,-144.264,59.775,-144.234,87,50,10:05,175,3.9,1,1,7.22,51,50,Y,N,N,51,10:19,0:14,0.91,0.918,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,I12,2016-4-21,41,59.787,-144.224,59.797,-144.199,46,48,10:54,170,3.9,1,1,7.22,48,47,Y,N,N,47,11:08,0:14,0.92,0.968,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,J14,2016-4-21,42,59.781,-144.162,59.781,-144.131,87,52,11:44,182,3.7,1,1,7.44,53,52,Y,N,N,53,11:59,0:15,0.91,0.940,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,I15,2016-4-21,43,59.790,-144.131,59.797,-144.102,60,51,12:27,182,3.8,1,1,7.28,52,51,Y,N,N,52,12:42,0:15,0.94,0.975,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Ancillary,J18,2016-4-21,44,59.779,-144.000,59.777,-144.032,260,60,13:32,210,3.7,1,1,7.56,60,59,Y,N,N,59,13:47,0:15,0.93,0.978,1,9 Kilos scallops
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Ancillary,I17,2016-4-21,45,59.793,-144.039,59.786,-144.066,235,58,14:22,200,3.7,1,1,7.89,58,56,Y,N,N,56,14:37,0:15,0.93,0.921,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,G15,2016-4-21,46,59.820,-144.129,59.826,-144.101,71,45,15:15,160,3.7,1,1,7.83,45,45,Y,N,N,45,15:30,0:15,0.92,0.922,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Standard,F15,2016-4-21,47,59.845,-144.129,59.849,-144.100,72,40,15:58,140,3.6,1,1,8.11,40.4,40,Y,N,N,40.4,16:13,0:15,0.91,0.910,1,
+Dave Anderson,E,Solstice,EKI,99945,C,EK1,Ancillary,D16,2016-4-21,48,59.872,-144.097,59.878,-144.070,65,36,16:39,126,3.6,1,1,8.00,36,35.8,Y,N,N,35.8,16:54,0:15,0.90,0.893,1,

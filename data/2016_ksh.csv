@@ -1,0 +1,24 @@
+Captain Name,Registration area,Vessel,District,ADFG,Dredge_code,Bed,Station_type,Station,Set_Date,Haul,Set_Lat,Set_Lon,heading,start_ftm,start_time,cable_out,avg_knts,beaufort,swell,max_ftm,min_ftm,inclino,logger,camera,end_ftm,end_time,haul_duration,haul_distance,haul_dist_calc,gear_perf,gear_perf_comment,Comment
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GJ174,5/13/2016,1,,,35,75,6:50,260,4.1,0,1,89.1,75,Y,N,N,89.1,7:05,0:15,1,,1,,Tow cable out started at 260 then out to 283 then out 304 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GK174,5/13/2016,2,,,15,81.4,8:10,280,3.9,0,1,86.1,81.4,Y,N,N,86.1,8:26,0:16,1,,1,,Tow cable out started at 280 then out to 290 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GL173,5/13/2016,3,,,22,63.6,9:12,226,3.9,0,1,66.8,63.6,Y,N,N,66.8,9:27,0:15,1,,1,,
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GM174,5/13/2016,4,,,19,88.9,10:10,310,3.9,0,1,92.1,88.9,Y,N,N,92.1,10:26,0:16,1,,1,,Tow cable out started at 310 then out to 315 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GM171,5/13/2016,5,,,26,36.3,11:24,130,4,2,1,,,Y,N,N,33.2,11:39,0:15,1,,1,,depth change under tow.  Tow cable start at 130 then into 125 then into 120 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GN172,5/13/2016,6,,,199,57.7,12:42,200,4,3,1,61,57.7,Y,N,N,61,12:57,0:15,1,,1,,Tow cable out started at 200 then out to 208 then out 210 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GO172,5/13/2016,7,,,34,71.5,13:31,250,4,2,1,72.9,71.5,Y,N,N,72.9,13:47,0:16,1,,5,F,Redo tow came in upside down
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GO172,5/13/2016,8,,,16,70.6,14:38,250,3.8,2,1,70.6,68.9,Y,N,N,68.9,14:54,0:16,1,,1,,repeat tow came in good
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GP171,5/13/2016,9,,,30,69,15:41,240,3.9,2,1,69,67,Y,N,N,67,15:56,0:15,1,,1,,
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GQ172,5/13/2016,10,,,28,84.3,16:40,295,3.9,1,1,84.3,80.4,Y,N,N,80.4,16:56,0:16,1,,1,,A lot of rocks
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GR171,5/13/2016,11,,,16,81.1,17:50,285,3.9,1,1,81.1,79,Y,N,N,79,18:06,0:16,1,,1,,Tow cable out started at 285 then half way it went to 280
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GP165,5/14/2016,12,,,161,13.6,6:39,46,3.9,0,1,17.3,13.6,Y,N,N,17.3,6:54,0:15,1,,1,,Tow cable out started at 46 then out to 50 then out 55 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GQ166,5/14/2016,13,,,162,19.2,7:12,65,3.9,2,1,27.8,19.2,Y,N,N,27.8,7:28,0:16,1,,1,,Tow cable out started at 65 then out to 70 then out to 80 then out to 85 then 95 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GP168,5/14/2016,14,,,28,38.2,7:55,130,3.9,2,1,38.2,30.1,Y,N,N,30.1,8:10,0:15,1,,1,,Tow cable out started at 130 then into 125 then into 120 then into 115 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GO169,5/14/2016,15,,,30,37,8:31,130,3.9,2,1,37,30.9,Y,N,N,30.9,8:47,0:16,1,,1,,Tow cable out started at 130 then into 125 then into 120 then into 115 then 110 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GQ169,5/14/2016,16,,,45,58.8,9:29,206,3.9,2,1,58.8,55.4,Y,N,N,55.4,9:45,0:16,1,,1,,Tow cable out started at 206 then into 195 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GR168,5/14/2016,17,,,29,61.1,10:26,215,3.9,2,1,61,54.9,Y,N,N,54.9,10:42,0:16,1,,1,,Tow cable out started at 215 then into 210 then into 200 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GS168,5/14/2016,18,,,133,60.9,11:12,210,4,2,1,70,60.9,Y,N,N,70,11:27,0:15,1,,1,,Tow cable out started at 210 then out to 220 then out to 225 then out to 230 then 235 then 240 then 245 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GS171,5/14/2016,19,,,75,83.2,12:06,290,3.9,2,1,88.2,83.2,Y,N,N,88.2,12:22,0:16,1,,1,,Tow cable out started at 290 then out to 295 then out to 300 then out to 305 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GT168,5/14/2016,20,,,65,69.7,13:25,245,3.9,1,1,70.6,69.7,Y,N,N,70.6,13:41,0:16,1,,1,,
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GU168,5/14/2016,21,,,60,74.3,14:21,260,3.9,2,1,75.7,74.3,Y,N,N,75.7,14:37,0:16,1,,1,,Tow cable out started at 260 then out to 264 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GV169,5/14/2016,22,,,67,78.8,15:15,276,4,2,1,82.1,78.8,Y,N,N,82.1,15:30,0:15,1,,1,,Tow cable out started at 276 then out to 280 then out 285 fathoms
+Ted Jewell,K,Pandalus,KSH,19433,C,1,Standard,GW168,5/14/2016,23,,,62,78.6,16:21,275,4,2,1,80.4,78.6,Y,N,N,80.4,16:36,0:15,1,,1,,Tow cable out started at 275 then out to 280 fathoms

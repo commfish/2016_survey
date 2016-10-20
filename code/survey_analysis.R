@@ -12,9 +12,9 @@
 
 ## Naming 
    # lower case names are numeric
-   # Capitolized names are factors 
+   # Capitalized names are factors 
 
-## The operational plan lays out the foundation for the analyses herein
+## The operational plan lays out the foundation for the analyses herein it is available in the literature folder
 
 # load ----
 library(tidyverse)
@@ -41,15 +41,17 @@ awl %>% select(Event = EVENT_ID, weight=WHOLE_WT_GRAMS, worm=SHELL_WORM_SW, heig
 # a_i
 #Dredge width in nmi = 0.00131663
 # Q = 0.83
+#add ai column to events dataframe
 event %>% mutate(ai=length*0.00131663*0.83) -> event
 
 #filter out scallops from the catch data and calculate density
 catch %>% filter(species==74120, cond==1) %>% 
-   group_by(Event, size_class) %>% summarise(catch=sum(count, na.rm=T)) -> tab
+   group_by(Event, size_class) %>% summarise(catch=sum(count, na.rm=T), weight = sum(sample_wt, na.rm=T)) -> tab
 
 #combine with event data - change NA catches to 0
-event %>% filter(performance==1) %>% left_join(tab) %>% mutate(catch=replace(catch, which(is.na(tab1$catch)), 0), di = catch/ai) -> tab1
+event %>% filter(performance==1) %>% left_join(tab) %>% mutate(catch=replace(catch, which(is.na(catch)), 0), di = catch/ai, weight=replace(weight, which(is.na(weight)), 0), di_wt = weight/ai) -> tab1
 
 # calculate dbar
-tab1 %>% group_by(District, Bed) %>% summarise(s = length(unique(Event)), dbar=1/s*sum(di))
+tab1 %>% group_by(District, Bed) %>% summarise(s = length(unique(Event)), dbar=1/s*sum(di), dbar_wt=1/s*sum(di_wt)) -> dbar
+
 

@@ -18,7 +18,7 @@
 
 # load ----
 library(tidyverse)
-
+theme_set(theme_bw())
 # data ----
 #clean up event data- change names and data types etc.
 events <- read.csv('./data/events_2016.csv')
@@ -28,30 +28,109 @@ events %>% mutate(ID = gsub(" ", "", STATION_ID),date = as.Date(DATE_SET, format
           Dredge = DREDGE_ID, Bed = BED_SW, Type = STATION_TYPE, ID = ID, 
           slat = START_LATITUDE, slon=START_LONGITUDE, sdepth = DEPTH_START_F, stime = START_TIME, speed=TOW_SPEED, maxdepth=Max_Dpth_fa, mindepth=Min_Dpth_fa, elat=END_LATITUDE, elon=END_LONGITUDE, edepth=DEPTH_END_F, etime=END_TIME, calc_length=TOW_LENGTH_CALC, field_length=TOW_LENGTH_FIELD,length=TOW_LENGTH_DESIGNATED,performance=GEAR_PERFORMANCE_CODE_SW) -> event
 
-
 catch <- read.csv('./data/catchComp_2016.csv')
 catch %>% select(Event = EVENT_ID, species=RACE_CODE, size_class=SCAL_SIZE_CLASS, count=COUNT,
                  sample_wt=SAMPLE_WT_KG, cond = CONDITION_CODE_RII, sample_type = SAMPLE_TYPE) -> catch
 
-
 awl <- read.csv('./data/awl_2016.csv')
 awl %>% select(Event = EVENT_ID, weight=WHOLE_WT_GRAMS, worm=SHELL_WORM_SW, height=SHELL_HEIGHT_MM, sex=SEX_SW, gonad_cond=SCAL_GONAD_COND, blister=MUD_BLISTER_SW, meat_cond=MEAT_CONDITION_SW, clapper = CLAPPER, sample_type = SAMPLE_TYPE) -> awl
 
-# calculations----
-# a_i
+# a_i ----
 #Dredge width in nmi = 0.00131663
-# Q = 0.83
+
 #add ai column to events dataframe
-event %>% mutate(ai=length*0.00131663*0.83) -> event
+event %>% mutate(ai=length*0.00131663) -> event #ai is in nmi^2
 
+# number of sampling events by bed
+event %>% group_by(Bed) %>% summarise(n = length(unique(Event))) -> samples
+
+# catch ----
 #filter out scallops from the catch data and calculate density
+#weight is in kg
 catch %>% filter(species==74120, cond==1) %>% 
-   group_by(Event, size_class) %>% summarise(catch=sum(count, na.rm=T), weight = sum(sample_wt, na.rm=T)) -> tab
+   group_by(Event, size_class) %>% summarise(catch=sum(count, na.rm=T), weight = sum(sample_wt, na.rm=T)) -> catch.a
 
+# d_i ----
 #combine with event data - change NA catches to 0
-event %>% filter(performance==1) %>% left_join(tab) %>% mutate(catch=replace(catch, which(is.na(catch)), 0), di = catch/ai, weight=replace(weight, which(is.na(weight)), 0), di_wt = weight/ai) -> tab1
+# do check the end result to be sure that no hauls are being double counted
+event %>% filter(performance==1) %>% left_join(catch.a) %>% group_by(size_class) %>% mutate(catch=replace(catch, which(is.na(catch)), 0), di = catch/ai, weight=replace(weight, which(is.na(weight)), 0), di_wt = weight/ai) -> catch.area
 
-# calculate dbar
-tab1 %>% group_by(District, Bed) %>% summarise(s = length(unique(Event)), dbar=1/s*sum(di), dbar_wt=1/s*sum(di_wt)) -> dbar
+
+# dbar ----
+# average biomass per unit area
+# Q = 0.83
+Q=0.83
+#calculate for >100 mm shells
+catch.area %>% left_join(samples) %>% filter(size_class==1) %>% group_by(Bed) %>% 
+   summarise(dbar=(1/mean(n)*sum(di))/Q, dbar_wt=(1/mean(n)*sum(di_wt))/Q, 
+             var_dbar=1/(mean(n)-1)*sum((di-dbar)^2), 
+             error = qt(0.975,df=mean(n)-1)*sqrt(var_dbar)/sqrt(mean(n)),
+             ll = dbar-error,
+             ul=dbar+error,
+             ss = sum((di-dbar)^2),
+             var_dbar_wt=1/(mean(n)-1)*sum((di_wt-dbar_wt)^2), 
+             error_wt = qt(0.975,df=mean(n)-1)*sqrt(var_dbar_wt)/sqrt(mean(n)),
+             ll_wt = dbar_wt-error_wt,
+             ul_wt=dbar_wt+error_wt,
+             ss_wt = sum((di_wt-dbar_wt)^2),
+             n=mean(n)) %>% mutate(size='large')-> large 
+
+#calculate for <100 mm shells
+catch.area %>% left_join(samples) %>% filter(size_class==2) %>% group_by(Bed) %>% 
+   summarise(dbar=(1/mean(n)*sum(di))/Q, dbar_wt=(1/mean(n)*sum(di_wt))/Q, 
+             var_dbar=1/(mean(n)-1)*sum((di-dbar)^2), 
+             error = qt(0.975,df=mean(n)-1)*sqrt(var_dbar)/sqrt(mean(n)),
+             ll = dbar-error,
+             ul=dbar+error,
+             ss = sum((di-dbar)^2),
+             var_dbar_wt=1/(mean(n)-1)*sum((di_wt-dbar_wt)^2), 
+             error_wt = qt(0.975,df=mean(n)-1)*sqrt(var_dbar_wt)/sqrt(mean(n)),
+             ll_wt = dbar_wt-error_wt,
+             ul_wt=dbar_wt+error_wt,
+             ss_wt = sum((di_wt-dbar_wt)^2),
+             n=mean(n)) %>% mutate(size='small')-> small
+
+#calculate for all shells caught
+catch.area %>% left_join(samples) %>% group_by(Bed) %>% 
+   summarise(dbar=(1/mean(n)*sum(di))/Q, dbar_wt=(1/mean(n)*sum(di_wt))/Q, 
+             var_dbar=1/(mean(n)-1)*sum((di-dbar)^2), 
+             error = qt(0.975,df=mean(n)-1)*sqrt(var_dbar)/sqrt(mean(n)),
+             ll = dbar-error,
+             ul=dbar+error,
+             ss = sum((di-dbar)^2),
+             var_dbar_wt=1/(mean(n)-1)*sum((di_wt-dbar_wt)^2), 
+             error_wt = qt(0.975,df=mean(n)-1)*sqrt(var_dbar_wt)/sqrt(mean(n)),
+             ll_wt = dbar_wt-error_wt,
+             ul_wt=dbar_wt+error_wt,
+             ss_wt = sum((di-dbar)^2),
+             n=mean(n)) %>% mutate(size='all')-> all 
+
+
+combi <- rbind(large,small)
+combi <- rbind(combi, all)
+#ggplot(combi, aes(Bed, dbar))+geom_point()+geom_errorbar(aes(ymax=ul, ymin=ll), width=.1)+ggtitle('density numbers and 95% CI')+facet_grid(size~.)
+#ggplot(combi, aes(Bed, dbar_wt))+geom_point()+geom_errorbar(aes(ymax=ul_wt, ymin=ll_wt), width=.1)+ggtitle('density  weight and 95% CI')+facet_grid(size~.)
+
+# N ----
+# need to get areas from Josh or Ryan
+# for the moment I'll just use the WKI total area of 48.65717
+# this should be filled by joining an Area database with the combi database
+# then grouping by size and area
+
+
+combi %>% group_by(size,Bed) %>% summarise(N = dbar*48.65717, N_wt = dbar_wt*48.65717) -> N
+
+# var N ----
+combi %>% left_join(N) -> abundance
+
+areas <- data.frame(Bed=levels(combi$Bed), area =c(50,107,48.65717))
+
+abundance %>% left_join(areas) %>% mutate(var = (area/0.83)^2*1/n*1/(n-1)*ss, wt_var = (area/0.83)^2*1/n*1/(n-1)*ss_wt,
+                                          UL=N+2*sqrt(var)/sqrt(n), LL=N-2*sqrt(var)/sqrt(n), 
+                                          UL_wt=N_wt+2*sqrt(var)/sqrt(n),
+                                          LL_wt=N_wt-2*sqrt(var)/sqrt(n))-> variances
+
+ggplot(variances, aes(Bed, N, color=size))+geom_point()+geom_errorbar(aes(ymin=LL, ymax=UL), width=.2)
+
 
 

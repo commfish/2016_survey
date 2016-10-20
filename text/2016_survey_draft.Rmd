@@ -23,7 +23,7 @@ css: markdown4.css
 
 #OBJECTIVES  
 ##Primary  
- 1. Estimate catch rates and abundnace of scallops by survey area with a coefficient of variation (CV) ≤ 20%.
+ 1. Estimate catch rates and abundance of scallops by survey area with a coefficient of variation (CV) ≤ 20%.
  2. Collection of biological data (e.g., shell height, meat weight, age) for estimation of growth, mortality, and biomass.  
 
 ##Secondary  
@@ -35,7 +35,7 @@ css: markdown4.css
  
 #METHODS  
 
-Scallop abundance estimation based upno area-swept calculations where scallop density $d_i$ is calculated as:
+Scallop abundance estimation based upon area-swept calculations where scallop density $d_i$ is calculated as:
 
 $$d_i=\frac{c_i}{a_i},$$  
 where  

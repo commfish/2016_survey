@@ -158,3 +158,5 @@ ggplot(variances, aes(Bed, N, color=size))+geom_point()+geom_errorbar(aes(ymin=L
 ggplot(variances, aes(Bed, N_wt, color=size))+geom_point()+geom_errorbar(aes(ymin=LL_wt, ymax=UL_wt), width=.2)+facet_grid(.~size)
 
 variances
+
+write.csv(variances,'./data/variances')

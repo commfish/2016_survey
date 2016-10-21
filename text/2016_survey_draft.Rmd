@@ -1,19 +1,22 @@
 ---
 title: "2016 Statewide Weathervane Scallop Survey Summary"
 author:
-  - name: Benjamin C. Williams and Katie Palof
-    email: ben.williams@alaska.gov
-    affiliation: Alaska Department of Fish and Game, Juneau, AK
-  - name: Josh Mumm
-    affiliation: Alaska Department of Fish and Game, Homer, AK
-
+- affiliation: Alaska Department of Fish and Game, Juneau, AK
+  email: ben.williams@alaska.gov
+  name: Benjamin C. Williams and Katie Palof
+- affiliation: Alaska Department of Fish and Game, Homer, AK
+  name: Josh Mumm
 date: ''
 output:
+  word_document:
+    toc: yes
+  pdf_document:
+    toc: yes
   html_document:
-    toc: true
-bibliography: scallop_survey_bibfile.bib
+    toc: yes
 csl: canjfas.csl
 css: markdown4.css
+bibliography: scallop_survey_bibfile.bib
 ---
 #ABSTRACT  
 
@@ -45,15 +48,15 @@ $$\bar d = \frac{1}{s}\sum_{i=1}^{s} d_i.$$
 
 Density variance is calculated as  
 
-\begin{eqnarray} \label{eq:density} 
+$$
 \hat{\sigma }^{2}_{\bar d} = \frac{1}{s-1}\sum \left ( d_i-\bar{d} \right )^2
-\end{eqnarray}
+$$
 
 And 95% confidence intervals calculated as:  
 
-\begin{eqnarray} \label{eq:ci} 
+$$
 ci = \pm t_{\alpha=0.05}, n=df-1\frac{\hat{\sigma}_d}{\sqrt{s}}
-\end{eqnarray}
+$$
 
 where: 
 
@@ -66,25 +69,36 @@ $l_i$ = the nmi towed for sample haul *i*,
 
 An estimate of the surveyed population $\hat{N}$ will be calculated by expanding $\bar{d}$ over the defined bed area *A* encompassing all grid cells as: 
 
-\begin{eqnarray} \label{eq:N} 
+$$
 \hat{N}=A\bar{d}.
-\end{eqnarray}
+$$
 
 Variance of the surveyed population was estimated [@Seber1982] by
 
-\begin{eqnarray} \label{eq:var} 
+$$
 \hat{\sigma }^{2}_{\hat{N}}=S^2\frac{s^2}{s}(1-(\frac{s}{S})),
-\end{eqnarray}
+$$
 
 where:  
 
-\begin{eqnarray} 
+$$
 S=\frac{A}{\bar{a} }.
-\end{eqnarray}
+$$
 
-A preliminary *Q* of 0.83 calculated from the Kayak ISland beds in 2004 [@Gustafson2012] was used in lieu of bed specific efficiencies. 
+A preliminary *Q* of 0.83 calculated from the Kayak Island beds in 2004 [@Gustafson2012] was used in lieu of bed specific efficiencies. 
 
 #RESULTS  
+```{r, echo=F, message=F, warning=F}
+library(knitr)
+a <- read.csv('../data/variances')
+library(tidyverse)
+options(scipen=9999) # remove scientific notation
+a %>% mutate(N=round(N),UL=round(UL),LL=round(LL),N_wt=round(N_wt),UL_wt=round(UL_wt),LL_wt=round(LL_wt)) %>% select(Bed, size,N,UL,LL,N_wt,UL_wt,LL_wt) %>% kable()
+
+a %>% filter(Bed=='WK1', size=='all') -> wk1
+```
+
+The western Kayak Island abundance estimate of all scallops was ```r round(wk1$N)``` with 95% CI of ```r round(wk1$LL)```, ```r round(wk1$UL)```.
 
 #DISCUSSION  
 

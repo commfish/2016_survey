@@ -26,3 +26,16 @@ awl %>% select(Event = EVENT_ID, weight=WHOLE_WT_GRAMS,
                gonad_cond=SCAL_GONAD_COND, blister=MUD_BLISTER_SW, 
                meat_cond=MEAT_CONDITION_SW, clapper = CLAPPER, 
                sample_type = SAMPLE_TYPE) -> awl
+
+#height/weight relationship
+awl %>% left_join(event) %>% 
+   ggplot(aes(weight,height))+geom_point()+facet_wrap(~Bed)+stat_smooth()
+
+#height densities - this way includes <100mm shells
+awl %>% left_join(event) %>% 
+   ggplot(aes(height))+geom_density(alpha=.2,fill=4)+facet_wrap(~Bed)+stat_smooth()
+
+#height densities - 
+awl %>% left_join(event) %>% 
+   ggplot(aes(height, fill=factor(sex),color=factor(sex)))+geom_density(alpha=.2)+facet_wrap(~Bed)+stat_smooth()
+# getting some issues between using 0 and using NA - need to examine this.

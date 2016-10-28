@@ -23,7 +23,7 @@ library(tidyverse)
 theme_set(theme_bw())
 # data ----
 #clean up event data- change names and data types etc.
-events <- read.csv('./data/events_2016.csv')
+events <- read.csv('./data/events_2016_161027.csv')
 events %>% mutate(ID = gsub(" ", "", STATION_ID),date = as.Date(DATE_SET, format='%m-%d-%Y'),
                   year = as.numeric(format(date, "%Y"))) %>% 
    select(year=year, date=date, Event = EVENT_ID, District = DISTRICT, 
@@ -34,7 +34,7 @@ events %>% mutate(ID = gsub(" ", "", STATION_ID),date = as.Date(DATE_SET, format
           calc_length=TOW_LENGTH_CALC, field_length=TOW_LENGTH_FIELD,length=TOW_LENGTH_DESIGNATED,
           performance=GEAR_PERFORMANCE_CODE_SW) -> event
 
-catch <- read.csv('./data/catchComp_2016.csv')
+catch <- read.csv('./data/catchComp_2016_161027.csv')
 catch %>% select(Event = EVENT_ID, species=RACE_CODE, 
                  size_class=SCAL_SIZE_CLASS, count=COUNT,
                  sample_wt=SAMPLE_WT_KG, cond = CONDITION_CODE_RII, 
@@ -54,7 +54,7 @@ event %>% group_by(Bed) %>% summarise(n = length(unique(Event))) -> samples
 # need to get areas from Josh or Ryan
 # for the moment I'll just use the WKI total area of 48.65717
 
-areas <- data.frame(Bed=unique(event$Bed), area =c(50,107,48.65717))
+areas <- data.frame(Bed=unique(event$Bed), area =c(48.65717,50,107,10,10))
 
 samples %>% left_join(areas) -> samples
 

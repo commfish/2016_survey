@@ -110,6 +110,9 @@ catch.area %>% filter(size_class==1|di==0) %>%
              N=area*dbar,
              varN=(area^2)*1/n*1/(n-1)*ss,
              cvN=sqrt(varN)/N*100,
+             errorN=qt(0.975,df=(n)-1)*sqrt(varN)/sqrt((n)),
+             llN=N-errorN,
+             ulN=N+errorN,
              # By weight
              dbar_wt=(1/n*sum(di_wt)),
              sd_wt=sd(di_wt),
@@ -121,7 +124,10 @@ catch.area %>% filter(size_class==1|di==0) %>%
              ss_wt=sum((di_wt-dbar_wt)^2),
              N_wt=area*dbar_wt,
              varN_wt=(area^2)*1/n*1/(n-1)*ss_wt,
-             cvN_wt=sqrt(varN_wt)/N_wt*100) %>% mutate(size='large')-> large 
+             cvN_wt=sqrt(varN_wt)/N_wt*100,
+             errorN_wt=qt(0.975,df=(n)-1)*sqrt(varN_wt)/sqrt((n)),
+             llN_wt=N_wt-errorN_wt,
+             ulN_wt=N_wt+errorN_wt) %>% mutate(size='large')-> large 
 
 # What is the CV
 large %>% group_by(Bed) %>% summarise(cv, cvN, cv_wt, cvN_wt)
@@ -142,6 +148,9 @@ catch.area %>% filter(size_class==2|di==0) %>%
              N=area*dbar,
              varN=(area^2)*1/n*1/(n-1)*ss,
              cvN=sqrt(varN)/N*100,
+             errorN=qt(0.975,df=(n)-1)*sqrt(varN)/sqrt((n)),
+             llN=N-errorN,
+             ulN=N+errorN,
              # By weight
              dbar_wt=(1/n*sum(di_wt)),
              sd_wt=sd(di_wt),
@@ -153,7 +162,10 @@ catch.area %>% filter(size_class==2|di==0) %>%
              ss_wt=sum((di_wt-dbar_wt)^2),
              N_wt=area*dbar_wt,
              varN_wt=(area^2)*1/n*1/(n-1)*ss_wt,
-             cvN_wt=sqrt(varN_wt)/N_wt*100) %>% mutate(size='small')-> small
+             cvN_wt=sqrt(varN_wt)/N_wt*100,
+             errorN_wt=qt(0.975,df=(n)-1)*sqrt(varN_wt)/sqrt((n)),
+             llN_wt=N_wt-errorN_wt,
+             ulN_wt=N_wt+errorN_wt) %>% mutate(size='small')-> small
 
 # What is the CV
 small %>% group_by(Bed) %>% summarise(cv, cvN, cv_wt, cvN_wt)
@@ -174,6 +186,9 @@ catch.area %>%
              N=area*dbar,
              varN=(area^2)*1/n*1/(n-1)*ss,
              cvN=sqrt(varN)/N*100,
+             errorN=qt(0.975,df=(n)-1)*sqrt(varN)/sqrt((n)),
+             llN=N-errorN,
+             ulN=N+errorN,
              # By weight
              dbar_wt=(1/n*sum(di_wt)),
              sd_wt=sd(di_wt),
@@ -185,26 +200,16 @@ catch.area %>%
              ss_wt=sum((di_wt-dbar_wt)^2),
              N_wt=area*dbar_wt,
              varN_wt=(area^2)*1/n*1/(n-1)*ss_wt,
-             cvN_wt=sqrt(varN_wt)/N_wt*100) %>% mutate(size='all')-> all 
+             cvN_wt=sqrt(varN_wt)/N_wt*100,
+             errorN_wt=qt(0.975,df=(n)-1)*sqrt(varN_wt)/sqrt((n)),
+             llN_wt=N_wt-errorN_wt,
+             ulN_wt=N_wt+errorN_wt) %>% mutate(size='all')-> all 
 
 # What is the CV
 all %>% group_by(Bed) %>% summarise(cv, cvN, cv_wt, cvN_wt)
 
-# var N ----
-glimpse(small)
+ggplot(large, aes(Bed, N))+geom_point()+geom_errorbar(aes(ymin=llN, ymax=ulN), width=.2)+
+   geom_point(data=small, aes(Bed, N), color=2)+geom_errorbar(data=small, aes(ymin=llN, ymax=ulN), width=.2, color=2)
 
-combi %>% left_join(samples) %>% 
-   mutate(var = (area_nm2/ai_bar)^2*(1/n)*(1/(n-1))*ss, 
-          wt_var = (area/0.83)^2*1/n*1/(n-1)*ss_wt,
-            UL=N+2*sqrt(var)/sqrt(n), 
-            LL=N-2*sqrt(var)/sqrt(n), 
-            UL_wt=N_wt+2*sqrt(wt_var)/sqrt(n),
-            LL_wt=N_wt-2*sqrt(wt_var)/sqrt(n)) %>% 
-   select(Bed, dbar, ll, ul,dbar_wt, ll_wt, ul_wt, size, N, UL, LL, N_wt, UL_wt, LL_wt)-> variances
-
-ggplot(variances, aes(Bed, N, color=size))+geom_point()+geom_errorbar(aes(ymin=LL, ymax=UL), width=.2)+facet_grid(.~size)
-ggplot(variances, aes(Bed, N_wt, color=size))+geom_point()+geom_errorbar(aes(ymin=LL_wt, ymax=UL_wt), width=.2)+facet_grid(.~size)
-
-variances
-
-write.csv(variances,'./data/variances')
+ggplot(large, aes(Bed, N_wt))+geom_point()+geom_errorbar(aes(ymin=llN_wt, ymax=ulN_wt), width=.2)+
+   geom_point(data=small, aes(Bed, N_wt), color=2)+geom_errorbar(data=small, aes(ymin=llN_wt, ymax=ulN_wt), width=.2, color=2)

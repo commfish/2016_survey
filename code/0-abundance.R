@@ -20,7 +20,9 @@
 
 # load ----
 library(tidyverse)
-theme_set(theme_bw())
+theme_set(theme_bw()+ 
+             theme(panel.grid.major = element_blank(),
+                   panel.grid.minor = element_blank()))
 # data ----
 #clean up event data- change names and data types etc.
 events <- read.csv('./data/events_2016_161027.csv')
@@ -32,31 +34,39 @@ events %>% mutate(ID = gsub(" ", "", STATION_ID),date = as.Date(DATE_SET, format
           stime = START_TIME, speed=TOW_SPEED, maxdepth=Max_Dpth_fa, mindepth=Min_Dpth_fa, 
           elat=END_LATITUDE, elon=END_LONGITUDE, edepth=DEPTH_END_F, etime=END_TIME, 
           calc_length=TOW_LENGTH_CALC, field_length=TOW_LENGTH_FIELD,length=TOW_LENGTH_DESIGNATED,
-          performance=GEAR_PERFORMANCE_CODE_SW) -> event
+          performance=GEAR_PERFORMANCE_CODE_SW) %>% filter(performance==1)-> event
+
+#check for replicates - if dataframe has values there are duplicates
+event %>% group_by(Bed, ID) %>% filter(n()>1)
 
 catch <- read.csv('./data/catchComp_2016_161027.csv')
 catch %>% select(Event = EVENT_ID, species=RACE_CODE, 
                  size_class=SCAL_SIZE_CLASS, count=COUNT,
                  sample_wt=SAMPLE_WT_KG, cond = CONDITION_CODE_RII, 
                  sample_type = SAMPLE_TYPE) -> catch
+
+#check structure of catch data
+catch %>% filter(species==74120) %>% left_join(event) %>% 
+   group_by(Bed, ID, size_class) %>% summarise(catch=sum(count, na.rm=T)) %>% data.frame()
+
+
 # a_i ----
 #Dredge width in nmi = 0.00131663 x length of dredging in each station
+# Q = 0.83
+Q <- 0.83
 
 #add ai column to events dataframe
-event %>% mutate(ai=length*0.00131663) -> event #ai is in nmi^2
-
+event %>% mutate(ai=length * 0.00131663 * Q) -> event #ai is in nmi^2
 
 # areas ----
 # number of stations sampled by bed
-event %>% group_by(Bed) %>% summarise(n = length(unique(Event))) -> samples
+event %>% group_by(Bed) %>% summarise(n=n(), ai_bar = mean(ai)) -> samples
+   
 
 # Total area of each bed
-# need to get areas from Josh or Ryan
-# for the moment I'll just use the WKI total area of 48.65717
+area <- read.csv('./data/area.csv')
 
-areas <- data.frame(Bed=unique(event$Bed), area =c(48.65717,50,107,10,10))
-
-samples %>% left_join(areas) -> samples
+samples %>% left_join(area) %>% select(-grids) -> samples
 
 
 # catch ----
@@ -64,94 +74,132 @@ samples %>% left_join(areas) -> samples
 #weight is in kg
 catch %>% filter(species==74120, cond==1) %>% 
    group_by(Event, size_class) %>% 
-   summarise(catch=sum(count, na.rm=T), 
-             weight = sum(sample_wt, na.rm=T)) -> catch.a
+   summarise(catch=sum(count), 
+             weight = sum(sample_wt)) -> catch.a
 
 # d_i ----
 #combine with event data - change NA catches to 0
 # do check the end result to be sure that no hauls are being double counted
-event %>% filter(performance==1) %>% left_join(catch.a) %>% 
+event %>% filter(performance==1) %>% merge(catch.a, all=T) %>% 
+   left_join(samples) %>% 
    group_by(size_class) %>% 
    mutate(catch=replace(catch, which(is.na(catch)), 0), 
           di = catch/ai, 
           weight=replace(weight, which(is.na(weight)), 0), 
           di_wt = weight/ai) -> catch.area
 
-
 # dbar ----
 # density variance for both count and weight and error bars
 # average biomass per unit area
 
+###CHECK THIS USING A LOG DISTIBUTION
+
 #calculate for >100 mm shells
-catch.area %>% left_join(samples) %>% filter(size_class==1) %>% group_by(Bed) %>% 
-   summarise(dbar=(1/mean(n)*sum(di)),
-             var_dbar=1/(mean(n)-1)*sum((di-dbar)^2), 
-             error = qt(0.975,df=mean(n)-1)*sqrt(var_dbar)/sqrt(mean(n)),
-             ll = dbar-error,
+catch.area %>% filter(size_class==1|di==0) %>% 
+   group_by(Bed) %>%    
+   summarise(n=mean(n),
+             area=mean(area_nm2),
+             ai_bar=mean(ai_bar),
+             dbar=(1/n*sum(di)),
+             var_dbar=1/((n)-1)*sum((di-dbar)^2), 
+             cv=sqrt(var_dbar)/dbar*100,
+             error=qt(0.975,df=(n)-1)*sqrt(var_dbar)/sqrt((n)),
+             ll=dbar-error,
              ul=dbar+error,
-             ss = sum((di-dbar)^2),
-             
-             dbar_wt=(1/mean(n)*sum(di_wt)), 
-             var_dbar_wt=1/(mean(n)-1)*sum((di_wt-dbar_wt)^2), 
-             error_wt = qt(0.975,df=mean(n)-1)*sqrt(var_dbar_wt)/sqrt(mean(n)),
-             ll_wt = dbar_wt-error_wt,
+             ss=sum((di-dbar)^2),
+             N=area*dbar,
+             varN=(area^2)*1/n*1/(n-1)*ss,
+             cvN=sqrt(varN)/N*100,
+             # By weight
+             dbar_wt=(1/n*sum(di_wt)),
+             sd_wt=sd(di_wt),
+             cv_wt=sd_wt/dbar_wt*100,
+             var_dbar_wt=1/((n)-1)*sum((di_wt-dbar_wt)^2), 
+             error_wt=qt(0.975,df=(n)-1)*sqrt(var_dbar_wt)/sqrt((n)),
+             ll_wt=dbar_wt-error_wt,
              ul_wt=dbar_wt+error_wt,
-             ss_wt = sum((di_wt-dbar_wt)^2),
-             n=mean(n)) %>% mutate(size='large')-> large 
+             ss_wt=sum((di_wt-dbar_wt)^2),
+             N_wt=area*dbar_wt,
+             varN_wt=(area^2)*1/n*1/(n-1)*ss_wt,
+             cvN_wt=sqrt(varN_wt)/N_wt*100) %>% mutate(size='large')-> large 
+
+# What is the CV
+large %>% group_by(Bed) %>% summarise(cv, cvN, cv_wt, cvN_wt)
 
 #calculate for <100 mm shells
-catch.area %>% left_join(samples) %>% filter(size_class==2) %>% group_by(Bed) %>% 
-   summarise(dbar=1/mean(n)*sum(di),
-             var_dbar=1/(mean(n)-1)*sum((di-dbar)^2), 
-             error = qt(0.975,df=mean(n)-1)*sqrt(var_dbar)/sqrt(mean(n)),
-             ll = dbar-error,
+catch.area %>% filter(size_class==2|di==0) %>% 
+   group_by(Bed) %>%    
+   summarise(n=mean(n),
+             area=mean(area_nm2),
+             ai_bar=mean(ai_bar),
+             dbar=(1/n*sum(di)),
+             var_dbar=1/((n)-1)*sum((di-dbar)^2), 
+             cv=sqrt(var_dbar)/dbar*100,
+             error=qt(0.975,df=(n)-1)*sqrt(var_dbar)/sqrt((n)),
+             ll=dbar-error,
              ul=dbar+error,
-             ss = sum((di-dbar)^2),
-             
-             dbar_wt=1/mean(n)*sum(di_wt), 
-             var_dbar_wt=1/(mean(n)-1)*sum((di_wt-dbar_wt)^2), 
-             error_wt = qt(0.975,df=mean(n)-1)*sqrt(var_dbar_wt)/sqrt(mean(n)),
-             ll_wt = dbar_wt-error_wt,
+             ss=sum((di-dbar)^2),
+             N=area*dbar,
+             varN=(area^2)*1/n*1/(n-1)*ss,
+             cvN=sqrt(varN)/N*100,
+             # By weight
+             dbar_wt=(1/n*sum(di_wt)),
+             sd_wt=sd(di_wt),
+             cv_wt=sd_wt/dbar_wt*100,
+             var_dbar_wt=1/((n)-1)*sum((di_wt-dbar_wt)^2), 
+             error_wt=qt(0.975,df=(n)-1)*sqrt(var_dbar_wt)/sqrt((n)),
+             ll_wt=dbar_wt-error_wt,
              ul_wt=dbar_wt+error_wt,
-             ss_wt = sum((di_wt-dbar_wt)^2),
-             n=mean(n)) %>% mutate(size='small')-> small
+             ss_wt=sum((di_wt-dbar_wt)^2),
+             N_wt=area*dbar_wt,
+             varN_wt=(area^2)*1/n*1/(n-1)*ss_wt,
+             cvN_wt=sqrt(varN_wt)/N_wt*100) %>% mutate(size='small')-> small
+
+# What is the CV
+small %>% group_by(Bed) %>% summarise(cv, cvN, cv_wt, cvN_wt)
 
 #calculate for all shells caught
-catch.area %>% left_join(samples) %>% group_by(Bed) %>% 
-   summarise(dbar=(1/mean(n)*sum(di)),
-             var_dbar=1/(mean(n)-1)*sum((di-dbar)^2), 
-             error = qt(0.975,df=mean(n)-1)*sqrt(var_dbar)/sqrt(mean(n)),
-             ll = dbar-error,
+catch.area %>%
+   group_by(Bed) %>%    
+   summarise(n=mean(n),
+             area=mean(area_nm2),
+             ai_bar=mean(ai_bar),
+             dbar=(1/n*sum(di)),
+             var_dbar=1/((n)-1)*sum((di-dbar)^2), 
+             cv=sqrt(var_dbar)/dbar*100,
+             error=qt(0.975,df=(n)-1)*sqrt(var_dbar)/sqrt((n)),
+             ll=dbar-error,
              ul=dbar+error,
-             ss = sum((di-dbar)^2),
-             
-             dbar_wt=(1/mean(n)*sum(di_wt)), 
-             var_dbar_wt=1/(mean(n)-1)*sum((di_wt-dbar_wt)^2), 
-             error_wt = qt(0.975,df=mean(n)-1)*sqrt(var_dbar_wt)/sqrt(mean(n)),
-             ll_wt = dbar_wt-error_wt,
+             ss=sum((di-dbar)^2),
+             N=area*dbar,
+             varN=(area^2)*1/n*1/(n-1)*ss,
+             cvN=sqrt(varN)/N*100,
+             # By weight
+             dbar_wt=(1/n*sum(di_wt)),
+             sd_wt=sd(di_wt),
+             cv_wt=sd_wt/dbar_wt*100,
+             var_dbar_wt=1/((n)-1)*sum((di_wt-dbar_wt)^2), 
+             error_wt=qt(0.975,df=(n)-1)*sqrt(var_dbar_wt)/sqrt((n)),
+             ll_wt=dbar_wt-error_wt,
              ul_wt=dbar_wt+error_wt,
-             ss_wt = sum((di_wt-dbar_wt)^2),
-             n=mean(n)) %>% mutate(size='all')-> all 
+             ss_wt=sum((di_wt-dbar_wt)^2),
+             N_wt=area*dbar_wt,
+             varN_wt=(area^2)*1/n*1/(n-1)*ss_wt,
+             cvN_wt=sqrt(varN_wt)/N_wt*100) %>% mutate(size='all')-> all 
 
-
-combi <- rbind(large,small)
-combi <- rbind(combi, all)
-
-# N ----
-# Q = 0.83
-Q=0.83
-combi %>% left_join(samples) %>% group_by(size,Bed) %>% summarise(N = dbar*area/Q, N_wt = dbar_wt*area/Q) -> N
+# What is the CV
+all %>% group_by(Bed) %>% summarise(cv, cvN, cv_wt, cvN_wt)
 
 # var N ----
-combi %>% left_join(N) -> abundance
+glimpse(small)
 
-
-
-abundance %>% left_join(areas) %>% mutate(var = (area/Q)^2*(1/n)*(1/(n-1))*ss, wt_var = (area/0.83)^2*1/n*1/(n-1)*ss_wt,
-                                          UL=N+2*sqrt(var)/sqrt(n), 
-                                          LL=N-2*sqrt(var)/sqrt(n), 
-                                          UL_wt=N_wt+2*sqrt(wt_var)/sqrt(n),
-                                          LL_wt=N_wt-2*sqrt(wt_var)/sqrt(n)) %>% 
+combi %>% left_join(samples) %>% 
+   mutate(var = (area_nm2/ai_bar)^2*(1/n)*(1/(n-1))*ss, 
+          wt_var = (area/0.83)^2*1/n*1/(n-1)*ss_wt,
+            UL=N+2*sqrt(var)/sqrt(n), 
+            LL=N-2*sqrt(var)/sqrt(n), 
+            UL_wt=N_wt+2*sqrt(wt_var)/sqrt(n),
+            LL_wt=N_wt-2*sqrt(wt_var)/sqrt(n)) %>% 
    select(Bed, dbar, ll, ul,dbar_wt, ll_wt, ul_wt, size, N, UL, LL, N_wt, UL_wt, LL_wt)-> variances
 
 ggplot(variances, aes(Bed, N, color=size))+geom_point()+geom_errorbar(aes(ymin=LL, ymax=UL), width=.2)+facet_grid(.~size)

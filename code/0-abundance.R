@@ -28,7 +28,7 @@ theme_set(theme_bw()+
 events <- read.csv('./data/events_2016_161027.csv')
 events %>% mutate(ID = gsub(" ", "", STATION_ID),date = as.Date(DATE_SET, format='%m-%d-%Y'),
                   year = as.numeric(format(date, "%Y"))) %>% 
-   select(year=year, date=date, Event = EVENT_ID, District = DISTRICT, 
+   select(year, date, Event = EVENT_ID, District = DISTRICT, 
           Dredge = DREDGE_ID, Bed = BED_SW, Type = STATION_TYPE, ID = ID, 
           slat = START_LATITUDE, slon=START_LONGITUDE, sdepth = DEPTH_START_F, 
           stime = START_TIME, speed=TOW_SPEED, maxdepth=Max_Dpth_fa, mindepth=Min_Dpth_fa, 

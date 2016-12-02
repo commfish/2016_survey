@@ -1,6 +1,8 @@
 # load ----
 library(tidyverse)
-theme_set(theme_bw())
+theme_set(theme_bw()+ 
+             theme(panel.grid.major = element_blank(),
+                   panel.grid.minor = element_blank()))
 # data ----
 #clean up event data- change names and data types etc.
 events <- read.csv('./data/events_2016.csv')
@@ -29,13 +31,15 @@ awl %>% select(Event = EVENT_ID, weight=WHOLE_WT_GRAMS,
 
 #height/weight relationship
 awl %>% left_join(event) %>% 
-   ggplot(aes(weight,height))+geom_point()+facet_wrap(~Bed)+stat_smooth()
+   ggplot(aes(weight,height))+geom_point()+facet_wrap(~Bed)+stat_smooth() 
+
+#ggsave("./figs/Fig1.tiff", dpi=300, height=6, width=6, units="in")
 
 #height densities - this way includes <100mm shells
 awl %>% left_join(event) %>% 
-   ggplot(aes(height))+geom_density(alpha=.2,fill=4)+facet_wrap(~Bed)+stat_smooth()
+   ggplot(aes(height))+geom_density(alpha=.2,fill=4)+facet_wrap(~Bed)
 
 #height densities - 
 awl %>% left_join(event) %>% 
-   ggplot(aes(height, fill=factor(sex),color=factor(sex)))+geom_density(alpha=.2)+facet_wrap(~Bed)+stat_smooth()
+   ggplot(aes(height, fill=factor(sex),color=factor(sex)))+geom_density(alpha=.2)+facet_wrap(~Bed)
 # getting some issues between using 0 and using NA - need to examine this.

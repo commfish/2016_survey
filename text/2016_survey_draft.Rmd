@@ -8,10 +8,6 @@ author:
   name: Josh Mumm
 date: ''
 output:
-  word_document:
-    toc: yes
-  pdf_document:
-    toc: yes
   html_document:
     toc: yes
 csl: canjfas.csl
@@ -98,7 +94,8 @@ a %>% mutate(N=round(N),UL=round(UL),LL=round(LL),N_wt=round(N_wt),UL_wt=round(U
 a %>% filter(Bed=='WK1', size=='all') -> wk1
 ```
 
-The western Kayak Island abundance estimate of all scallops was ```r round(wk1$N)``` with 95% CI of ```r round(wk1$LL)```, ```r round(wk1$UL)```.
+
+The western Kayak Island abundance estimate of all scallops was ```r round(wk1$N)``` with 95% CI of ```r round(wk1$LL)``` - ```r round(wk1$UL)```.
 
 #DISCUSSION  
 

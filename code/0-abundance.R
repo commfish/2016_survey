@@ -95,15 +95,15 @@ event %>% filter(performance==1) %>% merge(catch.a, all=T) %>%
 ###CHECK THIS USING A LOG DISTIBUTION
 
 #calculate for >100 mm shells
-catch.area %>% filter(size_class==1|di==0) %>% 
+catch.area %>% filter(size_class==1|di==0) %>% #added to include 0 hauls.
    group_by(Bed) %>%    
-   summarise(n=mean(n),
-             area=mean(area_nm2),
-             ai_bar=mean(ai_bar),
-             dbar=(1/n*sum(di)),
-             var_dbar=1/((n)-1)*sum((di-dbar)^2), 
-             cv=sqrt(var_dbar)/dbar*100,
-             error=qt(0.975,df=(n)-1)*sqrt(var_dbar)/sqrt((n)),
+   summarise(n=mean(n), #gives one n or sample size for each bed
+             area=mean(area_nm2),#same as above
+             ai_bar=mean(ai_bar), # also gives one values 
+             dbar=(1/n*sum(di)), # average density
+             var_dbar=1/((n)-1)*sum((di-dbar)^2), #variance of dbar
+             cv=sqrt(var_dbar)/dbar*100, 
+             error=qt(0.975,df=(n)-1)*sqrt(var_dbar)/sqrt((n)), # confidence interval with SE of mean
              ll=dbar-error,
              ul=dbar+error,
              ss=sum((di-dbar)^2),
@@ -130,6 +130,7 @@ catch.area %>% filter(size_class==1|di==0) %>%
              ulN_wt=N_wt+errorN_wt) %>% mutate(size='large')-> large 
 
 # What is the CV
+# goal CV < 20 %
 large %>% group_by(Bed) %>% summarise(cv, cvN, cv_wt, cvN_wt)
 
 #calculate for <100 mm shells

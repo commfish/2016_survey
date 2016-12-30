@@ -99,18 +99,19 @@ event %>% filter(performance==1) %>% merge(catch.b, all=T) %>%
           weight=replace(weight, which(is.na(weight)), 0), 
           di_wt = weight/ai) -> catch.area2
 catch.area2 %>%
-  mutate(size_class=replace(size_class, which(is.na(size_class)), 1)) -> catch.area2
+  mutate(size_class2=replace(size_class, which(is.na(size_class)), 1)) -> catch.area2
 # Need to make sure that every event has a row for size class 1 and size class 2...even if catch is 0.
 # still have NA for 0 tows....how to deal with these.
 catch.area2 %>%
-  group_by(Bed, size_class) %>% summarise(n=n())
+  group_by(Bed, size_class2) %>% summarise(n=n()) # this puts the 0 tows in the size 1 category
+# not a complete fix.....
 
 # lists ---- 
 # create lists to hold data - 3 lists per bed - large, small, and all
-c.a.bedlist <- split(catch.area, catch.area$Bed)# splits into a list of each Bed
+c.a.bedlist <- split(catch.area2, catch.area2$Bed)# splits into a list of each Bed
 
 #need to split into large and small - 
-c.a.bedlist2 <- split(catch.area, list(catch.area$Bed, catch.area$size_class))
+c.a.bedlist2 <- split(catch.area2, list(catch.area2$Bed, catch.area2$size_class2))
 # what happens to the NA's here???
 
 

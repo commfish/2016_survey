@@ -34,13 +34,13 @@ plot(results.2, index =2)
 boot.ci(results.2, conf = 0.95, index =1)
 boot.ci(results.2, conf = 0.95, index =2)
 
-# bootstrap all beds at once - this is for ALL scallops - large and small
+# bootstrap by BED - this is for ALL scallops - large and small
 boot_all <- lapply(c.a.bedlist, boot, statistic = db.fun2, R=1000)
 
 lapply(boot_all, boot.ci, index =1)
 plot(boot_all$KSH1, index =1)
 
-#boot with all, split by size_class
+#boot By Bed and Size class ...1 and 2 for each bed
 boot_all2 <- lapply(c.a.bedlist2, boot, statistic = db.fun2, R=1000)
 
 lapply(boot_all2, boot.ci, index =1)

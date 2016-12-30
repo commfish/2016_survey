@@ -20,6 +20,7 @@
 
 # load ----
 library(tidyverse)
+library(reshape2)
 
 theme_set(theme_bw()+ 
              theme(panel.grid.major = element_blank(),
@@ -77,6 +78,11 @@ catch %>% filter(species==74120, cond==1) %>%
    group_by(Event, size_class) %>% 
    summarise(catch=sum(count), 
              weight = sum(sample_wt)) -> catch.a
+# here is where each "Event" should have a size class 1 and 2
+catch.a %>% select(-weight) ->step1
+step2 <- dcast(step1, Event ~ size_class, sum, drop=TRUE) # this puts in the 0 catchs
+
+# need to convert this back to old format and add in weights if catch >0
 
 # d_i ----
 #combine with event data - change NA catches to 0
@@ -88,6 +94,9 @@ event %>% filter(performance==1) %>% merge(catch.a, all=T) %>%
           di = catch/ai, 
           weight=replace(weight, which(is.na(weight)), 0), 
           di_wt = weight/ai) -> catch.area
+# Need to make sure that every event has a row for size class 1 and size class 2...even if catch is 0.
+
+
 # lists ---- 
 # create lists to hold data - 3 lists per bed - large, small, and all
 c.a.bedlist <- split(catch.area, catch.area$Bed)# splits into a list of each Bed

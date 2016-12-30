@@ -79,23 +79,31 @@ catch %>% filter(species==74120, cond==1) %>%
    summarise(catch=sum(count), 
              weight = sum(sample_wt)) -> catch.a
 # here is where each "Event" should have a size class 1 and 2
-catch.a %>% select(-weight) ->step1
+catch.a %>% select(-weight) ->step1 #only use catch
 step2 <- dcast(step1, Event ~ size_class, sum, drop=TRUE) # this puts in the 0 catchs
-
-# need to convert this back to old format and add in weights if catch >0
+step2 %>%
+  gather(size_class, catch, -Event) %>%
+  mutate(size_class = as.numeric(size_class))-> step3
+step3 %>% 
+  left_join(catch.a) ->step4# need to convert this back to old format and add in weights if catch >0
+catch.b <- step4
 
 # d_i ----
 #combine with event data - change NA catches to 0
 # do check the end result to be sure that no hauls are being double counted
-event %>% filter(performance==1) %>% merge(catch.a, all=T) %>% 
+event %>% filter(performance==1) %>% merge(catch.b, all=T) %>% 
    left_join(samples) %>% 
    group_by(size_class) %>% 
    mutate(catch=replace(catch, which(is.na(catch)), 0), 
           di = catch/ai, 
           weight=replace(weight, which(is.na(weight)), 0), 
-          di_wt = weight/ai) -> catch.area
+          di_wt = weight/ai) -> catch.area2
+catch.area2 %>%
+  mutate(size_class=replace(size_class, which(is.na(size_class)), 1)) -> catch.area2
 # Need to make sure that every event has a row for size class 1 and size class 2...even if catch is 0.
-
+# still have NA for 0 tows....how to deal with these.
+catch.area2 %>%
+  group_by(Bed, size_class) %>% summarise(n=n())
 
 # lists ---- 
 # create lists to hold data - 3 lists per bed - large, small, and all

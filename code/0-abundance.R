@@ -20,6 +20,7 @@
 
 # load ----
 library(tidyverse)
+
 theme_set(theme_bw()+ 
              theme(panel.grid.major = element_blank(),
                    panel.grid.minor = element_blank()))
@@ -87,6 +88,14 @@ event %>% filter(performance==1) %>% merge(catch.a, all=T) %>%
           di = catch/ai, 
           weight=replace(weight, which(is.na(weight)), 0), 
           di_wt = weight/ai) -> catch.area
+# lists ---- 
+# create lists to hold data - 3 lists per bed - large, small, and all
+c.a.bedlist <- split(catch.area, catch.area$Bed)# splits into a list of each Bed
+
+#need to split into large and small - 
+c.a.bedlist2 <- split(catch.area, list(catch.area$Bed, catch.area$size_class))
+# what happens to the NA's here???
+
 
 # dbar ----
 # density variance for both count and weight and error bars
@@ -103,6 +112,7 @@ catch.area %>% filter(size_class==1|di==0) %>%
              dbar=(1/n*sum(di)),
              var_dbar=1/((n)-1)*sum((di-dbar)^2), 
              cv=sqrt(var_dbar)/dbar*100,
+             
              error=qt(0.975,df=(n)-1)*sqrt(var_dbar)/sqrt((n)),
              ll=dbar-error,
              ul=dbar+error,
@@ -213,3 +223,6 @@ ggplot(large, aes(Bed, N))+geom_point()+geom_errorbar(aes(ymin=llN, ymax=ulN), w
 
 ggplot(large, aes(Bed, N_wt))+geom_point()+geom_errorbar(aes(ymin=llN_wt, ymax=ulN_wt), width=.2)+
    geom_point(data=small, aes(Bed, N_wt), color=2)+geom_errorbar(data=small, aes(ymin=llN_wt, ymax=ulN_wt), width=.2, color=2)
+
+#bootstrap ----
+#resample by bed

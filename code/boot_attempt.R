@@ -23,9 +23,10 @@ results.1 <- boot(data = catch.area.KSH1.L, db.fun,
                 R=1000)
 plot(results.1, index=1)
 boot.ci(results.1, conf = 0.95)
+#
 
-
-#   want to get dbar and N from each boostrap
+  
+#want to get dbar and N from each boostrap
 source("./code/boot_fnc.R")
 results.2 <- boot(data = catch.area.KSH1.L, db.fun2, 
                  R=1000)
@@ -34,6 +35,8 @@ plot(results.2, index =2)
 boot.ci(results.2, conf = 0.95, index =1)
 boot.ci(results.2, conf = 0.95, index =2)
 
+# using lists -------------- 
+source("./code/boot_fnc.R")
 # bootstrap by BED - this is for ALL scallops - large and small
 boot_all <- lapply(c.a.bedlist, boot, statistic = db.fun2, R=1000)
 

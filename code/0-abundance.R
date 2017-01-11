@@ -82,23 +82,32 @@ catch %>% filter(species==74120, cond==1) %>%
 # here is where each "Event" should have a size class 1 and 2
 catch.a %>% select(-weight) ->step1 #only use catch
 step2 <- dcast(step1, Event ~ size_class, sum, drop=TRUE) # this puts in the 0 catchs
-step2 %>%
-  gather(size_class, catch, -Event) %>%
-  mutate(size_class = as.numeric(size_class))-> step3
-step3 %>% 
-  left_join(catch.a) ->step4# need to convert this back to old format and add in weights if catch >0
-catch.b <- step4
+# try merging with event here -----
+event %>% filter(performance==1) %>% left_join(samples) %>%
+  merge(step2, all=T) -> mer1
+# need to get back to size class 1 and 2 and catch before grouping by size class.
+mer1 %>% 
+  gather(size_class, catch, 28:29) %>%
+  mutate(size_class = as.numeric(size_class)) -> mer2
+mer2 %>%
+  left_join(catch.a) -> catch.c
+#----
+#step2 %>%
+#  gather(key = size_class, catch, -Event) %>%
+#  mutate(size_class = as.numeric(size_class))-> step3
+#step3 %>% 
+#  left_join(catch.a) ->step4# need to convert this back to old format and add in weights if catch >0
+#catch.b <- step4
 
 # d_i ----
 #combine with event data - change NA catches to 0
 # do check the end result to be sure that no hauls are being double counted
-event %>% filter(performance==1) %>% merge(catch.b, all=T) %>% 
-   left_join(samples) %>% 
+catch.c %>% 
    group_by(size_class) %>% 
    mutate(catch=replace(catch, which(is.na(catch)), 0), 
           di = catch/ai, 
           weight=replace(weight, which(is.na(weight)), 0), 
-          di_wt = weight/ai) -> catch.area2
+          di_wt = weight/ai) -> catch.area3
 #temporary work around:
 #catch.area2 %>%
   #mutate(size_class2=replace(size_class, which(is.na(size_class)), 1)) -> catch.area2

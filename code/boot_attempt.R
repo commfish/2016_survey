@@ -41,12 +41,17 @@ source("./code/boot_fnc.R")
 boot_all <- lapply(c.a.bedlist, boot, statistic = db.fun2, R=1000)
 
 lapply(boot_all, boot.ci, index =1)
-plot(boot_all$KSH1, index =1)
+plot(boot_all$KSH1, index =1) # index 1 refers to d_bar, index 2 is N
 
 #boot By Bed and Size class ...1 and 2 for each bed
 boot_all2 <- lapply(c.a.bedlist2, boot, statistic = db.fun2, R=1000)
 
-lapply(boot_all2, boot.ci, index =1)
+lapply(boot_all2, boot.ci, index =1) #produces bootstrap confidence intervals
+# Normal (assumes normality)
+# Basic
+# Percentile (using the quantiles of the bootstrap samples)
+# BCa (corrects for bias and "acceleratioN" of the variance)
+
 plot(boot_all2$KSH1.1, index =1)
 
 # other methods that weren't working.

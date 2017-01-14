@@ -54,12 +54,30 @@ lapply(boot_all2, boot.ci, index =1) #produces bootstrap confidence intervals
 
 plot(boot_all2$KSH1.1, index =1)
 
-# other methods that weren't working.
-# Doesn't work
-#boot2 <- catch.area.KSH1.L %>% modelr::bootstrap(10)%>%
- # mutate(dbar = map_dbl(strap, ~ ((1/.$n*sum(.$di)))))
+## confidence intervals -----
+# percentile for one area - write function and apply to all
+lapply(boot_all, CIpercent)
 
-# why are there 5200 rows??? not right
-#boot.KSH1 <- catch.area.KSH1.L %>% bootstrap(100)%>%
-#  do(data.frame(dbar=(1/.$n*sum(.$di))))
-  
+CIpercent <- function (boot_out) {
+  d_bar_boot <- median(boot_out$t[,1]) 
+  N_boot <- median(boot_out$t[,2])
+  d_CI <- quantile(boot_out$t[,1], c(0.05, 0.95))
+  N_CI <- quantile(boot_out$t[,2], c(0.05, 0.95))
+  cat <- c(N_boot, N_CI)
+  hat <- c(d_bar_boot, d_CI)
+  CIs <- data.frame(matrix(c(hat,cat), ncol=3, byrow = TRUE))
+  colnames(CIs) <- c("median", "5%", "95%")
+  return(CIs)
+}
+
+
+# attempts to do with one bed ------
+d_bar_boot <- median(boot_all$KSH1$t[,1]) 
+N_boot <- median(boot_all$KSH1$t[,2])
+d_CI <- quantile(boot_all$KSH1$t[,1], c(0.05, 0.95))
+N_CI <- quantile(boot_all$KSH1$t[,2], c(0.05, 0.95))
+cat <- c(N_boot, N_CI)
+  hat <- c(d_bar_boot, d_CI)
+CIs <- data.frame(matrix(c(hat,cat), ncol=3, byrow = TRUE))
+colnames(CIs) <- c("median", "5%", "95%")
+CIs

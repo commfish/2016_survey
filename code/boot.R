@@ -1,6 +1,7 @@
 # load ----
 library(tidyverse)
 library(reshape2)
+library(scales)
 theme_set(theme_bw()+ 
              theme(panel.grid.major = element_blank(),
                    panel.grid.minor = element_blank()))
@@ -130,7 +131,8 @@ numbers %>% group_by(District,Bed,year,variable) %>%
    summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
              lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) %>% 
    group_by(Bed,variable) %>% 
-   ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)
+   ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)+
+   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma)
 
 #weight ----
 # apply the function to each component of the list
@@ -154,4 +156,5 @@ weight %>% group_by(District,Bed,year,variable) %>%
    summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
              lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) %>% 
    group_by(Bed,variable) %>% 
-   ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)
+   ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)+
+   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma)

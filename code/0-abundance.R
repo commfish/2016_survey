@@ -20,6 +20,8 @@
 
 # load ----
 library(tidyverse)
+library(reshape2)
+
 theme_set(theme_bw()+ 
              theme(panel.grid.major = element_blank(),
                    panel.grid.minor = element_blank()))
@@ -68,6 +70,7 @@ area <- read.csv('./data/area.csv')
 
 samples %>% left_join(area) %>% select(-grids) -> samples
 
+#add size classes for every event
 
 # catch ----
 #filter out scallops from the catch data and calculate density
@@ -76,18 +79,87 @@ catch %>% filter(species==74120, cond==1) %>%
    group_by(Event, size_class) %>% 
    summarise(catch=sum(count), 
              weight = sum(sample_wt)) -> catch.a
+# here is where each "Event" should have a size class 1 and 2
+catch.a %>% select(-weight) ->step1 #only use catch
+step2 <- dcast(step1, Event ~ size_class, sum, drop=TRUE) # this puts in the 0 catchs
+# try merging with event here -----
+event %>% filter(performance==1) %>% left_join(samples) %>%
+  merge(step2, all=T) -> mer1
+# need to get back to size class 1 and 2 and catch before grouping by size class.
+mer1 %>% 
+  gather(size_class, catch, 28:29) %>%
+  mutate(size_class = as.numeric(size_class)) -> mer2
+mer2 %>%
+  left_join(catch.a) -> catch.c
+#----
+#step2 %>%
+#  gather(key = size_class, catch, -Event) %>%
+#  mutate(size_class = as.numeric(size_class))-> step3
+#step3 %>% 
+#  left_join(catch.a) ->step4# need to convert this back to old format and add in weights if catch >0
+#catch.b <- step4
 
 # d_i ----
 #combine with event data - change NA catches to 0
 # do check the end result to be sure that no hauls are being double counted
-event %>% filter(performance==1) %>% merge(catch.a, all=T) %>% 
-   left_join(samples) %>% 
+catch.c %>% 
    group_by(size_class) %>% 
    mutate(catch=replace(catch, which(is.na(catch)), 0), 
           di = catch/ai, 
           weight=replace(weight, which(is.na(weight)), 0), 
-          di_wt = weight/ai) -> catch.area
+          di_wt = weight/ai) -> catch.area3
+#temporary work around:
+#catch.area2 %>%
+  #mutate(size_class2=replace(size_class, which(is.na(size_class)), 1)) -> catch.area2
+# Need to make sure that every event has a row for size class 1 and size class 2...even if catch is 0.
+# still have NA for 0 tows....how to deal with these.
+catch.area3 %>%
+  group_by(Bed, size_class) %>% summarise(n=n()) # this puts the 0 tows in the size 1 category
 
+
+# lists ---- 
+# create lists to hold data - 3 lists per bed - large, small, and all
+c.a.bedlist <- split(catch.area3, catch.area3$Bed)# splits into a list of each Bed
+
+#need to split into large and small - 
+c.a.bedlist2 <- split(catch.area3, list(catch.area3$Bed, catch.area3$size_class))
+
+
+# dbar using list ----
+# using lapply , create function to call for summary data
+c.a.bedlist2 %>% 
+  summarise(n=mean(n),
+            area=mean(area_nm2),
+            ai_bar=mean(ai_bar),
+            dbar=(1/n*sum(di)),
+            var_dbar=1/((n)-1)*sum((di-dbar)^2), 
+            cv=sqrt(var_dbar)/dbar*100,
+            
+            error=qt(0.975,df=(n)-1)*sqrt(var_dbar)/sqrt((n)),
+            ll=dbar-error,
+            ul=dbar+error,
+            ss=sum((di-dbar)^2),
+            N=area*dbar,
+            varN=(area^2)*1/n*1/(n-1)*ss,
+            cvN=sqrt(varN)/N*100,
+            errorN=qt(0.975,df=(n)-1)*sqrt(varN)/sqrt((n)),
+            llN=N-errorN,
+            ulN=N+errorN,
+            # By weight
+            dbar_wt=(1/n*sum(di_wt)),
+            sd_wt=sd(di_wt),
+            cv_wt=sd_wt/dbar_wt*100,
+            var_dbar_wt=1/((n)-1)*sum((di_wt-dbar_wt)^2), 
+            error_wt=qt(0.975,df=(n)-1)*sqrt(var_dbar_wt)/sqrt((n)),
+            ll_wt=dbar_wt-error_wt,
+            ul_wt=dbar_wt+error_wt,
+            ss_wt=sum((di_wt-dbar_wt)^2),
+            N_wt=area*dbar_wt,
+            varN_wt=(area^2)*1/n*1/(n-1)*ss_wt,
+            cvN_wt=sqrt(varN_wt)/N_wt*100,
+            errorN_wt=qt(0.975,df=(n)-1)*sqrt(varN_wt)/sqrt((n)),
+            llN_wt=N_wt-errorN_wt,
+            ulN_wt=N_wt+errorN_wt)
 # dbar ----
 # density variance for both count and weight and error bars
 # average biomass per unit area
@@ -103,6 +175,7 @@ catch.area %>% filter(size_class==1|di==0) %>%
              dbar=(1/n*sum(di)),
              var_dbar=1/((n)-1)*sum((di-dbar)^2), 
              cv=sqrt(var_dbar)/dbar*100,
+             
              error=qt(0.975,df=(n)-1)*sqrt(var_dbar)/sqrt((n)),
              ll=dbar-error,
              ul=dbar+error,
@@ -213,3 +286,6 @@ ggplot(large, aes(Bed, N))+geom_point()+geom_errorbar(aes(ymin=llN, ymax=ulN), w
 
 ggplot(large, aes(Bed, N_wt))+geom_point()+geom_errorbar(aes(ymin=llN_wt, ymax=ulN_wt), width=.2)+
    geom_point(data=small, aes(Bed, N_wt), color=2)+geom_errorbar(data=small, aes(ymin=llN_wt, ymax=ulN_wt), width=.2, color=2)
+
+#bootstrap ----
+#resample by bed

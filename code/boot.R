@@ -54,17 +54,17 @@ catch %>% filter(species==74120, cond==1) %>%
    group_by(Event, size_class) %>% 
    summarise(catch=sum(count, na.rm=T)) %>% 
    dcast(Event~size_class,sum, drop=TRUE) -> s.catch
-names(s.catch) <- c('Event', 'catch1', 'catch2')
+names(s.catch) <- c('Event', 'large', 'small')
 
 scal.catch <- merge(s.catch,event, all = TRUE) # merge with events - keep NA
    scal.catch[is.na(scal.catch)] <- 0 # change NA to 0
-   scal.catch %>% dplyr::select(Event, catch1, catch2,year,District,Bed,n,ai,area_nm2) %>% 
-      mutate(catch3 = catch1+catch2) %>% 
+   scal.catch %>% dplyr::select(Event, large, small,year,District,Bed,n,ai,area_nm2) %>% 
+      mutate(all = large+small) %>% 
       melt(., id.vars=c('Event','year','District','Bed','n','ai','area_nm2')) %>% 
       mutate(di= value/ai) %>% 
       group_by(District,Bed,year, variable) %>% 
-      do(data=(.)) %>% 
-      select(data) %>% 
+      do(dat=(.)) %>% 
+      select(dat) %>% 
       map(identity) -> scal.catch
 
 # weight ----
@@ -73,12 +73,12 @@ scal.catch <- merge(s.catch,event, all = TRUE) # merge with events - keep NA
       group_by(Event, size_class) %>% select(-count) %>% 
       summarise(weight=sum(sample_wt, na.rm=T)) %>% 
       dcast(Event~size_class,sum, drop=TRUE) -> s.weight
-   names(s.weight) <- c('Event', 'weight1', 'weight2')
+   names(s.weight) <- c('Event', 'large', 'small')
 
 scal.weight <- merge(s.weight,event, all = TRUE) # merge with events - keep NA
 scal.weight[is.na(scal.weight)] <- 0 # change NA to 0
-scal.weight %>% dplyr::select(Event, weight1, weight2,year,District,Bed,n,ai,area_nm2) %>% 
-   mutate(weight3 = weight1+weight2) %>% 
+scal.weight %>% dplyr::select(Event, large, small,year,District,Bed,n,ai,area_nm2) %>% 
+   mutate(all = large+small) %>% 
    melt(., id.vars=c('Event','year','District','Bed','n','ai','area_nm2')) %>% 
    mutate(di= value/ai) %>% 
    group_by(District,Bed,year, variable) %>% 
@@ -87,7 +87,6 @@ scal.weight %>% dplyr::select(Event, weight1, weight2,year,District,Bed,n,ai,are
    map(identity) -> scal.weight
 
 # bootstrap ----
-aa = scal.weight$dat[1]  
 f.it <- function(x){
    # first turn the list to a dataframe
    # extract the identifiers to append to the results
@@ -113,18 +112,46 @@ f.it <- function(x){
    cbind(out,y)
 }
 
-# apply the function to each component of the list
-newd <- lapply(scal.weight$dat,f.it)
 
-# bind the results together and convert to a dataframe
-newd <- as.data.frame(do.call(rbind,newd))
+#catch ----
+numbers <- lapply(scal.catch$dat,f.it)
+numbers <- as.data.frame(do.call(rbind,numbers))
 
-# plots ----
-newd %>% filter(variable=='weight2') %>% 
+numbers %>% filter(variable=='large') %>% 
    ggplot(aes(dbar, fill=Bed))+geom_density()+ facet_wrap(~Bed)
-newd %>% filter(variable=='weight1') %>% 
+
+numbers %>% filter(variable=='large') %>% 
    ggplot(aes(dbar, fill=Bed))+geom_density()
 
-newd %>% filter(variable=='weight2') %>% 
+numbers %>% filter(variable=='small') %>% 
+   ggplot(aes(N, fill=Bed))+geom_density() 
+
+numbers %>% group_by(District,Bed,year,variable) %>% 
+   summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
+             lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) %>% 
+   group_by(Bed,variable) %>% 
+   ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)
+
+#weight ----
+# apply the function to each component of the list
+weight <- lapply(scal.weight$dat,f.it)
+
+# bind the results together and convert to a dataframe
+weight <- as.data.frame(do.call(rbind,weight))
+
+
+weight %>% filter(variable=='large') %>% 
+   ggplot(aes(dbar, fill=Bed))+geom_density()+ facet_wrap(~Bed)
+
+
+weight %>% filter(variable=='large') %>% 
+   ggplot(aes(dbar, fill=Bed))+geom_density()
+
+weight %>% filter(variable=='small') %>% 
    ggplot(aes(N, fill=Bed))+geom_density() + facet_wrap(~Bed)
 
+weight %>% group_by(District,Bed,year,variable) %>% 
+   summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
+             lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) %>% 
+   group_by(Bed,variable) %>% 
+   ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)

@@ -18,6 +18,7 @@ events %>% mutate(ID = gsub(" ", "", STATION_ID),date = as.Date(DATE_SET, format
           elat=END_LATITUDE, elon=END_LONGITUDE, edepth=DEPTH_END_F, etime=END_TIME, 
           calc_length=TOW_LENGTH_CALC, field_length=TOW_LENGTH_FIELD,length=TOW_LENGTH_DESIGNATED,
           performance=GEAR_PERFORMANCE_CODE_SW) %>% filter(performance==1)-> event
+write_csv(event,'data/event.csv')
 
 #check for replicates - if dataframe has values there are duplicates
 event %>% group_by(Bed, ID) %>% filter(n()>1)
@@ -47,6 +48,7 @@ catch %>% select(Event = EVENT_ID, species=RACE_CODE,
                  size_class=SCAL_SIZE_CLASS, count=COUNT,
                  sample_wt=SAMPLE_WT_KG, cond = CONDITION_CODE_RII, 
                  sample_type = SAMPLE_TYPE) -> catch
+write_csv(catch, 'data/catch.csv')
 
 # scallops ----
 # catch ----
@@ -114,7 +116,7 @@ f.it <- function(x){
 }
 
 
-#catch ----
+# catch ----
 numbers <- lapply(scal.catch$dat,f.it)
 numbers <- as.data.frame(do.call(rbind,numbers))
 
@@ -134,7 +136,7 @@ numbers %>% group_by(District,Bed,year,variable) %>%
    ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)+
    scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma)
 
-#weight ----
+# weight ----
 # apply the function to each component of the list
 weight <- lapply(scal.weight$dat,f.it)
 
@@ -154,7 +156,68 @@ weight %>% filter(variable=='small') %>%
 
 weight %>% group_by(District,Bed,year,variable) %>% 
    summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
-             lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) %>% 
+             lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) -> weights
+weights%>% 
    group_by(Bed,variable) %>% 
    ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)+
    scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma)
+
+
+# meat weight ----
+awl <- read.csv('data/awl_2016_161027.csv')
+
+awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
+               j = SCALLOP_NUMBER, size_class = SCAL_SIZE_CLASS,
+               weight=WHOLE_WT_GRAMS, worm=SHELL_WORM_SW, 
+               height=SHELL_HEIGHT_MM, sex=SEX_SW, 
+               gonad_cond=SCAL_GONAD_COND, blister=MUD_BLISTER_SW, 
+               meat_cond=MEAT_CONDITION_SW, meat_weight = MEAT_WEIGHT_GRAMS,
+               clapper = CLAPPER, sample_type = SAMPLE_TYPE) %>% 
+   mutate(ratio = meat_weight/weight ) %>% 
+   filter(species == 74120, size_class == 1, is.na(clapper), !is.na(ratio), Event %in% event$Event) %>% 
+   select(Event,j,ratio)-> samp
+
+as.data.frame(do.call(rbind,scal.catch$dat)) %>% filter(variable=='large') %>% left_join(samp) -> meat.wts
+
+meat.wts %>% group_by(Event,Bed,year) %>% summarise(jn=max(j)) %>% filter(jn>1) -> inter
+meat.wts %>% group_by(Event,Bed,year) %>% summarise(jn=max(j)) %>% filter(jn==1) -> inter1
+meat.wts %>% left_join(inter) %>% filter(Event %in% inter$Event) -> meat.wt2
+meat.wts %>% left_join(inter1) %>% filter(Event %in% inter1$Event) %>% select(ratio_bar=ratio,Event,year,District,Bed)-> meat.wt3
+
+# bootstrap II----
+f.wt <- function(x){
+   # first turn the list to a dataframe
+   # extract the identifiers to append to the results
+   # function to be run each time for calculating meat weight
+   # function to sample by rows
+   # replicate the data 1000 times
+   
+   x = as.data.frame(x)
+   y = x[1,1:4]
+   boot.it <- function(x){
+      ratio_bar = sum(x$ratio)/mean(x$jn)
+      c(ratio_bar,y)
+   }
+   
+   f.do <- function(x){
+      x %>% sample_n(nrow(.), replace=TRUE) -> x 
+      boot.it(x)
+   }
+   
+   as.data.frame(t(replicate(1000,f.do(x)))) -> out
+   names(out) <- c('ratio_bar', 'Event','year','District','Bed')
+   out
+}
+
+meat.wt2 %>% 
+   group_by(Bed) %>% 
+   do(dat=(.)) %>% 
+   select(dat) %>% 
+   map(identity) -> meat.wt
+
+wts <- lapply(meat.wt$dat,f.wt)
+wts <- as.data.frame(matrix(unlist(do.call(rbind,wts)), ncol=5, byrow=F))
+names(wts) <- names(meat.wt3)
+wts %>% mutate(ratio_bar=as.numeric(ratio_bar)) -> wts
+wts <- rbind(wts,meat.wt3)
+wts %>% group_by(Bed, year) %>% summarise(rbar=mean(ratio_bar))

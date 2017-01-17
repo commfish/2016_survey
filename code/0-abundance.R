@@ -127,39 +127,39 @@ c.a.bedlist2 <- split(catch.area3, list(catch.area3$Bed, catch.area3$size_class)
 
 # dbar using list ----
 # using lapply , create function to call for summary data
-c.a.bedlist2 %>% 
-  summarise(n=mean(n),
-            area=mean(area_nm2),
-            ai_bar=mean(ai_bar),
-            dbar=(1/n*sum(di)),
-            var_dbar=1/((n)-1)*sum((di-dbar)^2), 
-            cv=sqrt(var_dbar)/dbar*100,
+#c.a.bedlist2 %>% 
+#  summarise(n=mean(n),
+#            area=mean(area_nm2),
+#            ai_bar=mean(ai_bar),
+#            dbar=(1/n*sum(di)),
+#            var_dbar=1/((n)-1)*sum((di-dbar)^2), 
+#            cv=sqrt(var_dbar)/dbar*100,
             
-            error=qt(0.975,df=(n)-1)*sqrt(var_dbar)/sqrt((n)),
-            ll=dbar-error,
-            ul=dbar+error,
-            ss=sum((di-dbar)^2),
-            N=area*dbar,
-            varN=(area^2)*1/n*1/(n-1)*ss,
-            cvN=sqrt(varN)/N*100,
-            errorN=qt(0.975,df=(n)-1)*sqrt(varN)/sqrt((n)),
-            llN=N-errorN,
-            ulN=N+errorN,
+#            error=qt(0.975,df=(n)-1)*sqrt(var_dbar)/sqrt((n)),
+#            ll=dbar-error,
+#            ul=dbar+error,
+#            ss=sum((di-dbar)^2),
+#            N=area*dbar,
+#            varN=(area^2)*1/n*1/(n-1)*ss,
+#            cvN=sqrt(varN)/N*100,
+#            errorN=qt(0.975,df=(n)-1)*sqrt(varN)/sqrt((n)),
+#            llN=N-errorN,
+#            ulN=N+errorN,
             # By weight
-            dbar_wt=(1/n*sum(di_wt)),
-            sd_wt=sd(di_wt),
-            cv_wt=sd_wt/dbar_wt*100,
-            var_dbar_wt=1/((n)-1)*sum((di_wt-dbar_wt)^2), 
-            error_wt=qt(0.975,df=(n)-1)*sqrt(var_dbar_wt)/sqrt((n)),
-            ll_wt=dbar_wt-error_wt,
-            ul_wt=dbar_wt+error_wt,
-            ss_wt=sum((di_wt-dbar_wt)^2),
-            N_wt=area*dbar_wt,
-            varN_wt=(area^2)*1/n*1/(n-1)*ss_wt,
-            cvN_wt=sqrt(varN_wt)/N_wt*100,
-            errorN_wt=qt(0.975,df=(n)-1)*sqrt(varN_wt)/sqrt((n)),
-            llN_wt=N_wt-errorN_wt,
-            ulN_wt=N_wt+errorN_wt)
+#            dbar_wt=(1/n*sum(di_wt)),
+#            sd_wt=sd(di_wt),
+#            cv_wt=sd_wt/dbar_wt*100,
+#            var_dbar_wt=1/((n)-1)*sum((di_wt-dbar_wt)^2), 
+#            error_wt=qt(0.975,df=(n)-1)*sqrt(var_dbar_wt)/sqrt((n)),
+#            ll_wt=dbar_wt-error_wt,
+#            ul_wt=dbar_wt+error_wt,
+#            ss_wt=sum((di_wt-dbar_wt)^2),
+#            N_wt=area*dbar_wt,
+#            varN_wt=(area^2)*1/n*1/(n-1)*ss_wt,
+#            cvN_wt=sqrt(varN_wt)/N_wt*100,
+#            errorN_wt=qt(0.975,df=(n)-1)*sqrt(varN_wt)/sqrt((n)),
+#            llN_wt=N_wt-errorN_wt,
+#            ulN_wt=N_wt+errorN_wt)
 # dbar ----
 # density variance for both count and weight and error bars
 # average biomass per unit area
@@ -167,7 +167,7 @@ c.a.bedlist2 %>%
 ###CHECK THIS USING A LOG DISTIBUTION
 
 #calculate for >100 mm shells
-catch.area %>% filter(size_class==1|di==0) %>% 
+catch.area3 %>% filter(size_class==1|di==0) %>% 
    group_by(Bed) %>%    
    summarise(n=mean(n),
              area=mean(area_nm2),

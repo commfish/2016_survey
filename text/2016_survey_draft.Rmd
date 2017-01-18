@@ -86,10 +86,10 @@ A preliminary *Q* of 0.83 calculated from the Kayak Island beds in 2004 [@Gustaf
 #RESULTS  
 ```{r, echo=F, message=F, warning=F}
 library(knitr)
-a <- read.csv('../data/variances')
+a <- read.csv('../output/bed_sum_table_Ndbar.csv')
 library(tidyverse)
 options(scipen=9999) # remove scientific notation
-a %>% mutate(N=round(N),UL=round(UL),LL=round(LL),N_wt=round(N_wt),UL_wt=round(UL_wt),LL_wt=round(LL_wt)) %>% select(Bed, size,N,UL,LL,N_wt,UL_wt,LL_wt) %>% kable()
+a %>% mutate(N=round(N),N_UL=round(ulN),N_LL=round(llN),dbar=round(dbar),dbar_UL=round(uldbar),dbar_LL=round(lldbar)) %>% select(Bed, variable,N,N_UL,N_LL,dbar,dbar_UL,dbar_LL) %>% kable()
 
 a %>% filter(Bed=='WK1', size=='all') -> wk1
 ```

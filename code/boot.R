@@ -69,7 +69,44 @@ scal.catch <- merge(s.catch,event, all = TRUE) # merge with events - keep NA
       do(dat=(.)) %>% 
       select(dat) %>% 
       map(identity) -> scal.catch
-
+   
+# function to summarize
+f.sum <- function(x){
+  # first turn the list to a dataframe
+  # extract the identifiers to append to the results
+  # function to be run each time for calculating dbar & N
+  # function to sample by rows
+  # replicate the data 1000 times
+  
+  x = as.data.frame(x)
+  x %>%
+    group_by(year, District, Bed, variable)%>%
+    summarise(n=mean(n),
+              area = mean(area_nm2) ,
+              dbar = (1/n*sum(di)),
+              var_dbar=1/((n)-1)*sum((di-dbar)^2) ,
+              cv=sqrt(var_dbar)/dbar*100,
+              ss=sum((di-dbar)^2),
+              N=area*dbar,
+              varN=(area^2)*1/n*1/(n-1)*ss,
+              cvN=sqrt(varN)/N*100) -> out
+   out
+  }
+  
+numbers_CV <- lapply(scal.catch$dat,f.sum)
+numbers_CV <- as.data.frame(do.call(rbind,numbers_CV)) 
+ 
+scal.catch %>%
+  group_by(Bed)%>%
+  summarise(n=mean(n), area = mean(area_nm2), 
+            dbar = (1/n*sum(di)),
+            var_dbar=1/((n)-1)*sum((di-dbar)^2), 
+            cv=sqrt(var_dbar)/dbar*100,
+            ss=sum((di-dbar)^2),
+            N=area*dbar,
+            varN=(area^2)*1/n*1/(n-1)*ss,
+            cvN=sqrt(varN)/N*100)
+   
 # weight ----
 # create weight data.frame
    catch %>% filter(species==74120, cond==1) %>% 
@@ -171,8 +208,12 @@ weight %>% group_by(District,Bed,year,variable) %>%
 weights%>% 
    group_by(Bed,variable) %>% 
    ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)+
-   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma)
+   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma) -> fig_bed_weight
 
+#save plot for write up
+png(filename = 'figs/bed_weight_wCI.png')
+fig_bed_weight
+dev.off()
 
 # meat weight ----
 awl <- read.csv('data/awl_2016_161027.csv')

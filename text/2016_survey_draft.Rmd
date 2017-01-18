@@ -84,6 +84,18 @@ $$
 A preliminary *Q* of 0.83 calculated from the Kayak Island beds in 2004 [@Gustafson2012] was used in lieu of bed specific efficiencies. 
 
 #RESULTS  
+Table 1 
+``````{r, echo=F, message=F, warning=F}
+library(knitr)
+b <- read.csv('../output/CV_table_Ndbar.csv')
+library(tidyverse)
+options(scipen=9999) # remove scientific notation
+b %>% 
+  mutate(dbar = round(dbar), cv = round(cv), N = round(N), cvN = round(cvN)) %>%
+  select(Bed, variable, n, area, dbar, cv, N, cvN) %>% kable()
+```
+
+Table 2
 ```{r, echo=F, message=F, warning=F}
 library(knitr)
 a <- read.csv('../output/bed_sum_table_Ndbar.csv')
@@ -91,7 +103,7 @@ library(tidyverse)
 options(scipen=9999) # remove scientific notation
 a %>% mutate(N=round(N),N_UL=round(ulN),N_LL=round(llN),dbar=round(dbar),dbar_UL=round(uldbar),dbar_LL=round(lldbar)) %>% select(Bed, variable,N,N_UL,N_LL,dbar,dbar_UL,dbar_LL) %>% kable()
 
-a %>% filter(Bed=='WK1', size=='all') -> wk1
+a %>% filter(Bed=='WK1', variable=='all') -> wk1
 ```
 
 

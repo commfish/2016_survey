@@ -87,7 +87,7 @@ event %>% filter(performance==1) %>% left_join(samples) %>%
   merge(step2, all=T) -> mer1
 # need to get back to size class 1 and 2 and catch before grouping by size class.
 mer1 %>% 
-  gather(size_class, catch, 27:28) %>%  #try to change this so that it auto references the columns
+  gather(size_class, catch, 28:29) %>%  #try to change this so that it auto references the columns
   mutate(size_class = as.numeric(size_class)) -> mer2
 mer2 %>%
   left_join(catch.a) -> catch.c

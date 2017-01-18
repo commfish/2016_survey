@@ -206,7 +206,7 @@ catch.area3 %>% filter(size_class==1|di==0) %>%
 large %>% group_by(Bed) %>% summarise(cv, cvN, cv_wt, cvN_wt)
 
 #calculate for <100 mm shells
-catch.area %>% filter(size_class==2|di==0) %>% 
+catch.area3 %>% filter(size_class==2|di==0) %>% 
    group_by(Bed) %>%    
    summarise(n=mean(n),
              area=mean(area_nm2),
@@ -244,7 +244,7 @@ catch.area %>% filter(size_class==2|di==0) %>%
 small %>% group_by(Bed) %>% summarise(cv, cvN, cv_wt, cvN_wt)
 
 #calculate for all shells caught
-catch.area %>%
+catch.area3 %>%
    group_by(Bed) %>%    
    summarise(n=mean(n),
              area=mean(area_nm2),

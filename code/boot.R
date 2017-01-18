@@ -134,8 +134,18 @@ numbers %>% group_by(District,Bed,year,variable) %>%
              lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) %>% 
    group_by(Bed,variable) %>% 
    ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)+
-   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma)
+   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma) -> fig_bedN
 
+#save plot for write up
+png(filename = 'figs/bed_abundance_wCI.png')
+fig_bedN
+dev.off()
+
+#table of results
+numbers %>% group_by(Bed,year,variable) %>% 
+  summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
+            lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) -> bed_summary
+write_csv(bed_summary, 'output/bed_sum_table_Ndbar.csv')
 # weight ----
 # apply the function to each component of the list
 weight <- lapply(scal.weight$dat,f.it)

@@ -73,10 +73,8 @@ scal.catch <- merge(s.catch,event, all = TRUE) # merge with events - keep NA
 # function to summarize
 f.sum <- function(x){
   # first turn the list to a dataframe
-  # extract the identifiers to append to the results
-  # function to be run each time for calculating dbar & N
-  # function to sample by rows
-  # replicate the data 1000 times
+  # use dplyr to summarise each list
+  # output is one row all stats.
   
   x = as.data.frame(x)
   x %>%
@@ -97,10 +95,8 @@ numbers_CV <- lapply(scal.catch$dat,f.sum)
 numbers_CV <- as.data.frame(do.call(rbind,numbers_CV)) 
  
 #table of results
-numbers_CV %>% 
-  select(-var_dbar, -ss, -varN) %>%
-  mutate(dbar = round(dbar), cv = round(cv), cvN = round(cvN)) -> CV_summary
-write_csv(CV_summary, 'output/CV_table_Ndbar.csv')
+
+write_csv(numbers_CV, 'output/CV_table_Ndbar.csv')
 
 # weight ----
 # create weight data.frame

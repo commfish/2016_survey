@@ -96,17 +96,12 @@ f.sum <- function(x){
 numbers_CV <- lapply(scal.catch$dat,f.sum)
 numbers_CV <- as.data.frame(do.call(rbind,numbers_CV)) 
  
-scal.catch %>%
-  group_by(Bed)%>%
-  summarise(n=mean(n), area = mean(area_nm2), 
-            dbar = (1/n*sum(di)),
-            var_dbar=1/((n)-1)*sum((di-dbar)^2), 
-            cv=sqrt(var_dbar)/dbar*100,
-            ss=sum((di-dbar)^2),
-            N=area*dbar,
-            varN=(area^2)*1/n*1/(n-1)*ss,
-            cvN=sqrt(varN)/N*100)
-   
+#table of results
+numbers_CV %>% 
+  select(-var_dbar, -ss, -varN) %>%
+  mutate(dbar = round(dbar), cv = round(cv), cvN = round(cvN)) -> CV_summary
+write_csv(CV_summary, 'output/CV_table_Ndbar.csv')
+
 # weight ----
 # create weight data.frame
    catch %>% filter(species==74120, cond==1) %>% 

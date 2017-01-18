@@ -146,6 +146,7 @@ numbers %>% group_by(Bed,year,variable) %>%
   summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
             lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) -> bed_summary
 write_csv(bed_summary, 'output/bed_sum_table_Ndbar.csv')
+
 # weight ----
 # apply the function to each component of the list
 weight <- lapply(scal.weight$dat,f.it)

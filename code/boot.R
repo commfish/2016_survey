@@ -91,12 +91,12 @@ f.sum <- function(x){
    out
   }
   
-numbers_CV <- lapply(scal.catch$dat,f.sum)
-numbers_CV <- as.data.frame(do.call(rbind,numbers_CV)) 
+numbers_original <- lapply(scal.catch$dat,f.sum)
+numbers_original <- as.data.frame(do.call(rbind,numbers_orignal)) 
  
 #table of results
 
-write_csv(numbers_CV, 'output/CV_table_Ndbar.csv')
+write_csv(numbers_original, 'output/original_numbers_NO_BOOT.csv')
 
 # weight ----
 # create weight data.frame
@@ -171,8 +171,12 @@ dev.off()
 
 #table of results
 numbers %>% group_by(Bed,year,variable) %>% 
-  summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
-            lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) -> bed_summary
+  summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N_b=mean(N), 
+            lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar_b=mean(dbar), 
+            var_dbar = 1/((n())-1)*sum((dbar-dbar_b)^2) ,
+            cv=sqrt(var_dbar)/dbar_b*100 , 
+            varN= 1/((n())-1)*sum((N-N_b)^2),
+            cvN=sqrt(varN)/N_b*100) -> bed_summary
 write_csv(bed_summary, 'output/bed_sum_table_Ndbar.csv')
 
 # weight ----

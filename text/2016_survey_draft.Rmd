@@ -84,16 +84,21 @@ $$
 A preliminary *Q* of 0.83 calculated from the Kayak Island beds in 2004 [@Gustafson2012] was used in lieu of bed specific efficiencies. 
 
 #RESULTS  
-Table 1: CV for abundance of large scallops by bed
+Table 1: CV of abundance for large scallops by bed, also sample size and area by bed
 ``````{r, echo=F, message=F, warning=F}
 library(knitr)
 a <- read.csv('../output/bed_sum_table_Ndbar.csv')
+b <- read.csv('../output/original_numbers_NO_BOOT.csv')
 library(tidyverse)
 options(scipen=9999) # remove scientific notation
+b %>%
+  group_by(year, Bed) %>%
+  summarise (n = mean(n), area = mean(area)) ->n_area
 a %>% 
   filter(variable == 'large')%>%
   mutate(dbar = round(dbar_b), cv = round(cv), N = round(N_b), cvN = round(cvN)) %>%
-  select(Bed, variable, N, cvN) %>% kable()
+  select(year, Bed, variable, N, cvN) %>% 
+  left_join(n_area) %>% kable()
 ```
 
 Table 2
@@ -102,13 +107,13 @@ library(knitr)
 a <- read.csv('../output/bed_sum_table_Ndbar.csv')
 library(tidyverse)
 options(scipen=9999) # remove scientific notation
-a %>% mutate(N=round(N),N_UL=round(ulN),N_LL=round(llN),dbar=round(dbar),dbar_UL=round(uldbar),dbar_LL=round(lldbar)) %>% select(Bed, variable,N,N_UL,N_LL,dbar,dbar_UL,dbar_LL) %>% kable()
+a %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),dbar=round(dbar_b),dbar_UL=round(uldbar),dbar_LL=round(lldbar)) %>% select(Bed, variable,N,N_UL,N_LL,dbar,dbar_UL,dbar_LL) %>% kable()
 
 a %>% filter(Bed=='WK1', variable=='all') -> wk1
 ```
 
 
-The western Kayak Island abundance estimate of all scallops was ```r round(wk1$N)``` with 95% CI of ```r round(wk1$LL)``` - ```r round(wk1$UL)```.
+The western Kayak Island abundance estimate of all scallops was ```r round(wk1$N_b)``` with 95% CI of ```r round(wk1$llN)``` - ```r round(wk1$ulN)```.
 
 #DISCUSSION  
 

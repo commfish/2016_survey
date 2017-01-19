@@ -75,6 +75,11 @@ $$
 A preliminary *Q* of 0.83 calculated from the Kayak Island beds in 2004 [@Gustafson2012] was used in lieu of bed specific efficiencies. 
 
 #RESULTS  
+
+![Figure 1: Tow paths for KSH beds 1,2, and 3](../figs/KSH16_8by11_rptTows.png)
+
+![Figure 2: Tow paths for WK1 and EK1 beds](../figs/KayYak16_8by11_WK1andEK1_rptTows.png)
+
 Table 1: CV of abundance for large scallops by bed, also sample size and area by bed
 ``````{r, echo=F, message=F, warning=F}
 library(knitr)

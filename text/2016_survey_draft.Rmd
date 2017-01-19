@@ -41,19 +41,6 @@ where
 $$a_i=l_i\cdot dw\cdot Q,$$  
 and  
 $$\bar d = \frac{1}{s}\sum_{i=1}^{s} d_i.$$
-
-Density variance is calculated as  
-
-$$
-\hat{\sigma }^{2}_{\bar d} = \frac{1}{s-1}\sum \left ( d_i-\bar{d} \right )^2
-$$
-
-And 95% confidence intervals calculated as:  
-
-$$
-ci = \pm t_{\alpha=0.05}, n=df-1\frac{\hat{\sigma}_d}{\sqrt{s}}
-$$
-
 where: 
 
 $c_i$ = the catch of a species, either as abundance or weight, in sample haul *i*,  
@@ -62,6 +49,10 @@ $l_i$ = the nmi towed for sample haul *i*,
 *dw* = the dredge width in nmi,   
 *Q* = dredge efficency, and   
 *s* = the number of stations sampled.  
+
+
+Density variance was calculated using a nonparametric bootstrap resampling procedure with replacement.  Bootstrap percentile intervals were used to estimate 95% confidence intervals.  
+
 
 An estimate of the surveyed population $\hat{N}$ will be calculated by expanding $\bar{d}$ over the defined bed area *A* encompassing all grid cells as: 
 
@@ -101,7 +92,7 @@ a %>%
   left_join(n_area) %>% kable()
 ```
 
-Table 2
+Table 2: Estimates of abundance and density with 95% bootstrap confidence intervals
 ```{r, echo=F, message=F, warning=F}
 library(knitr)
 a <- read.csv('../output/bed_sum_table_Ndbar.csv')

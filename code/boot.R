@@ -242,7 +242,7 @@ f.wt <- function(x){
    x = as.data.frame(x)
    y = x[1,1:4]
    boot.it <- function(x){
-      ratio_bar = sum(x$ratio)/mean(x$jn)
+      ratio_bar = sum(x$ratio)/mean(x$jn) # this is summing over all events by bed but only dividing by # scallop per event.
       c(ratio_bar,y)
    }
    

@@ -60,17 +60,8 @@ $$
 \hat{N}=A\bar{d}.
 $$
 
-Variance of the surveyed population was estimated [@Seber1982] by
+Variance and confidence intervals for the surveyed population were also estimated from the parametric bootstrap procedure.  
 
-$$
-\hat{\sigma }^{2}_{\hat{N}}=S^2\frac{s^2}{s}(1-(\frac{s}{S})),
-$$
-
-where:  
-
-$$
-S=\frac{A}{\bar{a} }.
-$$
 
 A preliminary *Q* of 0.83 calculated from the Kayak Island beds in 2004 [@Gustafson2012] was used in lieu of bed specific efficiencies. 
 

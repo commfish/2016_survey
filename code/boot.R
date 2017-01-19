@@ -92,7 +92,7 @@ f.sum <- function(x){
   }
   
 numbers_original <- lapply(scal.catch$dat,f.sum)
-numbers_original <- as.data.frame(do.call(rbind,numbers_orignal)) 
+numbers_original <- as.data.frame(do.call(rbind,numbers_original)) 
  
 #table of results
 

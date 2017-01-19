@@ -84,15 +84,16 @@ $$
 A preliminary *Q* of 0.83 calculated from the Kayak Island beds in 2004 [@Gustafson2012] was used in lieu of bed specific efficiencies. 
 
 #RESULTS  
-Table 1 
+Table 1: CV for abundance of large scallops by bed
 ``````{r, echo=F, message=F, warning=F}
 library(knitr)
-b <- read.csv('../output/CV_table_Ndbar.csv')
+a <- read.csv('../output/bed_sum_table_Ndbar.csv')
 library(tidyverse)
 options(scipen=9999) # remove scientific notation
-b %>% 
-  mutate(dbar = round(dbar), cv = round(cv), N = round(N), cvN = round(cvN)) %>%
-  select(Bed, variable, n, area, dbar, cv, N, cvN) %>% kable()
+a %>% 
+  filter(variable == 'large')%>%
+  mutate(dbar = round(dbar_b), cv = round(cv), N = round(N_b), cvN = round(cvN)) %>%
+  select(Bed, variable, N, cvN) %>% kable()
 ```
 
 Table 2

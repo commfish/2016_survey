@@ -95,6 +95,7 @@ scal.weight %>% dplyr::select(Event, large, small,year,District,Bed,n,ai,area_nm
 # weight ----
 ## Bootstrap ------------
 # apply the function to each component of the list
+source('./code/functions.R')
 weight <- lapply(scal.weight$dat,f.it)
 
 # bind the results together and convert to a dataframe

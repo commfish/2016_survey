@@ -52,3 +52,26 @@ f.it <- function(x){
   names(out) <- c('dbar','N')
   cbind(out,y)
 }
+
+# bootstrap II----
+# used for meat weight ratio
+f.wt <- function(x){
+  # function bootstraps meat weight ratio by bed, not by individual event
+  # first turn the list to a dataframe
+  # small function to group and calculate mean for each bootstrap sample
+  # replicate each sample 1000 x by year bed, district etc
+  # calculate ratio with function
+  
+  x = as.data.frame(x)
+  
+  f.do <- function(y){
+    y %>% 
+      group_by(year,District,Bed) %>% 
+      summarise(ratio = mean(ratio))
+  }
+  
+  replicate(1000,sample_n(x, nrow(x), replace=T), simplify=FALSE) %>% 
+    lapply(., f.do) %>% 
+    bind_rows %>% 
+    mutate(replicate=1:n())
+}

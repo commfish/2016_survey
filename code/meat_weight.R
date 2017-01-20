@@ -121,14 +121,15 @@ awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
   filter(variable=='large') %>% 
   dplyr::select(Bed,year,llN,ulN,N_b,weight) %>% 
   left_join(wts_summary) %>% 
-  mutate(min_meat_wt=llN*ll, meat_wt = N_b*ratio_bar*weight/453.592,meat_0.05 =meat_wt*0.05,
-         max_meat_wt=ulN*ul) %>% 
-  data.frame()
+  mutate(min_meat_wt=llN*ll*weight/453.592, meat_wt = N_b*ratio_bar*weight/453.592,meat_0.05 =meat_wt*0.05,
+         max_meat_wt=ulN*ul*weight/453.592)  -> meat_weight_summary
 
 
+meat_weight_summary %>% data.frame() #using weight from invididual scallops.
 
 
-
+### save tables and figures if needed ------------------------------------
+write_csv(meat.weight_summary, 'output/bed_meatwt_table_Ndbar.csv')
 
 
 

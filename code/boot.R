@@ -233,16 +233,17 @@ meat.wts %>% left_join(inter1) %>% filter(Event %in% inter1$Event) %>% select(ra
 
 # bootstrap II----
 f.wt <- function(x){
+   # function bootstraps meat weight ratio by bed, not by individual event
    # first turn the list to a dataframe
    # extract the identifiers to append to the results
-   # function to be run each time for calculating meat weight
+   # function to be run each time for calculating meat weight ratio from each bed
    # function to sample by rows
    # replicate the data 1000 times
    
    x = as.data.frame(x)
    y = x[1,1:4]
    boot.it <- function(x){
-      ratio_bar = sum(x$ratio)/mean(x$jn) # this is summing over all events by bed but only dividing by # scallop per event.
+      ratio_bar = mean(x$ratio) 
       c(ratio_bar,y)
    }
    
@@ -252,9 +253,10 @@ f.wt <- function(x){
    }
    
    as.data.frame(t(replicate(1000,f.do(x)))) -> out
-   names(out) <- c('ratio_bar', 'Event','year','District','Bed')
+   names(out) <- c('ratio_bar','Event', 'year','District','Bed')
    out
 }
+#not sure why this function is changing the district labels to 1,2,3 look into later
 
 meat.wt2 %>% 
    group_by(Bed) %>% 

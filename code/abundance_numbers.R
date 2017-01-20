@@ -120,19 +120,23 @@ numbers %>% group_by(District,Bed,year,variable) %>%
   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ 
   scale_y_continuous(labels = comma) -> fig_bedN
 
-
-
-
-
-
+#table of results
+numbers %>% group_by(Bed,year,variable) %>% 
+  summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N_b=mean(N), 
+            lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar_b=mean(dbar), 
+            var_dbar = 1/((n())-1)*sum((dbar-dbar_b)^2) ,
+            cv=sqrt(var_dbar)/dbar_b*100 , 
+            varN= 1/((n())-1)*sum((N-N_b)^2),
+            cvN=sqrt(varN)/N_b*100) -> bed_num_summary
 
 
 
 
 ### save tables and figures if needed ------------------------------------
 write_csv(numbers_original, 'output/original_numbers_NO_BOOT.csv')
+write_csv(bed_num_summary, 'output/bed_numbers_table_Ndbar.csv')
 
-#save plot for write up
+#save figure for write up
 png(filename = 'figs/bed_abundance_wCI.png')
 fig_bedN
 dev.off()

@@ -92,6 +92,46 @@ scal.weight %>% dplyr::select(Event, large, small,year,District,Bed,n,ai,area_nm
   select(dat) %>% 
   map(identity) -> scal.weight
 
+# weight ----
+## Bootstrap ------------
+# apply the function to each component of the list
+weight <- lapply(scal.weight$dat,f.it)
+
+# bind the results together and convert to a dataframe
+weight <- as.data.frame(do.call(rbind,weight))
+
+#figures----------
+weight %>% filter(variable=='large') %>% 
+  ggplot(aes(dbar, fill=Bed))+geom_density()+ facet_wrap(~Bed)
+
+
+weight %>% filter(variable=='large') %>% 
+  ggplot(aes(dbar, fill=Bed))+geom_density()
+
+weight %>% filter(variable=='small') %>% 
+  ggplot(aes(N, fill=Bed))+geom_density() + facet_wrap(~Bed)
+
+weight %>% group_by(District,Bed,year,variable) %>% 
+  summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
+            lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) -> weights
+weights%>% 
+  group_by(Bed,variable) %>% 
+  ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)+
+  scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma) -> fig_bed_weight
+
+
+
+
+
+### save tables and figures if needed ------------------------------------
+write_csv(weights, 'output/bed_weights_table_Ndbar.csv')
+
+#save figure for write up
+png(filename = 'figs/bed_weight_wCI.png')
+fig_bed_weight
+dev.off()
+
+
 
 
 

@@ -66,7 +66,7 @@ Variance and confidence intervals for the surveyed population were also estimate
 A preliminary *Q* of 0.83 calculated from the Kayak Island beds in 2004 [@Gustafson2012] was used in lieu of bed specific efficiencies. 
 
 #RESULTS  
-Successful tows were performed in all five beds during either the May or July surveys (Figs 1 and 2). The average scallop density and abundance by bed were estimated along with their respective confidence intervals, and coificient of variation (CV) (Tables 1 and 2).  
+Successful tows were performed in all five beds during either the May or July surveys (Figs 1 and 2). The average scallop density and abundance by bed were estimated along with their respective confidence intervals, and coefficient of variation (CV) (Tables 1 and 2). Scallop abundance calculations were performed for both size classes (small and large) and for all scallop combined (all).  Estimations of the meat weight ratio (round weight/ meat weight) were done using only large scallops (Table 3).  The average meat weight ratio, along bootstrap confidence intervals, was calculated and applied to the abundnace estimates to get a range of meat weight (in pounds - lb) available by bed. For illustration purposed only a rate of 5% was applied to the availalble meat weight by bed to get a hypothetical meat weight GHL.   
 
 
 ![**Figure 1:** Tow paths for KSH beds 1,2, and 3](../figs/KSH16_8by11_rptTows.png)
@@ -123,6 +123,7 @@ d %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),ratio =round(ratio_bar
 The western Kayak Island abundance estimate of all scallops was ```r round(wk1$N_b)``` with 95% CI of ```r round(wk1$llN)``` - ```r round(wk1$ulN)```.
 
 #DISCUSSION  
+Address the objectives and if they were met.
 
 #REFERENCES
 

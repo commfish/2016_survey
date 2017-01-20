@@ -266,8 +266,25 @@ wts <- do.call(rbind,lapply(meat.wt$dat,f.wt))
 wts %>% group_by(year, District, Bed) %>% 
    summarise(ratio_bar = mean(ratio), ll = quantile(ratio, .025), ul = quantile(ratio, .975)) -> wts_summary
 
-bed_summary %>% 
+awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
+               j = SCALLOP_NUMBER, size_class = SCAL_SIZE_CLASS,
+               weight=WHOLE_WT_GRAMS, worm=SHELL_WORM_SW, 
+               height=SHELL_HEIGHT_MM, sex=SEX_SW, 
+               gonad_cond=SCAL_GONAD_COND, blister=MUD_BLISTER_SW, 
+               meat_cond=MEAT_CONDITION_SW, meat_weight = MEAT_WEIGHT_GRAMS,
+               clapper = CLAPPER, sample_type = SAMPLE_TYPE) %>% 
+  mutate(ratio = meat_weight/weight ) %>% 
+  filter(species == 74120, size_class == 1, is.na(clapper), !is.na(ratio), Event %in% event$Event) %>% 
+  left_join(event) %>% group_by(year, District, Bed, Event) %>% summarise(weight = mean(weight)) %>% 
+  group_by(year, Bed) %>% summarise(weight = mean(weight)) %>% left_join(bed_summary) %>% 
    filter(variable=='large') %>% 
-   dplyr::select(Bed,year,llN,ulN,N_b) %>% 
+   dplyr::select(Bed,year,llN,ulN,N_b,weight) %>% 
    left_join(wts_summary) %>% 
-   mutate(min_meat_wt=llN*ll, meat_wt = N_b*ratio_bar,max_meat_wt=ulN*ul)
+   mutate(min_meat_wt=llN*ll, meat_wt = N_b*ratio_bar*weight*0.05/400,max_meat_wt=ulN*ul) %>% data.frame()
+
+weights %>% 
+  filter(variable=='large') %>% 
+  dplyr::select(Bed,year,llN,ulN,N) %>% 
+  left_join(wts_summary) %>% 
+  mutate(min_meat_wt=llN*ll, meat_wt = N*1000*ratio_bar*0.05/400,max_meat_wt=ulN*ul) %>% 
+  data.frame()

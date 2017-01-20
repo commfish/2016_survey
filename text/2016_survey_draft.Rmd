@@ -73,6 +73,7 @@ Successful tows were performed in all five beds during either the May or July su
 
 ![Figure 2: Tow paths for WK1 and EK1 beds](../figs/KayYak16_8by11_WK1andEK1_rptTows.png)
 
+##Abundance estimates by numbers
 Table 1: CV of abundance for large scallops by bed, also sample size and area by bed
 ``````{r, echo=F, message=F, warning=F}
 library(knitr)
@@ -102,6 +103,21 @@ a %>% filter(Bed=='WK1', variable=='all') -> wk1
 ```
 
 ![Figure 3: Abundance with 95% bootstrap confidence intervals by size class.](../figs/bed_abundance_wCI.png)
+
+
+##Meat Weight with large scallops ONLY
+
+Table 3: Meat weight by bed from individual scallops with 95% bootstrap confidence intervals
+```{r, echo=F, message=F, warning=F}
+library(knitr)
+d <- read.csv('../output/bed_meatwt_table_Ndbar.csv')
+library(tidyverse)
+options(scipen=9999) # remove scientific notation
+d %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, N,N_UL,N_LL,weight, ratio, ratio_UL, ratio_LL, min_meat_wt, meat_wt, max_meat_wt, meat_0.05) %>% kable()
+```
+
+
+Table 4: Meat weight by bed using weights from tows NOT individual weights 
 
 
 The western Kayak Island abundance estimate of all scallops was ```r round(wk1$N_b)``` with 95% CI of ```r round(wk1$llN)``` - ```r round(wk1$ulN)```.

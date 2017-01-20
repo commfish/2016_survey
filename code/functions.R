@@ -26,3 +26,29 @@ f.sum <- function(x){
   out
 }
 
+# bootstrap ----
+# used for numbers and weights-------------
+f.it <- function(x){
+  # first turn the list to a dataframe
+  # extract the identifiers to append to the results
+  # function to be run each time for calculating dbar & N
+  # function to sample by rows
+  # replicate the data 1000 times
+  
+  x = as.data.frame(x)
+  y = x[1,c(2:4,8)]
+  boot.it <- function(x){
+    d_bar = sum(x$di)/mean(x$n)
+    N=mean(x$area_nm2)*d_bar
+    c(d_bar, N)
+  }
+  
+  f.do <- function(x){
+    x %>% sample_n(nrow(.), replace=TRUE) -> x 
+    boot.it(x)
+  }
+  
+  as.data.frame(t(replicate(1000,f.do(x)))) -> out
+  names(out) <- c('dbar','N')
+  cbind(out,y)
+}

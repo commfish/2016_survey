@@ -69,12 +69,12 @@ A preliminary *Q* of 0.83 calculated from the Kayak Island beds in 2004 [@Gustaf
 Successful tows were performed in all five beds during either the May or July surveys (Figs 1 and 2). The average scallop density and abundance by bed were estimated along with their respective confidence intervals, and coificient of variation (CV) (Tables 1 and 2).  
 
 
-![Figure 1: Tow paths for KSH beds 1,2, and 3](../figs/KSH16_8by11_rptTows.png)
+![**Figure 1:** Tow paths for KSH beds 1,2, and 3](../figs/KSH16_8by11_rptTows.png)
 
-![Figure 2: Tow paths for WK1 and EK1 beds](../figs/KayYak16_8by11_WK1andEK1_rptTows.png)
+![**Figure 2:** Tow paths for WK1 and EK1 beds](../figs/KayYak16_8by11_WK1andEK1_rptTows.png)
 
 ##Abundance estimates by numbers
-Table 1: CV of abundance for large scallops by bed, also sample size and area by bed
+**Table 1:** CV of abundance for large scallops by bed, also sample size and area by bed
 ``````{r, echo=F, message=F, warning=F}
 library(knitr)
 a <- read.csv('../output/bed_sum_table_Ndbar.csv')
@@ -86,28 +86,28 @@ b %>%
   summarise (n = mean(n), area = mean(area)) ->n_area
 a %>% 
   filter(variable == 'large')%>%
-  mutate(dbar = round(dbar_b), cv = round(cv), N = round(N_b), cvN = round(cvN)) %>%
-  select(year, Bed, variable, N, cvN) %>% 
+  mutate(dbar = round(dbar_b), cv = round(cv), N = round(N_b), cvN = round(cvN), size.class = variable) %>%
+  select(year, Bed, size.class, N, cvN) %>% 
   left_join(n_area) %>% kable()
 ```
 
-Table 2: Estimates of abundance and density with 95% bootstrap confidence intervals
+**Table 2:** Estimates of abundance and density with 95% bootstrap confidence intervals
 ```{r, echo=F, message=F, warning=F}
 library(knitr)
 a <- read.csv('../output/bed_sum_table_Ndbar.csv')
 library(tidyverse)
 options(scipen=9999) # remove scientific notation
-a %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),dbar=round(dbar_b),dbar_UL=round(uldbar),dbar_LL=round(lldbar)) %>% select(Bed, variable,N,N_UL,N_LL,dbar,dbar_UL,dbar_LL) %>% kable()
+a %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),dbar=round(dbar_b),dbar_UL=round(uldbar),dbar_LL=round(lldbar), size.class = variable) %>% select(Bed, size.class, N,N_UL,N_LL,dbar,dbar_UL,dbar_LL) %>% kable()
 
 a %>% filter(Bed=='WK1', variable=='all') -> wk1
 ```
 
-![Figure 3: Abundance with 95% bootstrap confidence intervals by size class.](../figs/bed_abundance_wCI.png)
+![**Figure 3:** Abundance with 95% bootstrap confidence intervals by size class.](../figs/bed_abundance_wCI.png)
 
 
 ##Meat Weight with large scallops ONLY
 
-Table 3: Meat weight by bed from individual scallops with 95% bootstrap confidence intervals
+**Table 3:** Meat weight by bed from individual scallops with 95% bootstrap confidence intervals
 ```{r, echo=F, message=F, warning=F}
 library(knitr)
 d <- read.csv('../output/bed_meatwt_table_Ndbar.csv')
@@ -117,7 +117,7 @@ d %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),ratio =round(ratio_bar
 ```
 
 
-Table 4: Meat weight by bed using weights from tows NOT individual weights 
+**Table 4:** Meat weight by bed using weights from tows NOT individual weights 
 
 
 The western Kayak Island abundance estimate of all scallops was ```r round(wk1$N_b)``` with 95% CI of ```r round(wk1$llN)``` - ```r round(wk1$ulN)```.

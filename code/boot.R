@@ -1,3 +1,23 @@
+####### 2016 Scallop Statewide Survey
+####### Ben Williams / Katie Palof
+####### ben.williams@alaska.gov
+
+## Code   
+#-----------------------------------------------------------
+## All code, data, and associated documents are held in a single R project
+## titles 2016_survey.Rproj  
+
+# Data were forwarded from Josh Mumm joshua.mumm@alaska.gov. I've changed the names of the original files sent
+## Try to keep to the tidy data principles http://vita.had.co.nz/papers/tidy-data.pdf  
+
+## Naming 
+# lower case names are numeric
+# Capitalized names are factors 
+
+## The operational plan lays out the foundation for the analyses herein it is available in the literature folder
+
+#NOTE - this could easily be udated for multiple years by changing the group_by(...) throughout.
+
 # load ----
 library(tidyverse)
 library(reshape2)
@@ -51,7 +71,7 @@ catch %>% select(Event = EVENT_ID, species=RACE_CODE,
 write_csv(catch, 'data/catch.csv')
 
 # scallops ----
-# catch ----
+# catch by numbers ----
 # create catch data.frame
 catch %>% filter(species==74120, cond==1) %>% 
    group_by(Event, size_class) %>% 
@@ -177,7 +197,7 @@ numbers %>% group_by(Bed,year,variable) %>%
             cv=sqrt(var_dbar)/dbar_b*100 , 
             varN= 1/((n())-1)*sum((N-N_b)^2),
             cvN=sqrt(varN)/N_b*100) -> bed_summary
-write_csv(bed_summary, 'output/bed_sum_table_Ndbar.csv')
+write_csv(bed_num_summary, 'output/bed_sum_table_Ndbar.csv')
 
 # weight ----
 # apply the function to each component of the list
@@ -286,5 +306,5 @@ weights %>%
   filter(variable=='large') %>% 
   dplyr::select(Bed,year,llN,ulN,N) %>% 
   left_join(wts_summary) %>% 
-  mutate(min_meat_wt=llN*ll, meat_wt = N*1000*ratio_bar*0.05/400,max_meat_wt=ulN*ul) %>% 
+  mutate(min_meat_wt=llN*ll, meat_wt = N*1000*ratio_bar*0.05/453.592,max_meat_wt=ulN*ul) %>% 
   data.frame()

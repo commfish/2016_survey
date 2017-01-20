@@ -28,8 +28,48 @@ theme_set(theme_bw()+
             theme(panel.grid.major = element_blank(),
                   panel.grid.minor = element_blank()))
 
+#### survey/ event data -------------------
+#clean up event data- change names and data types etc.
+events <- read.csv('./data/events_2016_161027.csv')
+events %>% mutate(ID = gsub(" ", "", STATION_ID),date = as.Date(DATE_SET, format='%m-%d-%Y'),
+                  year = as.numeric(format(date, "%Y"))) %>% 
+  select(year, date, Event = EVENT_ID, District = DISTRICT, 
+         Dredge = DREDGE_ID, Bed = BED_SW, Type = STATION_TYPE, ID = ID, 
+         slat = START_LATITUDE, slon=START_LONGITUDE, sdepth = DEPTH_START_F, 
+         stime = START_TIME, speed=TOW_SPEED, maxdepth=Max_Dpth_fa, mindepth=Min_Dpth_fa, 
+         elat=END_LATITUDE, elon=END_LONGITUDE, edepth=DEPTH_END_F, etime=END_TIME, 
+         calc_length=TOW_LENGTH_CALC, field_length=TOW_LENGTH_FIELD,length=TOW_LENGTH_DESIGNATED,
+         performance=GEAR_PERFORMANCE_CODE_SW) %>% filter(performance==1)-> event
+write_csv(event,'data/event.csv')
+
+#check for replicates - if dataframe has values there are duplicates
+event %>% group_by(Bed, ID) %>% filter(n()>1)
+
+# a_i ----
+#Dredge width in nmi = 0.00131663 x length of dredging in each station
+# Q = 0.83
+Q <- 0.83
+
+# areas ----
+# Total area of each bed
+area <- read.csv('./data/area.csv')
+
+#add ai column to events dataframe
+#Dredge width in nmi = 0.00131663 x length of dredging in each station
+# number of stations sampled by bed
+event %>%  #ai is in nmi^2
+  group_by(Bed) %>% 
+  summarise(n=n()) %>% 
+  left_join(area) %>% select(-grids)-> samples
+
+event %>% mutate(ai=length * 0.00131663 * Q) %>% left_join(samples) -> event
+
+
+
 # meat weight ----
+# load event data above first (or have it loaded from either number or weight code files)
 awl <- read.csv('data/awl_2016_161027.csv')
+
 
 awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
                j = SCALLOP_NUMBER, size_class = SCAL_SIZE_CLASS,
@@ -39,5 +79,54 @@ awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
                meat_cond=MEAT_CONDITION_SW, meat_weight = MEAT_WEIGHT_GRAMS,
                clapper = CLAPPER, sample_type = SAMPLE_TYPE) %>% 
   mutate(ratio = meat_weight/weight ) %>% 
-  filter(species == 74120, size_class == 1, is.na(clapper), !is.na(ratio), Event %in% event$Event) %>% 
+  filter(species == 74120, size_class == 1, is.na(clapper), !is.na(ratio), 
+         Event %in% event$Event) %>% 
   select(Event,j,ratio)-> samp
+
+as.data.frame(do.call(rbind,scal.catch$dat)) %>% filter(variable=='large') %>% 
+  left_join(samp) %>% filter(ratio>0)-> meat.wts
+
+#turn meat weights into list for analysis
+meat.wts %>% 
+  group_by(Bed) %>% 
+  do(dat=(.)) %>% 
+  select(dat) %>% 
+  map(identity) -> meat.wt
+
+# run bootstrap on meat weights
+wts <- do.call(rbind,lapply(meat.wt$dat,f.wt))
+
+wts %>% group_by(year, District, Bed) %>% 
+  summarise(ratio_bar = mean(ratio), ll = quantile(ratio, .025), 
+            ul = quantile(ratio, .975)) -> wts_summary
+
+# wts is meat weight and weights is round weight
+
+# summarize meat weight with event - run 'abundance_numbers.R' first!!!!!!!
+awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
+               j = SCALLOP_NUMBER, size_class = SCAL_SIZE_CLASS,
+               weight=WHOLE_WT_GRAMS, worm=SHELL_WORM_SW, 
+               height=SHELL_HEIGHT_MM, sex=SEX_SW, 
+               gonad_cond=SCAL_GONAD_COND, blister=MUD_BLISTER_SW, 
+               meat_cond=MEAT_CONDITION_SW, meat_weight = MEAT_WEIGHT_GRAMS,
+               clapper = CLAPPER, sample_type = SAMPLE_TYPE) %>% 
+  mutate(ratio = meat_weight/weight ) %>% 
+  filter(species == 74120, size_class == 1, is.na(clapper), !is.na(ratio), 
+         Event %in% event$Event) %>% 
+  left_join(event) %>% group_by(year, District, Bed, Event) %>% 
+  summarise(weight = mean(weight)) %>% 
+  group_by(year, Bed) %>% summarise(weight = mean(weight)) %>% left_join(bed_num_summary) %>% 
+  filter(variable=='large') %>% 
+  dplyr::select(Bed,year,llN,ulN,N_b,weight) %>% 
+  left_join(wts_summary) %>% 
+  mutate(min_meat_wt=llN*ll, meat_wt = N_b*ratio_bar*weight*0.05/400,max_meat_wt=ulN*ul) %>% 
+  data.frame()
+
+
+
+
+
+
+
+
+

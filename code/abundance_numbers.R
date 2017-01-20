@@ -98,6 +98,7 @@ numbers_original <- as.data.frame(do.call(rbind,numbers_original))
 
 # catch ----
 # bootstrap
+source('./code/functions.R')
 numbers <- lapply(scal.catch$dat,f.it)
 numbers <- as.data.frame(do.call(rbind,numbers))
 

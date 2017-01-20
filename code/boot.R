@@ -265,7 +265,8 @@ meat.wt2 %>%
    map(identity) -> meat.wt
 
 wts <- lapply(meat.wt$dat,f.wt)
-wts <- as.data.frame(matrix(unlist(do.call(rbind,wts)), ncol=5, byrow=F))
+
+wts <- as.data.frame(matrix(unlist(do.call(rbind,wts)), ncol=5, byrow=F))  #why does this make everything a factor?
 names(wts) <- names(meat.wt3)
 wts %>% mutate(ratio_bar=as.numeric(ratio_bar)) -> wts
 wts <- rbind(wts,meat.wt3)

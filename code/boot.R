@@ -224,50 +224,50 @@ awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
    filter(species == 74120, size_class == 1, is.na(clapper), !is.na(ratio), Event %in% event$Event) %>% 
    select(Event,j,ratio)-> samp
 
-as.data.frame(do.call(rbind,scal.catch$dat)) %>% filter(variable=='large') %>% left_join(samp) -> meat.wts
+as.data.frame(do.call(rbind,scal.catch$dat)) %>% filter(variable=='large') %>% left_join(samp) %>% filter(ratio>0)-> meat.wts
 
-meat.wts %>% group_by(Event,Bed,year) %>% summarise(jn=max(j)) %>% filter(jn>1) -> inter
-meat.wts %>% group_by(Event,Bed,year) %>% summarise(jn=max(j)) %>% filter(jn==1) -> inter1
-meat.wts %>% left_join(inter) %>% filter(Event %in% inter$Event) -> meat.wt2
-meat.wts %>% left_join(inter1) %>% filter(Event %in% inter1$Event) %>% select(ratio_bar=ratio,Event,year,District,Bed)-> meat.wt3
+# meat.wts %>% group_by(Event,Bed,year) %>% summarise(jn=max(j)) %>% filter(jn>1) -> inter
+# meat.wts %>% group_by(Event,Bed,year) %>% summarise(jn=max(j)) %>% filter(jn==1) -> inter1
+# meat.wts %>% left_join(inter) %>% filter(Event %in% inter$Event) -> meat.wt2
+# meat.wts %>% left_join(inter1) %>% filter(Event %in% inter1$Event) %>% select(ratio_bar=ratio,Event,year,District,Bed)-> meat.wt3
 
 # bootstrap II----
 f.wt <- function(x){
    # function bootstraps meat weight ratio by bed, not by individual event
    # first turn the list to a dataframe
-   # extract the identifiers to append to the results
-   # function to be run each time for calculating meat weight ratio from each bed
-   # function to sample by rows
-   # replicate the data 1000 times
+   # small function to group and calculate mean for each bootstrap sample
+   # replicate each sample 1000 x by year bed, district etc
+   # calculate ratio with function
    
    x = as.data.frame(x)
-   y = x[1,1:4]
-   boot.it <- function(x){
-      ratio_bar = mean(x$ratio) 
-      c(ratio_bar,y)
+   
+   f.do <- function(y){
+      y %>% 
+         group_by(year,District,Bed) %>% 
+         summarise(ratio = mean(ratio))
    }
    
-   f.do <- function(x){
-      x %>% sample_n(nrow(.), replace=TRUE) -> x 
-      boot.it(x)
-   }
-   
-   as.data.frame(t(replicate(1000,f.do(x)))) -> out
-   names(out) <- c('ratio_bar','Event', 'year','District','Bed')
-   out
+  replicate(1000,sample_n(x, nrow(x), replace=T), simplify=FALSE) %>% 
+      lapply(., f.do) %>% 
+      bind_rows %>% 
+      mutate(replicate=1:n())
 }
-#not sure why this function is changing the district labels to 1,2,3 look into later
 
-meat.wt2 %>% 
+#turn meat weights into list for analysis
+meat.wts %>% 
    group_by(Bed) %>% 
    do(dat=(.)) %>% 
    select(dat) %>% 
    map(identity) -> meat.wt
 
-wts <- lapply(meat.wt$dat,f.wt)
+# combine all the weight data
+wts <- do.call(rbind,lapply(meat.wt$dat,f.wt))
 
-wts <- as.data.frame(matrix(unlist(do.call(rbind,wts)), ncol=5, byrow=F))  #why does this make everything a factor?
-names(wts) <- names(meat.wt3)
-wts %>% mutate(ratio_bar=as.numeric(ratio_bar)) -> wts
-wts <- rbind(wts,meat.wt3)
-wts %>% group_by(Bed, year) %>% summarise(rbar=mean(ratio_bar))
+wts %>% group_by(year, District, Bed) %>% 
+   summarise(ratio_bar = mean(ratio), ll = quantile(ratio, .025), ul = quantile(ratio, .975)) -> wts_summary
+
+bed_summary %>% 
+   filter(variable=='large') %>% 
+   dplyr::select(Bed,year,llN,ulN,N_b) %>% 
+   left_join(wts_summary) %>% 
+   mutate(min_meat_wt=llN*ll, meat_wt = N_b*ratio_bar,max_meat_wt=ulN*ul)

@@ -96,6 +96,29 @@ scal.catch %>% dplyr::select(Event, large, small,year,District,Bed,n,ai,area_nm2
 numbers_original <- lapply(scal.catch$dat,f.sum)
 numbers_original <- as.data.frame(do.call(rbind,numbers_original)) 
 
+# catch ----
+# bootstrap
+numbers <- lapply(scal.catch$dat,f.it)
+numbers <- as.data.frame(do.call(rbind,numbers))
+
+# visualization and summary of results
+numbers %>% filter(variable=='large') %>% 
+  ggplot(aes(dbar, fill=Bed))+geom_density()+ facet_wrap(~Bed)
+
+numbers %>% filter(variable=='large') %>% 
+  ggplot(aes(dbar, fill=Bed))+geom_density()
+
+numbers %>% filter(variable=='small') %>% 
+  ggplot(aes(N, fill=Bed))+geom_density() 
+
+numbers %>% group_by(District,Bed,year,variable) %>% 
+  summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
+            lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) %>% 
+  group_by(Bed,variable) %>% 
+  ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+
+  facet_wrap(~variable)+
+  scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ 
+  scale_y_continuous(labels = comma) -> fig_bedN
 
 
 
@@ -108,4 +131,9 @@ numbers_original <- as.data.frame(do.call(rbind,numbers_original))
 
 ### save tables and figures if needed ------------------------------------
 write_csv(numbers_original, 'output/original_numbers_NO_BOOT.csv')
+
+#save plot for write up
+png(filename = 'figs/bed_abundance_wCI.png')
+fig_bedN
+dev.off()
 

@@ -94,6 +94,7 @@ meat.wts %>%
   map(identity) -> meat.wt
 
 # run bootstrap on meat weights
+source('./code/functions.R')
 wts <- do.call(rbind,lapply(meat.wt$dat,f.wt))
 
 wts %>% group_by(year, District, Bed) %>% 
@@ -103,6 +104,7 @@ wts %>% group_by(year, District, Bed) %>%
 # wts is meat weight and weights is round weight
 
 # summarize meat weight with event - run 'abundance_numbers.R' first!!!!!!!
+# use conversion to convert from grams to lbs, 1 lb = 453.592 grams
 awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
                j = SCALLOP_NUMBER, size_class = SCAL_SIZE_CLASS,
                weight=WHOLE_WT_GRAMS, worm=SHELL_WORM_SW, 
@@ -119,7 +121,8 @@ awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
   filter(variable=='large') %>% 
   dplyr::select(Bed,year,llN,ulN,N_b,weight) %>% 
   left_join(wts_summary) %>% 
-  mutate(min_meat_wt=llN*ll, meat_wt = N_b*ratio_bar*weight*0.05/400,max_meat_wt=ulN*ul) %>% 
+  mutate(min_meat_wt=llN*ll, meat_wt = N_b*ratio_bar*weight/453.592,meat_0.05 =meat_wt*0.05,
+         max_meat_wt=ulN*ul) %>% 
   data.frame()
 
 

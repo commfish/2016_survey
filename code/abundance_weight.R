@@ -104,7 +104,6 @@ weight <- as.data.frame(do.call(rbind,weight))
 weight %>% filter(variable=='large') %>% 
   ggplot(aes(dbar, fill=Bed))+geom_density()+ facet_wrap(~Bed)
 
-
 weight %>% filter(variable=='large') %>% 
   ggplot(aes(dbar, fill=Bed))+geom_density()
 
@@ -118,6 +117,17 @@ weights%>%
   group_by(Bed,variable) %>% 
   ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)+
   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma) -> fig_bed_weight
+
+# large scallops using meat weight ratio - MUST run 'meat_weight.R' for these calcs.
+# convert weight in grams to lbs.  Using 1 lb = 453.592 grams
+# also convert weight by tow here from kilograms to grams.
+weights %>% 
+  filter(variable=='large') %>% 
+  dplyr::select(Bed,year,llN,ulN,N) %>% 
+  left_join(wts_summary) %>% 
+  mutate(min_meat_wt=llN*ll, meat_wt = N*1000*ratio_bar*0.05/453.592,
+         max_meat_wt=ulN*ul) %>% 
+  data.frame()
 
 
 

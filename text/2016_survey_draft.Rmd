@@ -33,6 +33,7 @@ bibliography: scallop_survey_bibfile.bib
  2. Special short term projects.
  
 #METHODS  
+Scallop size class designation. 
 
 Scallop abundance estimation based upon area-swept calculations where scallop density $d_i$ is calculated as:
 

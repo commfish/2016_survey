@@ -107,7 +107,7 @@ a %>% filter(Bed=='WK1', variable=='all') -> wk1
 
 ##Meat Weight with large scallops ONLY
 
-**Table 3:** Meat weight by bed from individual scallops with 95% bootstrap confidence intervals
+**Table 3:** Meat weight by bed from individual scallops with 95% bootstrap confidence intervals using estimated numbers of large scallops per bed
 ```{r, echo=F, message=F, warning=F}
 library(knitr)
 d <- read.csv('../output/bed_meatwt_table_Ndbar.csv')

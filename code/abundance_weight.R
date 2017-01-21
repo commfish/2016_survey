@@ -75,6 +75,7 @@ write_csv(catch, 'data/catch.csv')
 #scallop
 # weight ----
 # create weight data.frame
+# note sample weight is in kg 
 catch %>% filter(species==74120, cond==1) %>% 
   group_by(Event, size_class) %>% select(-count) %>% 
   summarise(weight=sum(sample_wt, na.rm=T)) %>% 
@@ -96,38 +97,43 @@ scal.weight %>% dplyr::select(Event, large, small,year,District,Bed,n,ai,area_nm
 ## Bootstrap ------------
 # apply the function to each component of the list
 source('./code/functions.R')
+# di here is density by round weight NOT numbers
 weight <- lapply(scal.weight$dat,f.it)
 
 # bind the results together and convert to a dataframe
 weight <- as.data.frame(do.call(rbind,weight))
 
+weight %>% mutate(dbar_lb = dbar*2.2046, N_lb = N*2.2046) -> weight
+  
 #figures----------
 weight %>% filter(variable=='large') %>% 
-  ggplot(aes(dbar, fill=Bed))+geom_density()+ facet_wrap(~Bed)
+  ggplot(aes(dbar_lb, fill=Bed))+geom_density()+ facet_wrap(~Bed)
 
 weight %>% filter(variable=='large') %>% 
-  ggplot(aes(dbar, fill=Bed))+geom_density()
+  ggplot(aes(dbar_lb, fill=Bed))+geom_density()
 
 weight %>% filter(variable=='small') %>% 
-  ggplot(aes(N, fill=Bed))+geom_density() + facet_wrap(~Bed)
+  ggplot(aes(N_lb, fill=Bed))+geom_density() + facet_wrap(~Bed)
 
 weight %>% group_by(District,Bed,year,variable) %>% 
-  summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
-            lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) -> weights
+  summarise(llN=quantile(N_lb,0.025),ulN=quantile(N_lb,0.975),N_lb=mean(N_lb), 
+            lldbar=quantile(dbar_lb,0.025),uldbar=quantile(dbar_lb,0.975),dbar_lb=mean(dbar_lb)) -> weights
+# N and d_bar here are round WEIGHTS not numbers N = total round weight of scallops by bed
 weights%>% 
   group_by(Bed,variable) %>% 
-  ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)+
-  scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma) -> fig_bed_weight
+  ggplot(aes(Bed,N_lb))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+facet_wrap(~variable)+
+  scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma) +
+  ylab("Round weight (lb)") -> fig_bed_weight
 
 # large scallops using meat weight ratio - MUST run 'meat_weight.R' for these calcs.
-# convert weight in grams to lbs.  Using 1 lb = 453.592 grams
-# also convert weight by tow here from kilograms to grams.
+# convert weight in kilograms to lbs - done ABOVE using N_lb
+# ratio was calculated using grams - does not matter since it's a ratio
 weights %>% 
   filter(variable=='large') %>% 
-  dplyr::select(Bed,year,llN,ulN,N) %>% 
+  dplyr::select(Bed,year,llN,ulN,N_lb) %>% 
   left_join(wts_summary) %>% 
-  mutate(min_meat_wt=llN*ll, meat_wt = N*1000*ratio_bar*0.05/453.592,
-         max_meat_wt=ulN*ul) %>% 
+  mutate(min_meat_wt=llN*ll, meat_wt = N_lb*ratio_bar,
+         max_meat_wt=ulN*ul, meat_wt_0.05 = meat_wt*0.05) %>% 
   data.frame()
 
 

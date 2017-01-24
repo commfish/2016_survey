@@ -112,16 +112,20 @@ samp3 %>%
 #need to filter for those events that don't have both...
 
 #K-S test
-ks_height <- do.call(rbind, lapply(samp3.list$dat[42:43], ks_func))
+ks_height <- do.call(rbind, lapply(samp3.list$dat[1:39], ks_func))
+ks_height2 <- do.call(rbind, lapply(samp3.list$dat[41:61], ks_func))
 # Issue is with duplicate j values.  need individual value to compute.  so far only an issue with 
 # list 40.  test other lists.  if this is the case just remove 40.
+#problematic lists: 40
+ks.height <- as.data.frame(ks_height)
+ks.height2 <- as.data.frame(ks_height2)
+ks.height %>% 
+  bind_rows(ks.height2) -> ks_height_all
 
-
-samp3 %>% filter(Event == '2016D06028') -> test1
-test1 %>% spread(m_weight, height, fill =NA) -> test1a
-hat <- ks.test(test1a$ht, test1a$mw)
-out = c(test1a$Event[1], hat$p.value)
-ks_func(test1)
+mean(ks_height_all$V1)
+ks_height_all %>% 
+  filter(V1 <= 0.05)
+# 6 out of 60 are significant. 
 
 ks_func <- function(x){
   #first turn the list into a dataframe
@@ -134,6 +138,7 @@ ks_func <- function(x){
   out
 }
 
+# list and bootstrap -------------------------
 #turn meat weights into list for analysis
 meat.wts %>% 
   group_by(Bed) %>% 

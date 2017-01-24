@@ -133,7 +133,8 @@ weights %>%
   dplyr::select(Bed,year,llN,ulN,N_lb) %>% 
   left_join(wts_summary) %>% 
   mutate(min_meat_wt=llN*ll, meat_wt = N_lb*ratio_bar,
-         max_meat_wt=ulN*ul, meat_wt_0.05 = meat_wt*0.05) %>% 
+         max_meat_wt=ulN*ul, meat_wt_0.05 = meat_wt*0.05, 
+         diff = ((meat_wt - min_meat_wt) + (max_meat_wt - meat_wt))) %>% 
   data.frame()
 
 

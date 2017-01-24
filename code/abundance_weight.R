@@ -134,15 +134,15 @@ weights %>%
   left_join(wts_summary) %>% 
   mutate(min_meat_wt=llN*ll, meat_wt = N_lb*ratio_bar,
          max_meat_wt=ulN*ul, meat_wt_0.05 = meat_wt*0.05, 
-         diff = ((meat_wt - min_meat_wt) + (max_meat_wt - meat_wt))) %>% 
-  data.frame()
+         diff = ((meat_wt - min_meat_wt) + (max_meat_wt - meat_wt))) -> weights_summary
 
-
+weights_summary %>% data.frame()
 
 
 
 ### save tables and figures if needed ------------------------------------
 write_csv(weights, 'output/bed_weights_table_Ndbar.csv')
+write_csv(weights_summary, 'output/weights_meatwt_table.csv')
 
 #save figure for write up
 png(filename = 'figs/bed_weight_wCI.png')

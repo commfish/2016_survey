@@ -114,7 +114,7 @@ library(knitr)
 d <- read.csv('../output/bed_meatwt_table_Ndbar.csv')
 library(tidyverse)
 options(scipen=9999) # remove scientific notation
-d %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, N,N_UL,N_LL,weight, ratio, ratio_UL, ratio_LL, min_meat_wt, meat_wt, max_meat_wt, meat_0.05) %>% kable()
+d %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, N,N_UL,N_LL,weight, ratio, min_meat_wt, meat_wt, max_meat_wt, meat_0.05) %>% kable()
 ```
 
 

@@ -112,9 +112,12 @@ samp3 %>%
 #need to filter for those events that don't have both...
 
 #K-S test
-ks_height <- do.call(rbind, lapply(samp3.list$dat, ks_func))
+ks_height <- do.call(rbind, lapply(samp3.list$dat[42:43], ks_func))
+# Issue is with duplicate j values.  need individual value to compute.  so far only an issue with 
+# list 40.  test other lists.  if this is the case just remove 40.
 
-samp2 %>% filter(Event == '2016D02003') -> test1
+
+samp3 %>% filter(Event == '2016D06028') -> test1
 test1 %>% spread(m_weight, height, fill =NA) -> test1a
 hat <- ks.test(test1a$ht, test1a$mw)
 out = c(test1a$Event[1], hat$p.value)
@@ -127,7 +130,7 @@ ks_func <- function(x){
   x = as.data.frame(x)
   x %>% spread(m_weight, height, fill=NA) ->inter
   ks <-ks.test(inter$ht, inter$mw)
-  out <- cbind(inter$Event[1], ks$p.value)
+  out <- ks$p.value
   out
 }
 

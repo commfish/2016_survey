@@ -119,7 +119,13 @@ d %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),ratio =round(ratio_bar
 
 
 **Table 4:** Meat weight by bed using weights from tows NOT individual weights 
-
+```{r, echo=F, message=F, warning=F}
+library(knitr)
+e <- read.csv('../output/weights_meatwt_table.csv.csv')
+library(tidyverse)
+options(scipen=9999) # remove scientific notation
+e %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, N,N_UL,N_LL,weight, ratio, min_meat_wt, meat_wt, max_meat_wt, meat_0.05) %>% kable()
+```
 
 The western Kayak Island abundance estimate of all scallops was ```r round(wk1$N_b)``` with 95% CI of ```r round(wk1$llN)``` - ```r round(wk1$ulN)```.
 

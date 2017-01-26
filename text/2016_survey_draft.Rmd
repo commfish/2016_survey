@@ -112,6 +112,8 @@ a %>% filter(Bed=='WK1', variable=='all') -> wk1
 
 ![**Figure 3:** Abundance with 95% bootstrap confidence intervals by size class.](../figs/bed_abundance_wCI.png)
 
+![**Figure 4:** Abundance of LARGE scallops with 95% bootstrap confidence intervals.](../figs/bed_N_large_wCI.png)
+
 
 ##Meat Weight with large scallops ONLY
 

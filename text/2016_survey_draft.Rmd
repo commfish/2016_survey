@@ -67,7 +67,14 @@ Variance and confidence intervals for the surveyed population were also estimate
 A preliminary *Q* of 0.83 calculated from the Kayak Island beds in 2004 [@Gustafson2012] was used in lieu of bed specific efficiencies. 
 
 #RESULTS  
-Successful tows were performed in all five beds during either the May or July surveys (Figs 1 and 2). The average scallop density and abundance by bed were estimated along with their respective confidence intervals, and coefficient of variation (CV) (Tables 1 and 2). Scallop abundance calculations were performed for both size classes (small and large) and for all scallop combined (all).  Estimations of the meat weight ratio (round weight/ meat weight) were done using only large scallops (Table 3).  The average meat weight ratio, along bootstrap confidence intervals, was calculated and applied to the abundnace estimates to get a range of meat weight (in pounds - lb) available by bed. For illustration purposed only a rate of 5% was applied to the availalble meat weight by bed to get a hypothetical meat weight GHL.   
+###Scallop denisty and abundance
+Successful tows were performed in all five beds during either the May or July surveys (Figs 1 and 2). The average scallop density and abundance by bed were estimated along with their respective confidence intervals, and coefficient of variation (CV) (Tables 1 and 2). Scallop abundance calculations were performed for both size classes (small and large) and for all scallop combined (all). 
+
+Discuss bed specific estimates and CVs.  
+
+###Meat weight
+Estimations of the meat weight ratio (round weight/ meat weight) were done using only large scallops that were sampled at a rate of approximately 10 per tow (Table 3).  The average meat weight ratio, along bootstrap confidence intervals, was calculated and applied to the abundnace estimates to get a range of meat weight (in pounds - lb) available by bed (Table 3). For illustration purposed only a rate of 5% was applied to the availalble meat weight by bed to get a hypothetical meat weight GHL.   
+Additionally, the meat weight available by bed was also calculated from the total weight of the tows, again using only large scallops (Table 4). For this method the meat weight ratio calculated above was applied to the estimated weight of the entire bed to determine the meat weight and associated confidence intervals by bed.  The method in Table 3, using individual weights, was less variable in all beds, with the exception of WK1.  In WK1 the variablity around the meat weight estimate was higher using the individual weights, but the point estimates were similar.  
 
 
 ![**Figure 1:** Tow paths for KSH beds 1,2, and 3](../figs/KSH16_8by11_rptTows.png)
@@ -108,23 +115,23 @@ a %>% filter(Bed=='WK1', variable=='all') -> wk1
 
 ##Meat Weight with large scallops ONLY
 
-**Table 3:** Meat weight by bed from individual scallops with 95% bootstrap confidence intervals using estimated numbers of large scallops per bed
+**Table 3:** Meat weight (lb) by bed from individual scallops with 95% bootstrap confidence intervals using estimated numbers of large scallops per bed
 ```{r, echo=F, message=F, warning=F}
 library(knitr)
 d <- read.csv('../output/bed_meatwt_table_Ndbar.csv')
 library(tidyverse)
 options(scipen=9999) # remove scientific notation
-d %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, N,N_UL,N_LL,weight, ratio, min_meat_wt, meat_wt, max_meat_wt, meat_0.05, diff) %>% kable()
+d %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, N,N_UL,N_LL,weight, ratio, min_meat_wt, meat_wt, max_meat_wt, meat_0.05) %>% kable()
 ```
 
 
-**Table 4:** Meat weight by bed using weights from tows NOT individual weights 
+**Table 4:** Meat weight (lb) by bed using weights from tows NOT individual weights 
 ```{r, echo=F, message=F, warning=F}
 library(knitr)
 e <- read.csv('../output/weights_meatwt_table.csv')
 library(tidyverse)
 options(scipen=9999) # remove scientific notation
-e %>% mutate(W_lb=round(N_lb),W_UL=round(ulN),W_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, W_lb,W_UL,W_LL,ratio, min_meat_wt, meat_wt, max_meat_wt, meat_wt_0.05, diff) %>% kable()
+e %>% mutate(W_lb=round(N_lb),W_UL=round(ulN),W_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, W_lb,W_UL,W_LL,ratio, min_meat_wt, meat_wt, max_meat_wt, meat_0.05) %>% kable()
 ```
 
 The western Kayak Island abundance estimate of all scallops was ```r round(wk1$N_b)``` with 95% CI of ```r round(wk1$llN)``` - ```r round(wk1$ulN)```.

@@ -138,8 +138,6 @@ weights %>%
 
 weights_summary %>% data.frame()
 
-
-
 ### save tables and figures if needed ------------------------------------
 write_csv(weights, 'output/bed_weights_table_Ndbar.csv')
 write_csv(weights_summary, 'output/weights_meatwt_table.csv')

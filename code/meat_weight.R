@@ -180,6 +180,10 @@ awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
 
 meat_weight_summary %>% data.frame() #using weight from invididual scallops.
 
+# Visualization
+ggplot(meat_weight_summary, aes(Bed,meat_wt))+geom_point()+geom_errorbar(aes(ymin=min_meat_wt,ymax=max_meat_wt), width=0.2)+
+  scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ 
+  scale_y_continuous(labels = comma) 
 
 ### save tables and figures if needed ------------------------------------
 write_csv(meat_weight_summary, 'output/bed_meatwt_table_Ndbar.csv')

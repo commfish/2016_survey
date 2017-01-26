@@ -121,6 +121,16 @@ numbers %>% group_by(District,Bed,year,variable) %>%
   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ 
   scale_y_continuous(labels = comma) -> fig_bedN
 
+#just large scallops
+numbers %>% group_by(District,Bed,year,variable) %>% filter(variable == "large" ) %>% 
+  summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
+            lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) %>% 
+  group_by(Bed,variable) %>% 
+  ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+
+  facet_wrap(~variable)+
+  scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ 
+  scale_y_continuous(labels = comma) -> fig_bedN_large
+
 #table of results
 numbers %>% group_by(Bed,year,variable) %>% 
   summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N_b=mean(N), 
@@ -129,8 +139,6 @@ numbers %>% group_by(Bed,year,variable) %>%
             cv=sqrt(var_dbar)/dbar_b*100 , 
             varN= 1/((n())-1)*sum((N-N_b)^2),
             cvN=sqrt(varN)/N_b*100) -> bed_num_summary
-
-
 
 
 ### save tables and figures if needed ------------------------------------
@@ -142,3 +150,6 @@ png(filename = 'figs/bed_abundance_wCI.png')
 fig_bedN
 dev.off()
 
+png(filename = 'figs/bed_N_large_wCI.png')
+fig_bedN_large
+dev.off()

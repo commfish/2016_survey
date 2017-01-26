@@ -182,7 +182,7 @@ meat_weight_summary %>% data.frame() #using weight from invididual scallops.
 
 
 ### save tables and figures if needed ------------------------------------
-write_csv(meat.weight_summary, 'output/bed_meatwt_table_Ndbar.csv')
+write_csv(meat_weight_summary, 'output/bed_meatwt_table_Ndbar.csv')
 
 
 

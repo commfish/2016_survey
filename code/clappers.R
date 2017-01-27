@@ -72,3 +72,40 @@ catch %>% select(Event = EVENT_ID, species=RACE_CODE,
                  sample_type = SAMPLE_TYPE) -> catch
 #write_csv(catch, 'data/catch.csv')
 
+#scallop
+# weight ---- does NOT include clappers
+# create weight data.frame
+# note sample weight is in kg 
+catch %>% filter(species==74120, cond==1) %>% 
+  group_by(Event, size_class) %>% select(-count) %>% 
+  summarise(weight=sum(sample_wt, na.rm=T)) %>% 
+  dcast(Event~size_class,sum, drop=TRUE) -> s.weight
+names(s.weight) <- c('Event', 'large', 'small')
+
+scal.weight <- merge(s.weight,event, all = TRUE) # merge with events - keep NA
+scal.weight[is.na(scal.weight)] <- 0 # change NA to 0
+scal.weight %>% dplyr::select(Event, large, small,year,District,Bed,n,ai,area_nm2) %>% 
+  mutate(all = large+small) %>% 
+  melt(., id.vars=c('Event','year','District','Bed','n','ai','area_nm2')) %>% 
+  mutate(di= value/ai) %>% 
+  group_by(District,Bed,year, variable) %>% 
+  do(dat=(.)) %>% 
+  select(dat) %>% 
+  map(identity) -> scal.weight
+
+# weight ---- just clappers
+# create weight data.frame
+# note sample weight is in kg 
+catch %>% filter(species==74120, cond==99) %>% 
+  group_by(Event) %>% summarise(weight=sum(sample_wt, na.rm=T)) -> clap.weight
+
+
+clap.weight <- merge(clap.weight,event, all = TRUE) # merge with events - keep NA
+clap.weight[is.na(clap.weight)] <- 0 # change NA to 0
+clap.weight %>% dplyr::select(Event, weight, year,District,Bed,n,ai,area_nm2) %>% 
+  mutate(di= weight/ai, clap_wt = weight) %>% select(-weight) %>% 
+  group_by(District,Bed,year) %>% 
+  do(dat=(.)) %>% 
+  select(dat) %>% 
+  map(identity) -> clap.weight
+

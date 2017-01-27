@@ -137,7 +137,7 @@ clappers_bed %>% mutate(dbar_c_lb = dbar_c*2.2046, W_c_lb = W_c*2.2046) -> clapp
 #Percentage of clappers per bed.
 all_weights %>% 
   right_join(clappers_bed) %>% select(District, Bed, year, n, variable, N_lb,W_c_lb) %>% 
-  mutate(percent_clap = (W_c_lb/ N_lb)*100) -> clap_per_wt_bed
+  mutate(percent_clap = (W_c_lb/ (N_lb + W_c_lb)*100)) -> clap_per_wt_bed
 
 
 ### save tables and figures if needed ------------------------------------

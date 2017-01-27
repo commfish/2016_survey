@@ -113,17 +113,17 @@ Estimations of the meat weight ratio (round weight/ meat weight) were done using
 ? Histograms of scallop height by bed
 
 ###Clappers
-
+The abundance (by weight) of clappers was calculated by bed.  It was then evaluated, along with the abundance (by weight) of live scallops to estimate the percentage of clappers by bed (Table 6).  These estimates are higher than expected and further review of the assumptions and methods behind this analysis is recommended.   
 
 #DISCUSSION  
-The primary objective of this survey was to estimate scallop abundance by survey area with a coefficient of variation (CV) ≤ 20%.  From the results reported in Table 1, only EK1 and KSH1 were close to that level.  Additional sampling would be recommended to achieve a smaller CV in the other three survey areas (KSH2, KSH3, and WK1).  A power analyis can be performed prior to survey implementation to determine the desired sample rate to reduce the CV.  
+The primary objective of this survey was to estimate scallop abundance by survey area with a coefficient of variation (CV) ≤ 20%.  From the results reported in Table 1, only EK1 and KSH1 were close to that level.  Additional sampling would be recommended to achieve a smaller CV in the other three survey areas (KSH2, KSH3, and WK1).  A power analyis can be performed prior to survey implementation to determine the desired increased sample rate to reduce the CV.  
 
 Bed specific discussion of results???
 The western Kayak Island abundance estimate of all scallops was ```r round(wk1$N_b)``` with 95% CI of ```r round(wk1$llN)``` - ```r round(wk1$ulN)```.
 
 The subsample of scallops collected for more detailed biological data was set at a desired random subsample of 40 individuals.  Ten of these (large only) were further sampled to determine a meat weight to round weight ratio. A goodness-of-fit test (K-S test) was performed for each tow to confirm that the 10 random samples were representative of the 40 subsampled.  Using only the tows that had adequate sampling of large scallops (n>11) the majority of the time these 10 samples represented the entire subsample well (90% of the time). 
 
-Estimates of natural mortality from clappers? if so how?
+A secondary objective of this study was to estimate natural mortality from the presence of clapper (empty shells) in the tows.  The abundance (by weight) of clappers and their associated percent composition were calculated for each bed.  However, the preliminary percent composition numbers are higher than expected for a long-lived sedentary species (reference?).  Further review of the analysis methods is required before these estimated could be used as a proxy for natural mortality. 
 
 
 ##Tables:

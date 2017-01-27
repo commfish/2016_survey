@@ -33,7 +33,7 @@ bibliography: scallop_survey_bibfile.bib
  2. Special short term projects.
  
 #METHODS  
-Scallop size class designation. 
+Scallop samples are analyzed in each survey area (bed) and categorized by size-class, large (>= 100 mm) and small (< 100 mm). 
 
 Scallop abundance estimation based upon area-swept calculations where scallop density $d_i$ is calculated as:
 
@@ -51,20 +51,41 @@ $l_i$ = the nmi towed for sample haul *i*,
 *Q* = dredge efficency, and   
 *s* = the number of stations sampled.  
 
+A preliminary *Q* of 0.83 calculated from the Kayak Island beds in 2004 [@Gustafson2012] was used in lieu of bed specific efficiencies. Density variance was calculated using a nonparametric bootstrap resampling procedure with replacement.  Bootstrap percentile intervals were used to estimate 95% confidence intervals.  
 
-Density variance was calculated using a nonparametric bootstrap resampling procedure with replacement.  Bootstrap percentile intervals were used to estimate 95% confidence intervals.  
 
-
-An estimate of the surveyed population $\hat{N}$ will be calculated by expanding $\bar{d}$ over the defined bed area *A* encompassing all grid cells as: 
+An estimate of the surveyed population $\hat{N}$ was calculated by expanding $\bar{d}$ over the defined bed area *A* encompassing all grid cells as: 
 
 $$
 \hat{N}=A\bar{d}.
 $$
 
-Variance and confidence intervals for the surveyed population were also estimated from the parametric bootstrap procedure.  
+Variance and confidence intervals for the surveyed population $\hat{N}$ were also estimated from the nonparametric bootstrap procedure.  
 
+An estimate of the surveryed population by round weight in pounds $\hat{RW}$ was also be calculated using the same equations as above.  
 
-A preliminary *Q* of 0.83 calculated from the Kayak Island beds in 2004 [@Gustafson2012] was used in lieu of bed specific efficiencies. 
+Meat weight biomass(lb) available by bed was calculated based on two alternative methods. A comparison of these methods was performed and the less variable method used. Both methods use the meat weight ratio calculated from the subsample of 10 large individuals from each tow (where they were available).  For every individual the meat weight ratio is calulated as: 
+$$
+R = \frac{MW (g)}{RW (g)}
+$$
+A nonparametric bootstrap procedure was used to estimate the mean ratio $\bar R$, variance, and percentile confidence intervals for each survey area (bed).  
+
+The first method to estimate meat weight (lb) by survey area used the estimated abundance $\hat{N}$ in each bed and the mean individual round weight $\bar{RW}$ per bed:
+$$
+MWbed_1 = \hat{N}\bar R\frac{\bar {RW}}{453.592}
+$$
+The second method to estimate meat weight (lb) applied the same meat weight ratio $\bar R$ to the estimated round weight $\hat{RW}$(lb) of large scallops by bed:
+$$
+MWbed_2 = \hat{RW}\bar R\
+$$
+Confidence intervals for the meat weight (lb) estimates were calculated (using the above equation) from the nonparametric bootstraps performed on the abundance estimates (both $\hat{N}$ and $\hat{RW}$) and the mean ratio $\bar R$.  
+
+where: 
+*R* = ratio of round weight to meat weight for each individual, 
+*MW* = meat weight, 
+*RW* = round weight, and
+453.592 = constant to convert weight from grams to pounds
+
 
 #RESULTS  
 ###Scallop denisty and abundance

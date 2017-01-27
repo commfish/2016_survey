@@ -73,7 +73,7 @@ catch %>% select(Event = EVENT_ID, species=RACE_CODE,
 #write_csv(catch, 'data/catch.csv')
 
 #scallop
-# weight ---- does NOT include clappers
+# weight ---- does NOT include clappers -----------------------------
 # create weight data.frame
 # note sample weight is in kg 
 catch %>% filter(species==74120, cond==1) %>% 
@@ -93,7 +93,24 @@ scal.weight %>% dplyr::select(Event, large, small,year,District,Bed,n,ai,area_nm
   select(dat) %>% 
   map(identity) -> scal.weight
 
-# weight ---- just clappers
+## Bootstrap weight ------------
+# apply the function to each component of the list
+source('./code/functions.R')
+# di here is density by round weight NOT numbers
+weight <- lapply(scal.weight$dat,f.it)
+
+# bind the results together and convert to a dataframe
+weight <- as.data.frame(do.call(rbind,weight))
+
+weight %>% mutate(dbar_lb = dbar*2.2046, N_lb = N*2.2046) -> weight
+
+weight %>% group_by(District,Bed,year,variable) %>% 
+  summarise(llN=quantile(N_lb,0.025),ulN=quantile(N_lb,0.975),N_lb=mean(N_lb), 
+            lldbar=quantile(dbar_lb,0.025),uldbar=quantile(dbar_lb,0.975),dbar_lb=mean(dbar_lb)) -> weights
+
+weights %>% filter(variable == 'all') -> all_weights
+
+# Clapper weight ---- just clappers-----------------------
 # create weight data.frame
 # note sample weight is in kg 
 catch %>% filter(species==74120, cond==99) %>% 
@@ -109,3 +126,13 @@ clap.weight %>% dplyr::select(Event, weight, year,District,Bed,n,ai,area_nm2) %>
   select(dat) %>% 
   map(identity) -> clap.weight
 
+# Density of clappers by bed -----------
+source('./code/functions.R') # apply function to each bed NO BOOTSTRAP here
+clappers_bed <- lapply(clap.weight$dat,f.clap)
+clappers_bed <- as.data.frame(do.call(rbind,clappers_bed)) 
+
+
+#Percentage of clappers per bed.
+all_weights %>% 
+  right_join(clappers_bed) %>% select(District, Bed, year, n, variable, N_lb,W_c) %>% 
+  mutate(percent_clap = (W_c/ N_lb)*100) -> clap_per_wt_bed

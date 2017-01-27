@@ -1,3 +1,23 @@
+####### 2016 Scallop Statewide Survey
+####### Ben Williams / Katie Palof
+####### ben.williams@alaska.gov
+
+## Code   
+#-----------------------------------------------------------
+## All code, data, and associated documents are held in a single R project
+## titles 2016_survey.Rproj  
+
+# Data were forwarded from Josh Mumm joshua.mumm@alaska.gov. I've changed the names of the original files sent
+## Try to keep to the tidy data principles http://vita.had.co.nz/papers/tidy-data.pdf  
+
+## Naming 
+# lower case names are numeric
+# Capitalized names are factors 
+
+## The operational plan lays out the foundation for the analyses herein it is available in the literature folder
+
+#NOTE - this could easily be udated for multiple years by changing the group_by(...) throughout.
+
 # load ----
 library(tidyverse)
 library(reshape2)
@@ -51,7 +71,7 @@ catch %>% select(Event = EVENT_ID, species=RACE_CODE,
 write_csv(catch, 'data/catch.csv')
 
 # scallops ----
-# catch ----
+# catch by numbers ----
 # create catch data.frame
 catch %>% filter(species==74120, cond==1) %>% 
    group_by(Event, size_class) %>% 
@@ -177,7 +197,7 @@ numbers %>% group_by(Bed,year,variable) %>%
             cv=sqrt(var_dbar)/dbar_b*100 , 
             varN= 1/((n())-1)*sum((N-N_b)^2),
             cvN=sqrt(varN)/N_b*100) -> bed_summary
-write_csv(bed_summary, 'output/bed_sum_table_Ndbar.csv')
+write_csv(bed_num_summary, 'output/bed_sum_table_Ndbar.csv')
 
 # weight ----
 # apply the function to each component of the list
@@ -266,9 +286,34 @@ wts <- do.call(rbind,lapply(meat.wt$dat,f.wt))
 wts %>% group_by(year, District, Bed) %>% 
    summarise(ratio_bar = mean(ratio), ll = quantile(ratio, .025), ul = quantile(ratio, .975)) -> wts_summary
 
+<<<<<<< HEAD
 weights %>% 
    filter(variable=='large') %>% 
    dplyr::select(Bed,year,llN,ulN,N) %>% 
    left_join(wts_summary) %>% 
    mutate(min_meat_wt=llN*ll, meat_wt = N*ratio_bar,max_meat_wt=ulN*ul) %>% group_by(Bed) %>% 
    ggplot(aes(Bed, meat_wt))+geom_point()+geom_errorbar(aes(ymin=min_meat_wt, ymax=max_meat_wt), width=.2)
+=======
+awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
+               j = SCALLOP_NUMBER, size_class = SCAL_SIZE_CLASS,
+               weight=WHOLE_WT_GRAMS, worm=SHELL_WORM_SW, 
+               height=SHELL_HEIGHT_MM, sex=SEX_SW, 
+               gonad_cond=SCAL_GONAD_COND, blister=MUD_BLISTER_SW, 
+               meat_cond=MEAT_CONDITION_SW, meat_weight = MEAT_WEIGHT_GRAMS,
+               clapper = CLAPPER, sample_type = SAMPLE_TYPE) %>% 
+  mutate(ratio = meat_weight/weight ) %>% 
+  filter(species == 74120, size_class == 1, is.na(clapper), !is.na(ratio), Event %in% event$Event) %>% 
+  left_join(event) %>% group_by(year, District, Bed, Event) %>% summarise(weight = mean(weight)) %>% 
+  group_by(year, Bed) %>% summarise(weight = mean(weight)) %>% left_join(bed_summary) %>% 
+   filter(variable=='large') %>% 
+   dplyr::select(Bed,year,llN,ulN,N_b,weight) %>% 
+   left_join(wts_summary) %>% 
+   mutate(min_meat_wt=llN*ll, meat_wt = N_b*ratio_bar*weight*0.05/400,max_meat_wt=ulN*ul) %>% data.frame()
+
+weights %>% 
+  filter(variable=='large') %>% 
+  dplyr::select(Bed,year,llN,ulN,N) %>% 
+  left_join(wts_summary) %>% 
+  mutate(min_meat_wt=llN*ll, meat_wt = N*1000*ratio_bar*0.05/453.592,max_meat_wt=ulN*ul) %>% 
+  data.frame()
+>>>>>>> f40cd68b8eec0c1bd006dc606645c446e32d839c

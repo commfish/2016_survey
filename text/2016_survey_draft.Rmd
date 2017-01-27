@@ -92,17 +92,16 @@ where:
 Successful tows were performed in all five beds during either the May or July surveys (Figs 1 and 2). The average scallop density and abundance by bed were estimated along with their respective confidence intervals, and coefficient of variation (CV) (Tables 1 and 2). Scallop abundance calculations were performed for both size classes (small and large) and for all scallop combined (all). 
 
 Discuss bed specific estimates and CVs.  
+The western Kayak Island abundance estimate of all scallops was ```r round(wk1$N_b)``` with 95% CI of ```r round(wk1$llN)``` - ```r round(wk1$ulN)```.
 
 ###Meat weight
-Estimations of the meat weight ratio (round weight/ meat weight) were done using only large scallops that were sampled at a rate of approximately 10 per tow (Table 3).  The average meat weight ratio, along bootstrap confidence intervals, was calculated and applied to the abundnace estimates to get a range of meat weight (in pounds - lb) available by bed (Table 3). For illustration purposed only a rate of 5% was applied to the availalble meat weight by bed to get a hypothetical meat weight GHL.   
-Additionally, the meat weight available by bed was also calculated from the total weight of the tows, again using only large scallops (Table 4). For this method the meat weight ratio calculated above was applied to the estimated weight of the entire bed to determine the meat weight and associated confidence intervals by bed.  The method in Table 3, using individual weights, was less variable in all beds, with the exception of WK1.  In WK1 the variablity around the meat weight estimate was higher using the individual weights, but the point estimates were similar.  
+Estimations of the meat weight ratio (round weight/ meat weight) were done using only large scallops that were sampled at a rate of approximately 10 per tow (Table 3).  The average meat weight ratio, along bootstrap confidence intervals, was calculated and applied to the abundance estimates to get a range of meat weight (in pounds - lb) available by bed using two methods (Table 3 and 4). For illustration purposed only a rate of 5% was applied to the availalble meat weight by bed to get a hypothetical meat weight GHL. The method in Table 3, using individual weights, was less variable in all beds, with the exception of WK1.  In WK1 the variablity around the meat weight estimate was higher using the individual weights, but the point estimates were similar.  
 
 
-![**Figure 1:** Tow paths for KSH beds 1,2, and 3](../figs/KSH16_8by11_rptTows.png)
 
-![**Figure 2:** Tow paths for WK1 and EK1 beds](../figs/KayYak16_8by11_WK1andEK1_rptTows.png)
 
-##Abundance estimates by numbers
+##Tables:
+###Abundance estimates by numbers
 **Table 1:** CV of abundance for large scallops by bed, also sample size and area by bed
 ``````{r, echo=F, message=F, warning=F}
 library(knitr)
@@ -131,10 +130,6 @@ a %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),dbar=round(dbar_b),dba
 a %>% filter(Bed=='WK1', variable=='all') -> wk1
 ```
 
-![**Figure 3:** Abundance with 95% bootstrap confidence intervals by size class.](../figs/bed_abundance_wCI.png)
-
-![**Figure 4:** Abundance of LARGE scallops with 95% bootstrap confidence intervals.](../figs/bed_N_large_wCI.png)
-
 
 ##Meat Weight with large scallops ONLY
 
@@ -157,7 +152,18 @@ options(scipen=9999) # remove scientific notation
 e %>% mutate(W_lb=round(N_lb),W_UL=round(ulN),W_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, W_lb,W_UL,W_LL,ratio, min_meat_wt, meat_wt, max_meat_wt, meat_0.05) %>% kable()
 ```
 
-The western Kayak Island abundance estimate of all scallops was ```r round(wk1$N_b)``` with 95% CI of ```r round(wk1$llN)``` - ```r round(wk1$ulN)```.
+##Figures:
+![**Figure 1:** Tow paths for KSH beds 1,2, and 3](../figs/KSH16_8by11_rptTows.png)
+
+
+![**Figure 2:** Tow paths for WK1 and EK1 beds](../figs/KayYak16_8by11_WK1andEK1_rptTows.png)
+
+
+![**Figure 3:** Abundance with 95% bootstrap confidence intervals by size class.](../figs/bed_abundance_wCI.png)
+
+
+![**Figure 4:** Abundance of LARGE scallops with 95% bootstrap confidence intervals.](../figs/bed_N_large_wCI.png)
+
 
 #DISCUSSION  
 The primary objective of this survey was to estimate scallop abundance by survey area with a coefficient of variation (CV) ≤ 20%.  From the results reported in Table 1, only EK1 and KSH1 were close to that level.  Additional sampling would be recommended to achieve a smaller CV in the other three survey areas (KSH2, KSH3, and WK1).  A power analyis can be performed prior to survey implementation to determine the desired sample rate to reduce the CV.  

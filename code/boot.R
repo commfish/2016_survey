@@ -266,8 +266,9 @@ wts <- do.call(rbind,lapply(meat.wt$dat,f.wt))
 wts %>% group_by(year, District, Bed) %>% 
    summarise(ratio_bar = mean(ratio), ll = quantile(ratio, .025), ul = quantile(ratio, .975)) -> wts_summary
 
-bed_summary %>% 
+weights %>% 
    filter(variable=='large') %>% 
-   dplyr::select(Bed,year,llN,ulN,N_b) %>% 
+   dplyr::select(Bed,year,llN,ulN,N) %>% 
    left_join(wts_summary) %>% 
-   mutate(min_meat_wt=llN*ll, meat_wt = N_b*ratio_bar,max_meat_wt=ulN*ul)
+   mutate(min_meat_wt=llN*ll, meat_wt = N*ratio_bar,max_meat_wt=ulN*ul) %>% group_by(Bed) %>% 
+   ggplot(aes(Bed, meat_wt))+geom_point()+geom_errorbar(aes(ymin=min_meat_wt, ymax=max_meat_wt), width=.2)

@@ -90,7 +90,7 @@ where:
 *RW* = round weight.
 
 
-The density and abundance (by weight) of clappers
+The abundance (by weight) of clappers (empty shells) per bed was calculated using the same procedure as live scallops.  The clapper abundnace by bed was then used to estimate the percentage of clappers by bed.  This value may be helpful to understand natural mortality in each survey area. 
 
 #RESULTS  
 ###Scallop denisty and abundance
@@ -111,6 +111,9 @@ Estimations of the meat weight ratio (round weight/ meat weight) were done using
 
 ###Scallop height distribution by bed
 ? Histograms of scallop height by bed
+
+###Clappers
+
 
 #DISCUSSION  
 The primary objective of this survey was to estimate scallop abundance by survey area with a coefficient of variation (CV) ≤ 20%.  From the results reported in Table 1, only EK1 and KSH1 were close to that level.  Additional sampling would be recommended to achieve a smaller CV in the other three survey areas (KSH2, KSH3, and WK1).  A power analyis can be performed prior to survey implementation to determine the desired sample rate to reduce the CV.  
@@ -175,7 +178,6 @@ options(scipen=9999) # remove scientific notation
 d %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, N,N_UL,N_LL,weight, ratio, min_meat_wt, meat_wt, max_meat_wt, meat_0.05) %>% kable()
 ```
 
-
 **Table 5:** Meat weight (lb) by bed using weights from tows NOT individual weights 
 ```{r, echo=F, message=F, warning=F}
 library(knitr)
@@ -184,6 +186,18 @@ library(tidyverse)
 options(scipen=9999) # remove scientific notation
 e %>% mutate(W_lb=round(N_lb),W_UL=round(ulN),W_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, W_lb,W_UL,W_LL,ratio, min_meat_wt, meat_wt, max_meat_wt, meat_0.05) %>% kable()
 ```
+
+
+##Clappers
+**Table 6:** Preliminary estimates of abundance (by weight) and percent clappers by bed. 
+```{r, echo=F, message=F, warning=F}
+library(knitr)
+g <- read.csv('../output/clap_percent_wt_bed.csv')
+library(tidyverse)
+options(scipen=9999) # remove scientific notation
+g %>% mutate(W_c_lb=round(W_c_lb), percentC = round(percent_clap,2)) %>% select(Bed, year, variable, W_c_lb, percentC) %>% kable()
+```
+
 
 ##Figures:
 ![**Figure 1:** Tow paths for KSH beds 1,2, and 3](../figs/KSH16_8by11_rptTows.png)

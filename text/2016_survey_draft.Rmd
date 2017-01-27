@@ -77,7 +77,7 @@ The first method to estimate meat weight (lb) by survey area used the estimated 
 $$
 MWbed_1 = \hat{N}\bar r\bar {RW}
 $$
-The second method to estimate meat weight (lb) applied the same meat weight ratio $\bar R$ to the estimated round weight $\hat{RW}$(lb) of large scallops by bed.  The round weight of large scallops by bed was calculated using the average density of scallop round weight by bed multipled by the area of each bed :
+The second method to estimate meat weight (lb) applied the same meat weight ratio $\bar R$ to the estimated round weight $\hat{RW}$(lb) of large scallops by bed.  The round weight of large scallops by bed was calculated using the average density of scallop round weight by bed multipled by the area of each bed (see above, Table 3) :
 $$
 MWbed_2 = \hat{RW}\bar r\
 $$
@@ -89,6 +89,8 @@ where:
 *MW* = meat weight, and  
 *RW* = round weight.
 
+
+The density and abundance (by weight) of clappers
 
 #RESULTS  
 ###Scallop denisty and abundance

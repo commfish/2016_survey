@@ -16,9 +16,10 @@ bibliography: scallop_survey_bibfile.bib
 ---
 #ABSTRACT  
 
-#INTRODUCTION  
+#INTRODUCTION
+Weathervane scallops, Patinopecten caurinus, are distributed in the northeast Pacific Ocean from Pt. Reyes, California north to the Pribilof Islands in the Bering Sea, and west to the Aleutian Islands, and occur from the intertidal to 300 m (Foster 1991). Scallops are a long-lived species, attaining ages between 20 and 28 years in Alaska waters (Hennick 1973; Bechtol et al. 2009). Densities that support commercial harvest typically occur between 45 and 130 m on discrete aggregations (or beds) (Kruse et al. 2005), and in a wide variety of habitats ranging from rock and gravel to silt and mud (Hennick 1973). Scallop beds are typically elongated or elliptical in shape and oriented in the direction of mean current flow (Kruse et al. 2000).
 
-#GENERAL BIOLOGY  
+In Alaska, dredge based fishery-independent surveys have been restricted to Kayak Island and Cook Inlet areas. Initial surveys were conducted for Kamishak Bay and Kayak Island in 1984 and 1996, respectively (Hammarstrom and Merritt 1985, Bechtol et al. 2003), and have been conducted biennially since 1996 (Gustafson and Goldman 2012). These surveys have enabled the department to (1) delineate the primary scallop beds; (2) estimate scallop abundance and biomass within these beds; (3) define bed composition through age and shell height data; and (4) estimate bycatch rates of non-target species, particularly Tanner crab. Fishery managers have used the results of these surveys to set guideline harvest limits (GHLs) and manage the commercial scallop fishery in the Cook Inlet and Prince William Sound registration areas. All other management areas in the state are reliant on fishery-dependent data gathered from the statewide scallop observer program to inform management decisions (NPFMC 2015).
 
 #OBJECTIVES  
 ##Primary  
@@ -33,6 +34,8 @@ bibliography: scallop_survey_bibfile.bib
  2. Special short term projects.
  
 #METHODS  
+Survey design and implementation procedures are detailed in the statewide scallop survey operational plan (reference).  Sample collection is also detailed there. 
+
 Scallop samples are analyzed in each survey area (bed) and categorized by size-class, large (>= 100 mm) and small (< 100 mm). 
 
 Scallop abundance estimation based upon area-swept calculations where scallop density $d_i$ is calculated as:
@@ -74,7 +77,7 @@ The first method to estimate meat weight (lb) by survey area used the estimated 
 $$
 MWbed_1 = \hat{N}\bar r\bar {RW}
 $$
-The second method to estimate meat weight (lb) applied the same meat weight ratio $\bar R$ to the estimated round weight $\hat{RW}$(lb) of large scallops by bed:
+The second method to estimate meat weight (lb) applied the same meat weight ratio $\bar R$ to the estimated round weight $\hat{RW}$(lb) of large scallops by bed.  The round weight of large scallops by bed was calculated using the average density of scallop round weight by bed multipled by the area of each bed :
 $$
 MWbed_2 = \hat{RW}\bar r\
 $$

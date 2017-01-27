@@ -109,6 +109,7 @@ weight %>% group_by(District,Bed,year,variable) %>%
             lldbar=quantile(dbar_lb,0.025),uldbar=quantile(dbar_lb,0.975),dbar_lb=mean(dbar_lb)) -> weights
 
 weights %>% filter(variable == 'all') -> all_weights
+# this is weight of 
 
 # Clapper weight ---- just clappers-----------------------
 # create weight data.frame
@@ -130,9 +131,10 @@ clap.weight %>% dplyr::select(Event, weight, year,District,Bed,n,ai,area_nm2) %>
 source('./code/functions.R') # apply function to each bed NO BOOTSTRAP here
 clappers_bed <- lapply(clap.weight$dat,f.clap)
 clappers_bed <- as.data.frame(do.call(rbind,clappers_bed)) 
-
+clappers_bed %>% mutate(dbar_c_lb = dbar_c*2.2046, W_c_lb = W_c*2.2046) -> clappers_bed
+# convert kilograms to lbs.  
 
 #Percentage of clappers per bed.
 all_weights %>% 
-  right_join(clappers_bed) %>% select(District, Bed, year, n, variable, N_lb,W_c) %>% 
-  mutate(percent_clap = (W_c/ N_lb)*100) -> clap_per_wt_bed
+  right_join(clappers_bed) %>% select(District, Bed, year, n, variable, N_lb,W_c_lb) %>% 
+  mutate(percent_clap = (W_c_lb/ N_lb)*100) -> clap_per_wt_bed

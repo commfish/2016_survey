@@ -75,3 +75,26 @@ f.wt <- function(x){
     bind_rows %>% 
     mutate(replicate=1:n())
 }
+
+
+#Clapper density summerization function --------------------
+f.clap <- function(x){
+  # first turn the list to a dataframe
+  # use dplyr to summarise each list
+  # output is one row all stats.
+  
+  x = as.data.frame(x)
+  x %>%
+    group_by(year, District, Bed)%>%
+    summarise(n=mean(n),
+              area = mean(area_nm2) ,
+              dbar_c = (1/n*sum(di)),
+              var_dbar_c=1/((n)-1)*sum((di-dbar_c)^2) ,
+              cv=sqrt(var_dbar_c)/dbar_c*100,
+              ss=sum((di-dbar_c)^2),
+              W_c=area*dbar_c,
+              varW_c=(area^2)*1/n*1/(n-1)*ss,
+              cvW_c=sqrt(varW_c)/W_c*100) -> out
+  out
+}
+

@@ -117,14 +117,12 @@ ks_height2 <- do.call(rbind, lapply(samp3.list$dat[41:61], ks_func))
 # Issue is with duplicate j values.  need individual value to compute.  so far only an issue with 
 # list 40.  test other lists.  if this is the case just remove 40.
 #problematic lists: 40
-ks.height <- as.data.frame(ks_height)
-ks.height2 <- as.data.frame(ks_height2)
-ks.height %>% 
-  bind_rows(ks.height2) -> ks_height_all
+ks_height %>% 
+  bind_rows(ks_height2) -> ks.height_all
 
-mean(ks_height_all$V1)
-ks_height_all %>% 
-  filter(V1 <= 0.05)
+mean(ks.height_all$p.value)
+ks.height_all %>% 
+  filter(p.value <= 0.05)
 # 6 out of 60 are significant. 
 
 ks_func <- function(x){
@@ -133,8 +131,10 @@ ks_func <- function(x){
   # output is event id and p-value
   x = as.data.frame(x)
   x %>% spread(m_weight, height, fill=NA) ->inter
+  inter %>% summarise(n=n()) ->n
   ks <-ks.test(inter$ht, inter$mw)
-  out <- ks$p.value
+  p.value <- ks$p.value
+  out <- cbind(n, p.value)
   out
 }
 

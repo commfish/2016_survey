@@ -31,7 +31,7 @@ catchcomp %>%
    right_join(events, by="EVENT_ID") -> tab
 
 #survey stations dataframe
-stations <- read.csv("./data/DATA_SCALLOP_SURVEY_STATIONS.csv")
+stations <- read.csv("./survey_sample_size/data/DATA_SCALLOP_SURVEY_STATIONS.csv")
 
 #calculate total bed area 
 stations %>% 

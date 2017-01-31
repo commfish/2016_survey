@@ -2,21 +2,17 @@
 ####### Ben Williams / Katie Palof
 ####### ben.williams@alaska.gov
 
+# intro----
 ### Scallop survey data summarized by NUMBERS
 
-## Code   
-#-----------------------------------------------------------
-## All code, data, and associated documents are held in a single R project
-## titles 2016_survey.Rproj  
-
-# Data were forwarded from Josh Mumm joshua.mumm@alaska.gov. I've changed the names of the original files sent
+# Data were forwarded from Josh Mumm joshua.mumm@alaska.gov. 
 ## Try to keep to the tidy data principles http://vita.had.co.nz/papers/tidy-data.pdf  
 
 ## Naming 
 # lower case names are numeric
 # Capitalized names are factors 
 
-## The operational plan lays out the foundation for the analyses herein it is available in the literature folder
+## The operational plan lays out the foundation for the analyses herein
 
 #NOTE - this could easily be udated for multiple years by changing the group_by(...) throughout.
 
@@ -40,7 +36,6 @@ events %>% mutate(ID = gsub(" ", "", STATION_ID),date = as.Date(DATE_SET, format
          elat=END_LATITUDE, elon=END_LONGITUDE, edepth=DEPTH_END_F, etime=END_TIME, 
          calc_length=TOW_LENGTH_CALC, field_length=TOW_LENGTH_FIELD,length=TOW_LENGTH_DESIGNATED,
          performance=GEAR_PERFORMANCE_CODE_SW) %>% filter(performance==1)-> event
-write_csv(event,'data/event.csv')
 
 #check for replicates - if dataframe has values there are duplicates
 event %>% group_by(Bed, ID) %>% filter(n()>1)
@@ -72,9 +67,9 @@ catch %>% select(Event = EVENT_ID, species=RACE_CODE,
                  sample_type = SAMPLE_TYPE) -> catch
 write_csv(catch, 'data/catch.csv')
 
-# scallops ----
+
 # catch by numbers ----
-# create catch data.frame
+
 catch %>% filter(species==74120, cond==1) %>% 
   group_by(Event, size_class) %>% 
   summarise(catch=sum(count, na.rm=T)) %>% 
@@ -93,16 +88,15 @@ scal.catch %>% dplyr::select(Event, large, small,year,District,Bed,n,ai,area_nm2
   map(identity) -> scal.catch
 
 #summarize data before bootstraping to compare, call function file here
+source('./code/functions.R')
 numbers_original <- lapply(scal.catch$dat,f.sum)
 numbers_original <- as.data.frame(do.call(rbind,numbers_original)) 
 
-# catch ----
-# bootstrap
-source('./code/functions.R')
+# bootstrap ----
 numbers <- lapply(scal.catch$dat,f.it)
 numbers <- as.data.frame(do.call(rbind,numbers))
 
-# visualization and summary of results
+# figs ----
 numbers %>% filter(variable=='large') %>% 
   ggplot(aes(dbar, fill=Bed))+geom_density()+ facet_wrap(~Bed)
 
@@ -116,40 +110,23 @@ numbers %>% group_by(District,Bed,year,variable) %>%
   summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
             lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) %>% 
   group_by(Bed,variable) %>% 
-  ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+
+  ggplot(aes(Bed,N/1000000))+geom_point()+
+   geom_errorbar(aes(ymin=llN/1000000,ymax=ulN/1000000), width=0.2)+
   facet_wrap(~variable)+
   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ 
-  scale_y_continuous(labels = comma) -> fig_bedN
+   scale_y_continuous(labels = comma) +ylab("Abundance (millions)")
 
-#just large scallops
-numbers %>% group_by(District,Bed,year,variable) %>% filter(variable == "large" ) %>% 
-  summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N=mean(N), 
-            lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar=mean(dbar)) %>% 
-  group_by(Bed,variable) %>% 
-  ggplot(aes(Bed,N))+geom_point()+geom_errorbar(aes(ymin=llN,ymax=ulN), width=0.2)+
-  facet_wrap(~variable)+
-  scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ 
-  scale_y_continuous(labels = comma) -> fig_bedN_large
+ggsave("../figs/N_large.png", dpi=300, height=4.5, width=6.5, units="in")
 
-#table of results
+# tables ----
 numbers %>% group_by(Bed,year,variable) %>% 
   summarise(llN=quantile(N,0.025),ulN=quantile(N,0.975),N_b=mean(N), 
             lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar_b=mean(dbar), 
             var_dbar = 1/((n())-1)*sum((dbar-dbar_b)^2) ,
             cv=sqrt(var_dbar)/dbar_b*100 , 
             varN= 1/((n())-1)*sum((N-N_b)^2),
-            cvN=sqrt(varN)/N_b*100) -> bed_num_summary
+            cvN=sqrt(varN)/N_b*100) -> N_summary
 
+N_summary %>% filter(variable=='large') %>% dplyr::select(Bed, year, cv)
 
-### save tables and figures if needed ------------------------------------
-write_csv(numbers_original, 'output/original_numbers_NO_BOOT.csv')
-write_csv(bed_num_summary, 'output/bed_numbers_table_Ndbar.csv')
-
-#save figure for write up
-png(filename = 'figs/bed_abundance_wCI.png')
-fig_bedN
-dev.off()
-
-png(filename = 'figs/bed_N_large_wCI.png')
-fig_bedN_large
-dev.off()
+write_csv(N_summary, 'output/N_summary.csv')

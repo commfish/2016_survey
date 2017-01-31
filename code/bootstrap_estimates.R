@@ -191,13 +191,14 @@ meat.wts %>% group_by(year, District, Bed) %>%
 
 
 
-# Weight based GHL
+# Weight based GHL ** THIS IS USING A F of 0.10***
+F = 0.10
 meat.wts %>% left_join(weights_summary) %>% 
    filter(variable=='large') %>% group_by(Bed) %>% 
    summarise(ll = ratio_bar*llW,
              meat = ratio_bar*Weight,
              ul = ratio_bar*ulW,
-             GHL = meat * 0.10)
+             GHL = meat * F)
 
 
 # Numbers based GHL
@@ -210,7 +211,10 @@ awl %>% filter(species == 74120, size_class == 1, is.na(clapper),
    summarise(ll = ratio_bar*llN*mean_wt/453.592,
              meat = ratio_bar*N_b*mean_wt/453.592,
              ul = ratio_bar*ulN*mean_wt/453.592,
-             GHL = meat * 0.10)
+             GHL = meat *F)
+
+
+
 
 # figures ----
  # Numbers

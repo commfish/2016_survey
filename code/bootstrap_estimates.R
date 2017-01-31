@@ -192,7 +192,7 @@ meat.wts %>% group_by(year, District, Bed) %>%
 
 
 # Weight based GHL ** THIS IS USING A F of 0.10***
-F = 0.10
+F = 0.13
 meat.wts %>% left_join(weights_summary) %>% 
    filter(variable=='large') %>% group_by(Bed) %>% 
    summarise(ll = ratio_bar*llW,
@@ -214,7 +214,28 @@ awl %>% filter(species == 74120, size_class == 1, is.na(clapper),
              GHL = meat *F)
 
 
+# Clappers ----
+catch %>% filter(species==74120, cond==99) %>% 
+   group_by(Event) %>% summarise(weight=sum(sample_wt, na.rm=T)) -> clap.weight
 
+clap.weight <- merge(clap.weight,event, all = TRUE) # merge with events - keep NA
+clap.weight[is.na(clap.weight)] <- 0 # change NA to 0
+clap.weight %>% dplyr::select(Event, weight, year,District,Bed,n,ai,area_nm2) %>% 
+   mutate(di= weight/ai, clap_wt = weight) %>% select(-weight) %>% 
+   group_by(District,Bed,year) %>% 
+   do(dat=(.)) %>% 
+   select(dat) %>% 
+   map(identity) -> clap.weight
+
+clappers_bed <- lapply(clap.weight$dat,f.clap)
+clappers_bed <- as.data.frame(do.call(rbind,clappers_bed)) 
+clappers_bed %>% mutate(dbar_c_lb = dbar_c*2.2046, W_c_lb = W_c*2.2046) -> clappers_bed
+# convert kilograms to lbs.  
+
+#Percentage of clappers per bed.
+weights_summary %>% filter(variable == 'all') %>%  
+   right_join(clappers_bed) %>% select(District, Bed, year, n, variable, Weight,W_c_lb) %>% 
+   mutate(percent_clap = (W_c_lb/ (Weight + W_c_lb)*100))
 
 # figures ----
  # Numbers

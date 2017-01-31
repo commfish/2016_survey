@@ -213,6 +213,15 @@ awl %>% filter(species == 74120, size_class == 1, is.na(clapper),
              GHL = meat * 0.10)
 
 # figures ----
+ # Numbers
+numbers %>% filter(variable=='large') %>% 
+   ggplot(aes(dbar, fill=Bed))+geom_density()+ facet_wrap(~Bed)
+
+numbers %>% filter(variable=='large') %>% 
+   ggplot(aes(dbar, fill=Bed))+geom_density()
+
+numbers %>% filter(variable=='small') %>% 
+   ggplot(aes(N, fill=Bed))+geom_density() 
 
 N_summary %>% group_by(Bed,variable) %>%    
    ggplot(aes(Bed,N_b/1000000))+geom_point()+
@@ -223,9 +232,38 @@ N_summary %>% group_by(Bed,variable) %>%
 
 ggsave("./figs/Abundance.png", dpi=300, height=4.5, width=6.5, units="in")
 
+
+# Weights
+meat.wts %>%  
+   ggplot(aes(ratio_bar, fill=Bed))+geom_density()+ facet_wrap(~Bed)
+
+weight %>% filter(variable=='large') %>% 
+   ggplot(aes(dbar_lb, fill=Bed))+geom_density()
+
+weight %>% filter(variable=='small') %>% 
+   ggplot(aes(N_lb, fill=Bed))+geom_density() + facet_wrap(~Bed)
+
 weights_summary%>% 
    group_by(Bed,variable) %>% 
    ggplot(aes(Bed,Weight/1000000))+geom_point()+geom_errorbar(aes(ymin=llW/1000000,ymax=ulW/1000000), width=0.2)+facet_wrap(~variable)+
    scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma) +
    ylab("Round weight (million lb)") 
 
+ggsave("./figs/Weight.png", dpi=300, height=4.5, width=6.5, units="in")
+
+# Meat weight
+
+meat.wts %>% 
+   ggplot(aes(Bed,ratio_bar))+geom_point()+geom_errorbar(aes(ymin=ll,ymax=ul), width=0.2)+
+   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ 
+   ylab("Meat weight / Round weight") 
+
+ggsave("./figs/Ratio.png", dpi=300, height=4.5, width=6.5, units="in")
+
+
+
+
+# Tables ----
+write_csv(N_summary, 'output/N_summary.csv')
+write_csv(weights_summary, 'output/weights_summary.csv')
+write_csv(meat.wts, 'output/meat.wts.csv')

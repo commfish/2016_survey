@@ -44,7 +44,7 @@ event %>%  #ai is in nmi^2
    left_join(area) %>% select(-grids)-> samples
 
 # Q = 0.83
-Q <- 0.53
+Q <- 0.83
 
 # add ai column to event dataframe
 # Dredge width in nmi = 0.00131663 x length of dredging in each station x efficiency

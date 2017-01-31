@@ -116,7 +116,7 @@ numbers %>% group_by(District,Bed,year,variable) %>%
   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ 
    scale_y_continuous(labels = comma) +ylab("Abundance (millions)")
 
-ggsave("../figs/N_large.png", dpi=300, height=4.5, width=6.5, units="in")
+ggsave("./figs/Abundance.png", dpi=300, height=4.5, width=6.5, units="in")
 
 # tables ----
 numbers %>% group_by(Bed,year,variable) %>% 

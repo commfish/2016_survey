@@ -44,7 +44,7 @@ event %>%  #ai is in nmi^2
    left_join(area) %>% select(-grids)-> samples
 
 # Q = 0.83
-Q <- 0.83
+Q <- 0.53
 
 # add ai column to event dataframe
 # Dredge width in nmi = 0.00131663 x length of dredging in each station x efficiency
@@ -132,7 +132,9 @@ weights <- as.data.frame(do.call(rbind,weights))
 
 weights %>% group_by(District,Bed,year,variable) %>% 
    summarise(llW=quantile(N,0.025),ulW=quantile(N,0.975),Weight=mean(N), 
-             lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar_lb=mean(dbar)) -> weights_summary
+             lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar_lb=mean(dbar),
+             varW = 1/((n())-1)*sum((N-Weight)^2),
+             cvW=sqrt(varW)/Weight*100) -> weights_summary
 
 # meat weight ----
 as.data.frame(do.call(rbind,scal.catch$dat)) %>% filter(variable=='large') %>% 
@@ -195,7 +197,7 @@ meat.wts %>% left_join(weights_summary) %>%
    summarise(ll = ratio_bar*llW,
              meat = ratio_bar*Weight,
              ul = ratio_bar*ulW,
-             GHL = meat * 0.071)
+             GHL = meat * 0.10)
 
 
 # Numbers based GHL
@@ -208,8 +210,22 @@ awl %>% filter(species == 74120, size_class == 1, is.na(clapper),
    summarise(ll = ratio_bar*llN*mean_wt/453.592,
              meat = ratio_bar*N_b*mean_wt/453.592,
              ul = ratio_bar*ulN*mean_wt/453.592,
-             GHL = meat * 0.071)
+             GHL = meat * 0.10)
 
+# figures ----
 
+N_summary %>% group_by(Bed,variable) %>%    
+   ggplot(aes(Bed,N_b/1000000))+geom_point()+
+   geom_errorbar(aes(ymin=llN/1000000,ymax=ulN/1000000), width=0.2)+
+   facet_wrap(~variable)+
+   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ 
+   ylab("Abundance (millions)")
 
+ggsave("./figs/Abundance.png", dpi=300, height=4.5, width=6.5, units="in")
+
+weights_summary%>% 
+   group_by(Bed,variable) %>% 
+   ggplot(aes(Bed,Weight/1000000))+geom_point()+geom_errorbar(aes(ymin=llW/1000000,ymax=ulW/1000000), width=0.2)+facet_wrap(~variable)+
+   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma) +
+   ylab("Round weight (million lb)") 
 

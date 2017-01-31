@@ -98,3 +98,17 @@ f.clap <- function(x){
   out
 }
 
+
+# K-S Function ----
+ks_func <- function(x){
+   #first turn the list into a dataframe
+   #use dplyr to seperate into two groups y and z to compare
+   # output is event id and p-value
+   x = as.data.frame(x)
+   x %>% spread(m_weight, height, fill=NA) ->inter
+   inter %>% summarise(n=n()) ->n
+   ks <-ks.test(inter$ht, inter$mw)
+   p.value <- ks$p.value
+   out <- cbind(n, p.value)
+   out
+}

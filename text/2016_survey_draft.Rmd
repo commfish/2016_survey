@@ -8,8 +8,6 @@ author:
   name: Josh Mumm
 date: ''
 output:
-  word_document:
-    toc: yes
   html_document:
     toc: yes
 csl: canjfas.csl
@@ -99,10 +97,11 @@ Successful tows were performed in all five beds during either the May or July su
 
 ```{r, echo=F, message=F, warning=F}
 library(knitr)
-a <- read.csv('../output/bed_sum_table_Ndbar.csv')
 library(tidyverse)
 options(scipen=9999) # remove scientific notation
 
+
+a <- read.csv('../output/bed_sum_table_Ndbar.csv')
 a %>% filter(Bed=='WK1', variable=='all') -> wk1
 ```
   
@@ -129,74 +128,68 @@ A secondary objective of this study was to estimate natural mortality from the p
 
 ##Tables:
 ###Abundance estimates by numbers
-**Table 1:** CV of abundance for large scallops by bed, also sample size and area by bed
+**Table 1:** Coefficient of variation (CV) for abundance of large scallops by bed, also sample size and area by bed
 ``````{r, echo=F, message=F, warning=F}
-library(knitr)
 a <- read.csv('../output/bed_sum_table_Ndbar.csv')
 b <- read.csv('../output/original_numbers_NO_BOOT.csv')
-library(tidyverse)
-options(scipen=9999) # remove scientific notation
+
 b %>%
   group_by(year, Bed) %>%
-  summarise (n = mean(n), area = mean(area)) ->n_area
+  summarise (sample_size = mean(n), area = mean(area)) -> n_area
 a %>% 
   filter(variable == 'large')%>%
   mutate(dbar = round(dbar_b), cv = round(cv), N = round(N_b), cvN = round(cvN), size.class = variable) %>%
-  select(year, Bed, size.class, N, cvN) %>% 
-  left_join(n_area) %>% kable()
+   left_join(n_area) %>% 
+   select(Bed, sample_size, area, N, cvN) %>%  
+   mutate_each(funs(prettyNum(., big.mark=","))) %>% 
+   kable()
 ```
 
 **Table 2:** Estimates of abundance and density with 95% bootstrap confidence intervals
 ```{r, echo=F, message=F, warning=F}
-library(knitr)
+
 a <- read.csv('../output/bed_sum_table_Ndbar.csv')
-library(tidyverse)
-options(scipen=9999) # remove scientific notation
-a %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),dbar=round(dbar_b),dbar_UL=round(uldbar),dbar_LL=round(lldbar), size.class = variable) %>% select(Bed, size.class, N,N_UL,N_LL,dbar,dbar_UL,dbar_LL) %>% kable()
+
+a %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),dbar=round(dbar_b),dbar_UL=round(uldbar),dbar_LL=round(lldbar), size.class = variable) %>% select(Bed, size.class, N,N_UL,N_LL,dbar,dbar_UL,dbar_LL) %>%  mutate_each(funs(prettyNum(., big.mark=","))) %>%  mutate_each(funs(prettyNum(., big.mark=","))) %>%  kable()
 
 a %>% filter(Bed=='WK1', variable=='all') -> wk1
 ```
 
 **Table 3:** Estimates of round weight (lb) with 95% bootstrap confidence intervals for large scallops by bed.
 ```{r, echo=F, message=F, warning=F}
-library(knitr)
 f <- read.csv('../output/bed_weights_table_Ndbar.csv')
-library(tidyverse)
-options(scipen=9999) # remove scientific notation
-f %>% filter(variable == 'large') %>% mutate(RW=round(N_lb),RW_UL=round(ulN),RW_LL=round(llN), size.class = variable) %>% select(Bed, year, size.class, RW, RW_UL, RW_LL) %>% kable()
+f %>% filter(variable == 'large') %>% mutate(RW=round(N_lb),RW_UL=round(ulN),RW_LL=round(llN), size.class = variable) %>% select(Bed, year, size.class, RW, RW_UL, RW_LL) %>%  mutate_each(funs(prettyNum(., big.mark=","))) %>% kable()
 
 ```
 
 
-##Meat Weight with large scallops ONLY
+###Meat Weight - large scallops 
 
 **Table 4:** Meat weight (lb) by bed from individual scallops with 95% bootstrap confidence intervals using estimated numbers of large scallops per bed
 ```{r, echo=F, message=F, warning=F}
-library(knitr)
+options(digits=2)
 d <- read.csv('../output/bed_meatwt_table_Ndbar.csv')
-library(tidyverse)
-options(scipen=9999) # remove scientific notation
-d %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, N,N_UL,N_LL,weight, ratio, min_meat_wt, meat_wt, max_meat_wt, meat_0.05) %>% kable()
+
+d %>% mutate(N=round(N_b),N_UL=round(ulN),N_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, N,N_UL,N_LL,weight, ratio, min_meat_wt, meat_wt, max_meat_wt, meat_0.05) %>%  mutate_each(funs(prettyNum(., big.mark=","))) %>% kable()
 ```
 
 **Table 5:** Meat weight (lb) by bed using weights from tows NOT individual weights 
 ```{r, echo=F, message=F, warning=F}
-library(knitr)
+options(digits=2)
 e <- read.csv('../output/weights_meatwt_table.csv')
-library(tidyverse)
-options(scipen=9999) # remove scientific notation
-e %>% mutate(W_lb=round(N_lb),W_UL=round(ulN),W_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, W_lb,W_UL,W_LL,ratio, min_meat_wt, meat_wt, max_meat_wt, meat_0.05) %>% kable()
+
+e %>% mutate(W_lb=round(N_lb),W_UL=round(ulN),W_LL=round(llN),ratio =round(ratio_bar, 3), ratio_LL=round(ll, 3),ratio_UL=round(ul,3)) %>% select(Bed, W_lb,W_UL,W_LL,ratio, min_meat_wt, meat_wt, max_meat_wt, meat_0.05) %>%  mutate_each(funs(prettyNum(., big.mark=","))) %>% kable()
 ```
 
 
-##Clappers
+###Clappers
 **Table 6:** Preliminary estimates of abundance (by weight) and percent clappers by bed. 
 ```{r, echo=F, message=F, warning=F}
-library(knitr)
+options(digits=2)
+
 g <- read.csv('../output/clap_percent_wt_bed.csv')
-library(tidyverse)
-options(scipen=9999) # remove scientific notation
-g %>% mutate(W_c_lb=round(W_c_lb), percentC = round(percent_clap,2)) %>% select(Bed, year, variable, W_c_lb, percentC) %>% kable()
+
+g %>% mutate(W_c_lb=round(W_c_lb), percentC = round(percent_clap,2)) %>% select(Bed, year, variable, W_c_lb, percentC) %>%  mutate_each(funs(prettyNum(., big.mark=","))) %>% kable()
 ```
 
 

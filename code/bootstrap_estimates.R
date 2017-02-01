@@ -24,18 +24,11 @@ events %>% mutate(ID = gsub(" ", "", STATION_ID),date = as.Date(DATE_SET, format
           stime = START_TIME, speed=TOW_SPEED, maxdepth=Max_Dpth_fa, mindepth=Min_Dpth_fa, 
           elat=END_LATITUDE, elon=END_LONGITUDE, edepth=DEPTH_END_F, etime=END_TIME, 
           calc_length=TOW_LENGTH_CALC, field_length=TOW_LENGTH_FIELD,length=TOW_LENGTH_DESIGNATED,
-          performance=GEAR_PERFORMANCE_CODE_SW) %>% filter(performance==1)-> event
+          performance=GEAR_PERFORMANCE_CODE_SW, Vessel=VESSEL_NAME) %>% filter(performance==1)-> event
 
 #check for replicates - if dataframe has values there are duplicates
 event %>% group_by(Bed, ID) %>% filter(n()>1)
 
-# Catch data ----
-catch %>% select(Event = EVENT_ID, species=RACE_CODE, 
-                 size_class=SCAL_SIZE_CLASS, count=COUNT,
-                 sample_wt=SAMPLE_WT_KG, cond = CONDITION_CODE_RII, 
-                 sample_type = SAMPLE_TYPE) -> catch
-
-# Area data ----
 # join area and event dataframes
 # n = number of stations sampled by bed
 event %>%  #ai is in nmi^2
@@ -50,6 +43,13 @@ Q <- 0.83
 # Dredge width in nmi = 0.00131663 x length of dredging in each station x efficiency
 event %>% mutate(ai = length * 0.00131663 * Q) %>% left_join(samples) -> event
 
+# Catch data ----
+catch %>% select(Event = EVENT_ID, species=RACE_CODE, 
+                 size_class=SCAL_SIZE_CLASS, count=COUNT,
+                 sample_wt=SAMPLE_WT_KG, cond = CONDITION_CODE_RII, 
+                 sample_type = SAMPLE_TYPE) -> catch
+
+
 # meat weight data ----
 awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
                j = SCALLOP_NUMBER, size_class = SCAL_SIZE_CLASS,
@@ -57,11 +57,11 @@ awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
                height=SHELL_HEIGHT_MM, sex=SEX_SW, 
                gonad_cond=SCAL_GONAD_COND, blister=MUD_BLISTER_SW, 
                meat_cond=MEAT_CONDITION_SW, meat_weight = MEAT_WEIGHT_GRAMS,
-               clapper = CLAPPER, sample_type = SAMPLE_TYPE) %>% 
+               clapper = CLAPPER, sample_type = SAMPLE_TYPE) -> awl
+awl %>% 
    mutate(ratio = meat_weight/weight ) %>% 
    filter(species == 74120, size_class == 1, is.na(clapper), !is.na(ratio), 
-          Event %in% event$Event) %>% 
-   select(Event,j,ratio)-> meat_weight
+          Event %in% event$Event) -> meat_weight
 
 
 # catch ----
@@ -73,7 +73,7 @@ catch %>% filter(species==74120, cond==1) %>%
 
 catch %>% filter(species==74120, cond==1) %>% 
    group_by(Event, size_class) %>% 
-   summarise(weight=sum(sample_wt, na.rm=T)) %>% 
+   summarise(weight=sum(sample_wt*1000, na.rm=T)) %>% # change to grams 
    dcast(Event~size_class,sum, drop=TRUE) -> s.weight 
 
 names(s.catch) <- c('Event', 'large', 'small')
@@ -100,16 +100,16 @@ numbers <- lapply(scal.catch$dat,f.it)
 numbers <- as.data.frame(do.call(rbind,numbers))
 
 numbers %>% group_by(Bed,year,variable) %>% 
-   summarise(llN=quantile(N,0.025),
+   summarise(N_b=mean(N),
+             llN=quantile(N,0.025),
              ulN=quantile(N,0.975),
-             N_b=mean(N), 
+             varN = 1/((n())-1)*sum((N-N_b)^2),
+             cvN=sqrt(varN)/N_b*100,
+             dbar_b=mean(dbar), 
              lldbar=quantile(dbar,0.025),
              uldbar=quantile(dbar,0.975),
-             dbar_b=mean(dbar), 
              var_dbar = 1/((n())-1)*sum((dbar-dbar_b)^2) ,
-             cv=sqrt(var_dbar)/dbar_b*100 , 
-             varN = 1/((n())-1)*sum((N-N_b)^2),
-             cvN=sqrt(varN)/N_b*100) -> N_summary
+             cv=sqrt(var_dbar)/dbar_b*100) -> N_summary
 
 # weights ----
 scal.weight <- merge(s.weight,event, all = TRUE) # merge with events - keep NA
@@ -129,51 +129,50 @@ weights_original <- as.data.frame(do.call(rbind,weights_original))
 # bootstrap weight----
 weights <- lapply(scal.weight$dat,f.it)
 weights <- as.data.frame(do.call(rbind,weights))
+weights %>% mutate(W=N*0.00220462) -> weights # change to pounds
 
 weights %>% group_by(District,Bed,year,variable) %>% 
-   summarise(llW=quantile(N,0.025),ulW=quantile(N,0.975),Weight=mean(N), 
+   summarise(llW=quantile(W,0.025),ulW=quantile(W,0.975),Weight=mean(W), 
              lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar_lb=mean(dbar),
-             varW = 1/((n())-1)*sum((N-Weight)^2),
+             varW = 1/((n())-1)*sum((W-Weight)^2),
              cvW=sqrt(varW)/Weight*100) -> weights_summary
 
 # meat weight ----
 as.data.frame(do.call(rbind,scal.catch$dat)) %>% filter(variable=='large') %>% 
    left_join(meat_weight) %>% filter(ratio>0)-> meat.wts
 
-#awl 10 represenative of 40? ------------
-awl %>% select(Event = EVENT_ID,  species=RACE_CODE,
-               j = SCALLOP_NUMBER, size_class = SCAL_SIZE_CLASS,
-               weight=WHOLE_WT_GRAMS, worm=SHELL_WORM_SW, 
-               height=SHELL_HEIGHT_MM, meat_weight = MEAT_WEIGHT_GRAMS,
-               clapper = CLAPPER, sample_type = SAMPLE_TYPE)  -> awl
-awl %>% 
-   filter(species == 74120, size_class == 1, is.na(clapper), !is.na(height), 
-          Event %in% event$Event ) %>% mutate(m_weight = ifelse(!is.na(weight), "mw", 'ht'))%>%
-   select(Event, j, height, weight, meat_weight, m_weight) -> meat_weight2
+# #K-S test ----
+# Comparing distribution between meat weight sample and height sample
+# #10 meat weight samples represenative of 40 shell heights?
+# awl %>% 
+# 	filter(species == 74120, size_class == 1, is.na(clapper), !is.na(height), 
+# 			 Event %in% event$Event ) %>% mutate(m_weight = ifelse(!is.na(weight), "mw", 'ht'))%>%
+# 	select(Event, j, height, weight, meat_weight, m_weight) -> meat_weight2
+# 
+# #sample size for each event - n
+# meat_weight2 %>% group_by(Event) %>% 
+# 	mutate(maxj = max(j), n = n()) %>% 
+# 	select(Event, maxj,n) %>% 
+# 	group_by(Event) %>% 
+# 	summarise(n =mean(n)) %>% # only include Event if n is > 11
+# 	filter(n >11) -> ssize # Events with large enough samples sizes for kstest
+# 
+# # for each event does m_weight group 1 represent heights in m_weight group 2 ?
+# meat_weight2 %>% filter(Event %in% ssize$Event) %>%  
+# 	group_by(Event) %>% do(dat=(.)) %>% select(dat) %>% map(identity) -> meat_weight3 # list for each event
+# #need to filter for those events that don't have both...
 
-#sample size for each event - n
-meat_weight2 %>% group_by(Event) %>% mutate(maxj = max(j), n = n()) %>% select(Event, maxj,n) %>% 
-            # only include Event is n is > 11
-   group_by(Event) %>% summarise(n =mean(n)) %>% 
-   filter(n >11) -> ssize # Events with large enough samples sizes for kstest
-
-# for each event does m_weight group 1 represent heights in m_weight group 2 ?
-meat_weight2 %>% filter(Event %in% ssize$Event) %>%  
-   group_by(Event) %>% do(dat=(.)) %>% select(dat) %>% map(identity) -> meat_weight3 # list for each event
-#need to filter for those events that don't have both...
-
-#K-S test ----
-ks_height <- do.call(rbind, lapply(meat_weight3$dat[1:39], ks_func))
-ks_height2 <- do.call(rbind, lapply(meat_weight3$dat[41:61], ks_func))
-# Issue is with duplicate j values.  need individual value to compute.  so far only an issue with 
-# list 40.  test other lists.  if this is the case just remove 40.
-#problematic lists: 40
-ks_height %>% 
-   bind_rows(ks_height2) -> ks.height_all
-
-mean(ks.height_all$p.value)
-ks.height_all %>% 
-   filter(p.value <= 0.05)
+# ks_height <- do.call(rbind, lapply(meat_weight3$dat[1:39], ks_func))
+# ks_height2 <- do.call(rbind, lapply(meat_weight3$dat[41:61], ks_func))
+# # Issue is with duplicate j values.  need individual value to compute.  so far only an issue with 
+# # list 40.  test other lists.  if this is the case just remove 40.
+# #problematic lists: 40
+# ks_height %>% 
+#    bind_rows(ks_height2) -> ks.height_all
+# 
+# mean(ks.height_all$p.value)
+# ks.height_all %>% 
+#    filter(p.value <= 0.05)
 
 # meat weight bootstrap ----
 #turn meat weights into list for analysis
@@ -189,18 +188,6 @@ meat.wts %>% group_by(year, District, Bed) %>%
    summarise(ratio_bar = mean(ratio), ll = quantile(ratio, .025), 
              ul = quantile(ratio, .975)) -> meat.wts
 
-
-
-# Weight based GHL ** THIS IS USING A F of 0.10***
-F = 0.13
-meat.wts %>% left_join(weights_summary) %>% 
-   filter(variable=='large') %>% group_by(Bed) %>% 
-   summarise(ll = ratio_bar*llW,
-             meat = ratio_bar*Weight,
-             ul = ratio_bar*ulW,
-             GHL = meat * F)
-
-
 # Numbers based GHL
 awl %>% filter(species == 74120, size_class == 1, is.na(clapper), 
                Event %in% event$Event) %>% group_by(Event) %>% 
@@ -211,7 +198,28 @@ awl %>% filter(species == 74120, size_class == 1, is.na(clapper),
    summarise(ll = ratio_bar*llN*mean_wt/453.592,
              meat = ratio_bar*N_b*mean_wt/453.592,
              ul = ratio_bar*ulN*mean_wt/453.592,
-             GHL = meat *F)
+             GHL.05 = meat * .05,
+             lowGHL.05 = ll * .05,
+             highGHL.05 = ul * .05,
+             GHL.10 = meat * .10,
+             lowGHL.10 = ll * .10,
+             highGHL.10 = ul * .10) -> number_GHL
+
+# Weight based GHL 
+meat.wts %>% left_join(weights_summary) %>% 
+   filter(variable=='large') %>% group_by(Bed) %>% 
+   summarise(ll = ratio_bar*llW,
+             meat = ratio_bar*Weight,
+             ul = ratio_bar*ulW,
+             GHL.05 = meat * .05,
+             lowGHL.05 = ll * .05,
+             highGHL.05 = ul * .05,
+             GHL.10 = meat * .10,
+             lowGHL.10 = ll * .10,
+             highGHL.10 = ul * .10) -> weight_GHL
+
+
+
 
 
 # Clappers ----
@@ -238,7 +246,7 @@ weights_summary %>% filter(variable == 'all') %>%
    mutate(percent_clap = (W_c_lb/ (Weight + W_c_lb)*100))
 
 # figures ----
- # Numbers
+# Numbers
 numbers %>% filter(variable=='large') %>% 
    ggplot(aes(dbar, fill=Bed))+geom_density()+ facet_wrap(~Bed)
 
@@ -289,6 +297,10 @@ ggsave("./figs/Ratio.png", dpi=300, height=4.5, width=6.5, units="in")
 
 
 # Tables ----
+write_csv(numbers_original, 'output/numbers_original.csv')
 write_csv(N_summary, 'output/N_summary.csv')
 write_csv(weights_summary, 'output/weights_summary.csv')
 write_csv(meat.wts, 'output/meat.wts.csv')
+write_csv(weight_GHL, 'output/weight_GHL.csv')
+write_csv(number_GHL, 'output/number_GHL.csv')
+

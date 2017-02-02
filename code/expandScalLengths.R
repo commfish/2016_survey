@@ -142,7 +142,7 @@ for (i in beds) {
 #set the levels for plotting
 dat <- within(dat, Bed <- factor(Bed, levels = c('EK1','WK1','KSH1','KSH2','KSH3')))
 
-ggplot(dat, aes(sh))+geom_histogram(fill=4, alpha=.2, color=1, bins=75)+facet_wrap(~Bed, ncol=1,scale='free')+
+ggplot(dat, aes(sh))+geom_histogram(fill=4, alpha=.2, color=1, bins=75)+facet_wrap(~Bed, ncol=1,scale='free_y')+
    xlab('Shell height (mm)')+ylab('Number') + theme(strip.background = element_blank())
 
 ggsave("./figs/Heights.png", dpi=300, height=8.5, width=6.5, units="in")

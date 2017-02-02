@@ -15,16 +15,24 @@ awl <- read.csv('./data/awl_2016_161027.csv')
 event <- read.csv('./data/events_2016_161027.csv')
 cc <- read.csv('./data/catchComp_2016_161027.csv')
 
-awl %>% filter (RACE_CODE==74120 & is.na(CLAPPER)) %>% select(Event = EVENT_ID, sc=SCAL_SIZE_CLASS, sh=SHELL_HEIGHT_MM) -> awl  
-event %>% filter (GEAR_PERFORMANCE_CODE_SW == 1) %>% select(Event = EVENT_ID, Bed = BED_SW) -> event
-cc %>% filter (RACE_CODE==74120 & CONDITION_CODE_RII == 1) %>% select(Event = EVENT_ID, sc = SCAL_SIZE_CLASS, cnt = COUNT) -> cc
+awl %>% filter (RACE_CODE==74120 & is.na(CLAPPER)) %>%
+   select(Event = EVENT_ID, sc=SCAL_SIZE_CLASS, sh=SHELL_HEIGHT_MM) -> awl
+event %>%
+   filter (GEAR_PERFORMANCE_CODE_SW == 1) %>%
+   select(Event = EVENT_ID, Bed = BED_SW) -> event
+cc %>%
+   filter (RACE_CODE==74120 & CONDITION_CODE_RII == 1) %>%
+   select(Event = EVENT_ID, sc = SCAL_SIZE_CLASS, cnt = COUNT) -> cc
 
 #join bed from events to awl and cc
 awl <- merge(awl, event, by = "Event", all.x = T) 
 cc  <- merge(cc, event, by = "Event", all.x = T)
 
 # total caught by size class for each event 
-cc %>% group_by(Event,Bed,sc) %>% summarise (tot = sum(cnt)) -> tot 
+cc %>% 
+   group_by(Event,Bed,sc) %>% 
+   summarise (tot = sum(cnt)) -> tot 
+
 tot_w <- dcast(tot, Event + Bed ~ sc, value.var = "tot", fill = 0)     # cast tot from long to wide
 names(tot_w)[3:4] <- c('L', 'S')
 
@@ -131,3 +139,10 @@ for (i in beds) {
 # This is what i'd expect if the sampled ratio was less for smalls than larges. 
 # and also expanded hists aren't as "smooth". Sampling artifacts get exagerated.
 
+#set the levels for plotting
+dat <- within(dat, Bed <- factor(Bed, levels = c('EK1','WK1','KSH1','KSH2','KSH3')))
+
+ggplot(dat, aes(sh))+geom_histogram(fill=4, alpha=.2, color=1, bins=75)+facet_wrap(~Bed, ncol=1,scale='free')+
+   xlab('Shell height (mm)')+ylab('Number') + theme(strip.background = element_blank())
+
+ggsave("./figs/Heights.png", dpi=300, height=8.5, width=6.5, units="in")

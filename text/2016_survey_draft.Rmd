@@ -8,6 +8,8 @@ author:
   name: Josh Mumm
 date: ''
 output:
+  word_document:
+    toc: yes
   pdf_document:
     keep_tex: yes
     toc: yes
@@ -298,3 +300,5 @@ Something something
 ![Abundance of LARGE scallops with 95% bootstrap confidence intervals.](../figs/Weight.png)
 
 ![Scallop shell height histograms by bed. Sampled shell heights have been expanded to the number sampled. Note the differing y-axis.](../figs/Heights.png)
+
+![Scallop shell height histograms by bed for clappers (empty shells).](../figs/Clappers.png)

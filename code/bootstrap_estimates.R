@@ -71,6 +71,9 @@ catch %>% filter(species==74120, cond==1) %>%
    summarise(catch=sum(count, na.rm=T)) %>% 
    dcast(Event~size_class,sum, drop=TRUE) -> s.catch 
 
+# write s.catch to .csv for use in shell height allocations 
+write_csv(s.catch, 'output/s.catch.csv')
+
 catch %>% filter(species==74120, cond==1) %>% 
    group_by(Event, size_class) %>% 
    summarise(weight=sum(sample_wt*1000, na.rm=T)) %>% # change to grams 

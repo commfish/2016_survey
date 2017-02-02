@@ -121,19 +121,19 @@ nrow(dat)
 sum(tot_w[,c("L","S")])
 # hmmm 23 more in expanded than on total. Presumably due to rounding issue or similar(?). 
 
-#### compare histograms of awl to dat (combined measured + expanded)
-library (lattice) 
-par(mfcol = c(2,1))
-# all 
-  hist (~ sh , data = awl, breaks = seq(0,200,1), main  = c("measured", "all beds"), freq = T, col = 'red' )   
-  hist (~ sh , data = dat, breaks = seq(0,200,1), main  = c("expanded", "all beds"), freq = T, col = 'blue')
-
-#by Bed
-beds <- (sort(unique(dat$Bed)))
-for (i in beds) {
-  hist (~ sh , data = subset(awl, Bed == i), breaks = seq(0,200,1), main  = c("measured", i), freq = T, col = 'red' )   
-  hist (~ sh , data = subset(dat, Bed == i), breaks = seq(0,200,1), main  = c("expanded", i), freq = T, col = 'blue')
-}
+# #### compare histograms of awl to dat (combined measured + expanded)
+# library (lattice) 
+# par(mfcol = c(2,1))
+# # all 
+#   hist (~ sh , data = awl, breaks = seq(0,200,1), main  = c("measured", "all beds"), freq = T, col = 'red' )   
+#   hist (~ sh , data = dat, breaks = seq(0,200,1), main  = c("expanded", "all beds"), freq = T, col = 'blue')
+# 
+# #by Bed
+# beds <- (sort(unique(dat$Bed)))
+# for (i in beds) {
+#   hist (~ sh , data = subset(awl, Bed == i), breaks = seq(0,200,1), main  = c("measured", i), freq = T, col = 'red' )   
+#   hist (~ sh , data = subset(dat, Bed == i), breaks = seq(0,200,1), main  = c("expanded", i), freq = T, col = 'blue')
+# }
 
 # seems reasonable.  Appear to be a few more expanded smalls in WK1 than measured 
 # This is what i'd expect if the sampled ratio was less for smalls than larges. 

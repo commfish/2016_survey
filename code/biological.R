@@ -36,6 +36,7 @@ awl %>% select(Event = EVENT_ID, species=RACE_CODE, weight=WHOLE_WT_GRAMS,
                sample_type = SAMPLE_TYPE, meat_wt = MEAT_WEIGHT_GRAMS) %>%
   filter (Event %in% event$Event) -> awl
 
+
 # height ----
 #height/weight relationship
 awl %>% left_join(event) %>% filter(Bed=='KSH1') %>% 
@@ -63,6 +64,7 @@ worm <- table(bio$worm, bio$Bed)
 gonad <- table(bio$gonad_cond, bio$Bed) 
 blist <- table(bio$blister, bio$Bed) 
 weak <- table(bio$meat_cond, bio$Bed) 
+clap <- table(bio$clapper, bio$Bed) 
 
 # prop tables 
 worm.p <- round(prop.table(worm, 2) * 100, 2) 
@@ -94,22 +96,31 @@ write_csv(gonad.pn,'./output/gonad.csv')
 write_csv(blist.pn,'./output/blist.csv')
 write_csv(weak.pn,'./output/weak.csv')
 
-# cumbersome code to limit number of digits row-wise. Bottom row is n, others are %. 
-worm.dig <- matrix  (c(rep(2,nrow(worm.pn) - 1),0),  nrow=nrow(worm.pn),  ncol=ncol(worm.pn) + 1) 
-gonad.dig <- matrix (c(rep(2,nrow(gonad.pn) - 1),0), nrow=nrow(gonad.pn), ncol=ncol(gonad.pn) + 1) 
-blist.dig <- matrix (c(rep(2,nrow(blist.pn) - 1),0), nrow=nrow(blist.pn), ncol=ncol(blist.pn) + 1) 
-weak.dig <- matrix  (c(rep(2,nrow(weak.pn) - 1),0),  nrow=nrow(weak.pn),  ncol=ncol(weak.pn) + 1) 
 
-# html tables. Insert this to rmd. Latex tables look better but not supported by word.
-print(xtable(worm.pn,digits=worm.dig), type = 'html')
-print(xtable(gonad.pn,digits=gonad.dig), type = 'html')
-print(xtable(blist.pn,digits=blist.dig), type = 'html')
-print(xtable(weak.pn,digits=weak.dig), type = 'html')  
 
-# kable tables, as preview. but kable doesn't preserve digit formating.
-kable(xtable(worm.pn,digits=worm.dig))  
-kable(xtable(gonad.pn,digits=gonad.dig)) 
-kable(xtable(blist.pn,digits=blist.dig)) 
-kable(xtable(weak.pn,digits=weak.dig))   
+awl %>% filter(species == 74120, !is.na(clapper)) %>% 
+   left_join(event) %>% 
+   ggplot(aes(height))+geom_histogram(fill=4, alpha=.2, color=1,bins=50)+facet_wrap(~Bed, ncol=1,scale='free_y')+
+   xlab('Shell height (mm)')+ylab('Number') + theme(strip.background = element_blank())
 
-options(scipen = 0)
+ggsave("./figs/Clappers.png", dpi=300, height=8.5, width=6.5, units="in")
+
+# # cumbersome code to limit number of digits row-wise. Bottom row is n, others are %. 
+# worm.dig <- matrix  (c(rep(2,nrow(worm.pn) - 1),0),  nrow=nrow(worm.pn),  ncol=ncol(worm.pn) + 1) 
+# gonad.dig <- matrix (c(rep(2,nrow(gonad.pn) - 1),0), nrow=nrow(gonad.pn), ncol=ncol(gonad.pn) + 1) 
+# blist.dig <- matrix (c(rep(2,nrow(blist.pn) - 1),0), nrow=nrow(blist.pn), ncol=ncol(blist.pn) + 1) 
+# weak.dig <- matrix  (c(rep(2,nrow(weak.pn) - 1),0),  nrow=nrow(weak.pn),  ncol=ncol(weak.pn) + 1) 
+# 
+# # html tables. Insert this to rmd. Latex tables look better but not supported by word.
+# print(xtable(worm.pn,digits=worm.dig), type = 'html')
+# print(xtable(gonad.pn,digits=gonad.dig), type = 'html')
+# print(xtable(blist.pn,digits=blist.dig), type = 'html')
+# print(xtable(weak.pn,digits=weak.dig), type = 'html')  
+# 
+# # kable tables, as preview. but kable doesn't preserve digit formating.
+# kable(xtable(worm.pn,digits=worm.dig))  
+# kable(xtable(gonad.pn,digits=gonad.dig)) 
+# kable(xtable(blist.pn,digits=blist.dig)) 
+# kable(xtable(weak.pn,digits=weak.dig))   
+# 
+# options(scipen = 0)

@@ -91,6 +91,8 @@ Confidence intervals for the meat weight (lb) estimates were calculated from the
 
 A Guideline harvest level (GHL) was calculated based upon 5% and 10% pooulation exploitation levels.
 
+Graphical representations of biological data are presented for evaluation.
+
 *The abundance (by weight) of empty shells, aka clappers, per bed was calculated using the same procedure as live scallops. The clapper abundance by bed was then used to estimate the percentage of clappers by bed. This value may be helpful to understand natural mortality in each survey area.*
 
 #RESULTS  
@@ -117,7 +119,7 @@ library(knitr)
 library(tidyverse)
 options(scipen=9999) # remove scientific notation
 
-
+knitr::opts_chunk$set(echo = FALSE, message=F, warning=F)
 a <- read.csv('../output/N_summary.csv')
 a %>% filter(Bed=='WK1', variable=='all') -> wk1
 ```
@@ -241,13 +243,39 @@ a %>%
 
 ```
 
+```{r}
+worm <- read_csv('../output/worm.csv')
+
+kable(worm, caption='Worms!')
+```
+
+```{r}
+gonad <- read_csv('../output/gonad.csv')
+
+kable(gonad, caption='Gonads!')
+```
+
+```{r}
+blist <- read_csv('../output/blist.csv')
+
+kable(blist, caption='Blisters!')
+```
+
+```{r}
+weak <- read_csv('../output/weak.csv')
+
+kable(weak, caption='Weak meats!')
+```
+
+
+
 #FIGURES
 
 
 
 ###Clappers
 **Table 6:** Preliminary estimates of abundance (by weight) and percent clappers by bed. 
-```{r, echo=F, message=F, warning=F}
+```{r}
 # options(digits=2)
 # 
 # g <- read.csv('../output/clap_percent_wt_bed.csv')
@@ -269,3 +297,4 @@ Something something
 
 ![Abundance of LARGE scallops with 95% bootstrap confidence intervals.](../figs/Weight.png)
 
+![Scallop shell height histograms by bed. Sampled shell heights have been expanded to the number sampled. Note the differing y-axis.](../figs/Heights.png)

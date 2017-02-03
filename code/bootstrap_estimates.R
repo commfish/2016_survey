@@ -87,7 +87,7 @@ names(s.weight) <- c('Event', 'large', 'small')
 event %>% dplyr::select(Event, Bed) %>% left_join(s.catch) %>% 
    filter(complete.cases(.)) %>% 
    group_by(Bed) %>% 
-   summarise(large.c=sum(large), small.c = sum(small)) -> catch.table
+   summarise(large.c=sum(large), small.c = sum(small), min.l=min(large), max.l=max(large), min.s=min(small), max.s=max(small)) -> catch.table
 
 event %>% dplyr::select(Event, Bed) %>% left_join(s.weight) %>% 
    filter(complete.cases(.)) %>% 
@@ -312,6 +312,7 @@ ggsave("./figs/Ratio.png", dpi=300, height=4.5, width=6.5, units="in")
 
 
 # Tables ----
+write_csv(samples, 'output/samples.csv')
 write_csv(catch.table, 'output/catch.table.csv')
 write_csv(numbers_original, 'output/numbers_original.csv')
 write_csv(N_summary, 'output/N_summary.csv')

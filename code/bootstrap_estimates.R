@@ -82,6 +82,21 @@ catch %>% filter(species==74120, cond==1) %>%
 names(s.catch) <- c('Event', 'large', 'small')
 names(s.weight) <- c('Event', 'large', 'small')
 
+
+# Tables for report of raw catch and weight numbers
+event %>% dplyr::select(Event, Bed) %>% left_join(s.catch) %>% 
+   filter(complete.cases(.)) %>% 
+   group_by(Bed) %>% 
+   summarise(large.c=sum(large), small.c = sum(small)) -> catch.table
+
+event %>% dplyr::select(Event, Bed) %>% left_join(s.weight) %>% 
+   filter(complete.cases(.)) %>% 
+   group_by(Bed) %>% 
+   summarise(large.lb=sum(large*0.00220462), small.lb = sum(small*0.00220462),
+             large.kg=sum(large/1000), small.kg=sum(small/1000)) %>% 
+   left_join(catch.table) -> catch.table
+
+
 # Abundance ----
 # numbers ----
 scal.catch <- merge(s.catch,event, all = TRUE) # merge with events - keep NA
@@ -222,9 +237,6 @@ meat.wts %>% left_join(weights_summary) %>%
              highGHL.10 = ul * .10) -> weight_GHL
 
 
-
-
-
 # Clappers ----
 catch %>% filter(species==74120, cond==99) %>% 
    group_by(Event) %>% summarise(weight=sum(sample_wt, na.rm=T)) -> clap.weight
@@ -300,6 +312,7 @@ ggsave("./figs/Ratio.png", dpi=300, height=4.5, width=6.5, units="in")
 
 
 # Tables ----
+write_csv(catch.table, 'output/catch.table.csv')
 write_csv(numbers_original, 'output/numbers_original.csv')
 write_csv(N_summary, 'output/N_summary.csv')
 write_csv(weights_summary, 'output/weights_summary.csv')

@@ -238,12 +238,12 @@ meat.wts %>% left_join(weights_summary) %>%
 
 
 # Clappers ----
-catch %>% filter(species==74120, cond==99) %>% 
-   group_by(Event) %>% summarise(weight=sum(sample_wt, na.rm=T)) -> clap.weight
+catch %>% filter(species==74120, cond==52) %>% 
+   group_by(Event) %>% summarise(count = sum(count, na.rm =T), weight=sum(sample_wt, na.rm=T)) -> clappers
 
-clap.weight <- merge(clap.weight,event, all = TRUE) # merge with events - keep NA
-clap.weight[is.na(clap.weight)] <- 0 # change NA to 0
-clap.weight %>% dplyr::select(Event, weight, year,District,Bed,n,ai,area_nm2) %>% 
+clappers <- merge(clappers,event, all = TRUE) # merge with events - keep NA
+clappers[is.na(clappers)] <- 0 # change NA to 0
+clappers %>% dplyr::select(Event, weight, year,District,Bed,n,ai,area_nm2) %>% 
    mutate(di= weight/ai, clap_wt = weight) %>% select(-weight) %>% 
    group_by(District,Bed,year) %>% 
    do(dat=(.)) %>% 

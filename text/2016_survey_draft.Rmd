@@ -215,7 +215,7 @@ Amendment 6 of the scallop Fishery Management Plan (FMP) established an overfish
 a <- read.csv('../output/N_summary.csv')
 b <- read.csv('../output/numbers_original.csv')
 
-column_names = c('Bed', 'Area', 'Sample', 'N', 'CV')
+column_names = c('Bed', 'Area (nmi)', 'Sample', 'N (numbers)', 'CV')
 b %>%
   group_by(year, Bed) %>%
   summarise (sample_size = mean(n), area = mean(area)) %>% 

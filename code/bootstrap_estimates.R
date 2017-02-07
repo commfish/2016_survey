@@ -130,7 +130,7 @@ numbers %>% group_by(Bed,year,variable) %>%
              cv=sqrt(var_dbar)/dbar_b*100) -> N_summary
 
 # weights ----
-scal.weight <- merge(s.weight,event, all = TRUE) # merge with events - keep NA
+scal.weight <- merge(s.weight,event, all = TRUE) # merge with events - keep NA, weight is in grams here
 scal.weight[is.na(scal.weight)] <- 0 # change NA to 0
 scal.weight %>% dplyr::select(Event, large, small,year,District,Bed,n,ai,area_nm2) %>% 
    mutate(all = large+small) %>% 
@@ -147,11 +147,11 @@ weights_original <- as.data.frame(do.call(rbind,weights_original))
 # bootstrap weight----
 weights <- lapply(scal.weight$dat,f.it)
 weights <- as.data.frame(do.call(rbind,weights))
-weights %>% mutate(W=N*0.00220462) -> weights # change to pounds
+weights %>% mutate(W=N*0.00220462, dbar_lb = dbar*0.00220462) -> weights # change to pounds
 
 weights %>% group_by(District,Bed,year,variable) %>% 
    summarise(llW=quantile(W,0.025),ulW=quantile(W,0.975),Weight=mean(W), 
-             lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar_lb=mean(dbar),
+             lldbar=quantile(dbar_lb,0.025),uldbar=quantile(dbar_lb,0.975),dbar_lb=mean(dbar_lb),
              varW = 1/((n())-1)*sum((W-Weight)^2),
              cvW=sqrt(varW)/Weight*100) -> weights_summary
 
@@ -250,13 +250,13 @@ clappers %>% dplyr::select(Event, count, weight, year,District,Bed,n,ai,area_nm2
    select(dat) %>% 
    map(identity) -> clap.count.weight
 
-clappers_bed <- lapply(clap.weight$dat,f.clap)
+clappers_bed <- lapply(clap.count.weight$dat,f.clap)
 clappers_bed <- as.data.frame(do.call(rbind,clappers_bed)) 
-clappers_bed %>% mutate(dbar_c_lb = dbar_c*2.2046, W_c_lb = W_c*2.2046) -> clappers_bed
+clappers_bed %>% mutate(dbar_wt_lb = dbar_wt*2.2046, Wt_c_lb = Wt_c*2.2046) -> clappers_bed
 # convert kilograms to lbs.  
 
 #Percentage of clappers per bed.
-weights_summary %>% filter(variable == 'all') %>%  
+weights_summary %>% filter(variable == 'large') %>%  
    right_join(clappers_bed) %>% select(District, Bed, year, n, variable, Weight,W_c_lb) %>% 
    mutate(percent_clap = (W_c_lb/ (Weight + W_c_lb)*100))
 

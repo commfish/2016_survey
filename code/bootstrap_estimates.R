@@ -243,12 +243,12 @@ catch %>% filter(species==74120, cond==52) %>%
 
 clappers <- merge(clappers,event, all = TRUE) # merge with events - keep NA
 clappers[is.na(clappers)] <- 0 # change NA to 0
-clappers %>% dplyr::select(Event, weight, year,District,Bed,n,ai,area_nm2) %>% 
-   mutate(di= weight/ai, clap_wt = weight) %>% select(-weight) %>% 
+clappers %>% dplyr::select(Event, count, weight, year,District,Bed,n,ai,area_nm2) %>% 
+   mutate(di = count/ai, di_wt= weight/ai, clap_wt = weight) %>% 
    group_by(District,Bed,year) %>% 
    do(dat=(.)) %>% 
    select(dat) %>% 
-   map(identity) -> clap.weight
+   map(identity) -> clap.count.weight
 
 clappers_bed <- lapply(clap.weight$dat,f.clap)
 clappers_bed <- as.data.frame(do.call(rbind,clappers_bed)) 

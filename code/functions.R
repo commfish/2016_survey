@@ -92,9 +92,16 @@ f.clap <- function(x){
               var_dbar_c=1/((n)-1)*sum((di-dbar_c)^2) ,
               cv=sqrt(var_dbar_c)/dbar_c*100,
               ss=sum((di-dbar_c)^2),
-              W_c=area*dbar_c,
-              varW_c=(area^2)*1/n*1/(n-1)*ss,
-              cvW_c=sqrt(varW_c)/W_c*100) -> out
+              N_c=area*dbar_c,
+              varN_c = (area^2)*1/n*1/(n-1)*ss,
+              cvN_c = sqrt(varN_c)/N_c*100, 
+              dbar_wt = (1/n*sum(di_wt)) ,
+              var_dbar_wt=1/((n)-1)*sum((di_wt-dbar_wt)^2) ,
+              cv_wt=sqrt(var_dbar_wt)/dbar_wt*100 ,
+              ss_wt=sum((di_wt-dbar_wt)^2) ,
+              Wt_c=area*dbar_wt ,
+              varWt_c=(area^2)*1/n*1/(n-1)*ss_wt ,
+              cvWt_c=sqrt(varWt_c)/Wt_c*100) -> out
   out
 }
 

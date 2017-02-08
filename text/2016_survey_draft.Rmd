@@ -60,17 +60,11 @@ The Kodiak Shelikof study area...
 
 # METHODS  
 
-## VESSELS AND GEAR
+## DREDGE SURVEY
 
-## SURVEY DESIGN
+Survey design and implementation, as well as sample collection procedures are detailed in the statewide scallop survey operational plan [@Smith2016].  
 
-Survey design and implementation procedures are detailed in the statewide scallop survey operational plan [@Smith2016].  Sample collection is also detailed there. 
-
-## DATA COLLECTION
-
-Someone that collected data should fill this in.
-
-## DATA ANALYSIS
+## STOCK ASSESSMENT AND QUOTA CALCULATIONS 
 Scallop samples were analyzed for each survey area (bed) and categorized by size-class, large ($\geq$ 100 mm) and small (< 100 mm). Scallop abundance estimations were based upon area-swept calculations. The scallop density $d_i$ was calculated as:
 
 $$d_i=\frac{c_i}{a_i},$$  
@@ -113,7 +107,7 @@ MW_1 = \hat{N}\bar r\bar {RW}
 $$
 The second meat weight estimation method applied the $\bar r$ to the estimated round weight $\hat{RW}$(lb) of large scallops by bed. The round weight of large scallops by bed was calculated using the average density of scallop round weight by bed multipled by the area of each bed (see above, Table 3):
 $$
-MW_2 = \hat{RW}\bar r\
+MW_2 = \hat{RW}\bar r
 $$
 Projection intervals for the meat weight (lb) estimates were calculated from the nonparametric bootstraps performed for the abundance estimates (both $\hat{N}$ and $\hat{RW}$) and the mean ratio $\bar r$.  
 
@@ -336,9 +330,9 @@ kable(weak, caption='Observed scallop meat condition, an indication of "weak mea
 ```{r}
 # options(digits=2)
 # 
-# g <- read.csv('../output/clap_percent_wt_bed.csv')
+# g <- read.csv('../output/clapper.summary.csv')
 # 
-# g %>% mutate(W_c_lb=round(W_c_lb), percentC = round(percent_clap,2)) %>% select(Bed, year, variable, W_c_lb, percentC) %>%  mutate_each(funs(prettyNum(., big.mark=","))) %>% kable()
+# g %>% mutate_each(funs(prettyNum(., big.mark=","))) %>% kable()
 ```
 
 

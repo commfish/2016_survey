@@ -266,7 +266,7 @@ N_summary %>% filter(variable == 'large') %>% select (- cv) %>%
   mutate(percent_clap = (N_c/ (N_b + N_c)*100)) -> clap.numb.percent
 
 clap.numb.percent %>% right_join(clap.weight.percent) %>% 
-  select(Bed, year, n, percent_clap, percent_clap_wt)
+  select(Bed, year, n, percent_clap, percent_clap_wt) -> clapper.summary
 
 # figures ----
 # Numbers
@@ -328,4 +328,5 @@ write_csv(weights_summary, 'output/weights_summary.csv')
 write_csv(meat.wts, 'output/meat.wts.csv')
 write_csv(weight_GHL, 'output/weight_GHL.csv')
 write_csv(number_GHL, 'output/number_GHL.csv')
+write_csv(clapper.summary, 'output/clapper.summary.csv')
 

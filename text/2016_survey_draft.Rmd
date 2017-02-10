@@ -328,11 +328,11 @@ kable(weak, caption='Observed scallop meat condition, an indication of "weak mea
 ###Clappers
 **Table 6:** Preliminary estimates of abundance (by weight) and percent clappers by bed. 
 ```{r}
-# options(digits=2)
-# 
-# g <- read.csv('../output/clapper.summary.csv')
-# 
-# g %>% mutate_each(funs(prettyNum(., big.mark=","))) %>% kable()
+options(digits=2)
+ 
+g <- read.csv('../output/clapper.summary.csv')
+ 
+g %>% kable()
 ```
 
 

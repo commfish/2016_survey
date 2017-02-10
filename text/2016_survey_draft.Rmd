@@ -304,7 +304,7 @@ kable(worm, caption='The percent of shells with evidence of boring worms by bed.
 ```{r}
 gonad <- read_csv('../output/gonad.csv')
 
-kable(gonad, caption='Gonad developement stage of scallops by bed.')
+kable(gonad, caption='Gonad developement stage of scallops by bed and month.')
 ```
 
 ```{r}

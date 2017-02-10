@@ -57,11 +57,12 @@ awl %>% left_join(event) %>% filter(Bed=='KSH1', sex!='NA') %>%
 
 # OTHER SCAL BIOLOGICAL DATA TABLES ----
 
-awl %>% filter(species == 74120, is.na(clapper)) %>% left_join (event) -> bio # not adding events with no scals
+awl %>% filter(species == 74120, is.na(clapper)) %>% left_join (event) -> bio # join event for Bed and Month
+bio$BedMonth <- paste(bio$Bed,months(bio$date)) # add BedMonth var for gonad table
 
 # freq table for each variable by bed. 
 worm <- table(bio$worm, bio$Bed) 
-gonad <- table(bio$gonad_cond, bio$Bed) 
+gonad <- table(bio[bio$gonad_cond %in% c(1,2,3,4), c("gonad_cond","BedMonth")]) # exclude 0's (immature) and 5's (cannot determine) 
 blist <- table(bio$blister, bio$Bed) 
 weak <- table(bio$meat_cond, bio$Bed) 
 clap <- table(bio$clapper, bio$Bed) 
@@ -80,13 +81,13 @@ weak.pn <-  rbind(weak.p, margin.table(weak, 2))
 
 # change row names.  Should use LUTs or some other type of substitution, in case classes observed in future changes. 
 worm.pn <- as.data.frame(worm.pn) %>% mutate(Percent=c("0%", "1 - 24%", "25 - 49%", "50 - 74%", "75 - 100%", "n"))
-gonad.pn <- as.data.frame(gonad.pn) %>% mutate(Stage=c("Immature", "Empty", "Initial Recovery", "Filling", "Full", "Cannot Determine", "n"))
+gonad.pn <- as.data.frame(gonad.pn) %>% mutate(Stage=c("Empty", "Initial Recovery", "Filling", "Full", "n"))
 blist.pn <- as.data.frame(blist.pn) %>% mutate(Percent = c("0%", "1 - 24%", "25 - 49%", "50 - 74%", "n"))   # no 4's (75-100%) this year
 weak.pn <- as.data.frame(weak.pn) %>% mutate(Meats = c("Good", "Weak", "n"))
 
 # reorder kayak beds together
 worm.pn <- worm.pn[,c("Percent","EK1","WK1","KSH1", "KSH2", "KSH3")]
-gonad.pn <- gonad.pn[,c("Stage","EK1","WK1","KSH1", "KSH2", "KSH3")]
+gonad.pn <- gonad.pn[,c("Stage","EK1 April","WK1 April","KSH1 May","KSH1 July", "KSH2 July", "KSH3 July")] # In word, move Month to column spanners. 
 blist.pn <- blist.pn[,c("Percent","EK1","WK1","KSH1", "KSH2", "KSH3")]
 weak.pn <- weak.pn[,c('Meats',"EK1","WK1","KSH1", "KSH2", "KSH3")]
 
@@ -105,22 +106,4 @@ awl %>% filter(species == 74120, !is.na(clapper)) %>%
 
 ggsave("./figs/Clappers.png", dpi=300, height=8.5, width=6.5, units="in")
 
-# # cumbersome code to limit number of digits row-wise. Bottom row is n, others are %. 
-# worm.dig <- matrix  (c(rep(2,nrow(worm.pn) - 1),0),  nrow=nrow(worm.pn),  ncol=ncol(worm.pn) + 1) 
-# gonad.dig <- matrix (c(rep(2,nrow(gonad.pn) - 1),0), nrow=nrow(gonad.pn), ncol=ncol(gonad.pn) + 1) 
-# blist.dig <- matrix (c(rep(2,nrow(blist.pn) - 1),0), nrow=nrow(blist.pn), ncol=ncol(blist.pn) + 1) 
-# weak.dig <- matrix  (c(rep(2,nrow(weak.pn) - 1),0),  nrow=nrow(weak.pn),  ncol=ncol(weak.pn) + 1) 
-# 
-# # html tables. Insert this to rmd. Latex tables look better but not supported by word.
-# print(xtable(worm.pn,digits=worm.dig), type = 'html')
-# print(xtable(gonad.pn,digits=gonad.dig), type = 'html')
-# print(xtable(blist.pn,digits=blist.dig), type = 'html')
-# print(xtable(weak.pn,digits=weak.dig), type = 'html')  
-# 
-# # kable tables, as preview. but kable doesn't preserve digit formating.
-# kable(xtable(worm.pn,digits=worm.dig))  
-# kable(xtable(gonad.pn,digits=gonad.dig)) 
-# kable(xtable(blist.pn,digits=blist.dig)) 
-# kable(xtable(weak.pn,digits=weak.dig))   
-# 
-# options(scipen = 0)
+

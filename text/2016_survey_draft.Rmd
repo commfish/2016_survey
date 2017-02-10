@@ -27,11 +27,28 @@ knitr::opts_chunk$set(echo = FALSE, message=F, warning=F)
 
 #INTRODUCTION
 
-**Whatever Quinn wants here**
+Weathervane scallops, Patinopecten caurinus, are distributed in the northeast Pacific Ocean from Pt. Reyes, California north to the Pribilof Islands in the Bering Sea, and west to the Aleutian Islands, and occur from the intertidal to 300 m (Foster 1991). Scallops are a long-lived species, attaining ages between 20 and 28 years in Alaska waters (Hennick 1973, Bechtol et al. (2009)). Densities that support commercial harvest typically occur between 45 and 130 m on discrete aggregations (or beds) (Kruse et al. 2005), and in a wide variety of habitats ranging from rock and gravel to silt and mud (Hennick 1973). Scallop beds are typically elongated or elliptical in shape and oriented in the direction of mean current flow (Kruse et al. 2000).
 
-Weathervane scallops, Patinopecten caurinus, are distributed in the northeast Pacific Ocean from Pt. Reyes, California north to the Pribilof Islands in the Bering Sea, and west to the Aleutian Islands, and occur from the intertidal to 300 m [@Foster1991]. Scallops are a long-lived species, attaining ages between 20 and 28 years in Alaska waters [@Hennick1973, @Bechtol2009]. Densities that support commercial harvest typically occur between 45 and 130 m on discrete aggregations (or beds) [@Kruse2005], and in a wide variety of habitats ranging from rock and gravel to silt and mud [@Hennick1973]. Scallop beds are typically elongated or elliptical in shape and oriented in the direction of mean current flow [@Kruse2000].
+In Alaska, prior to 2016 dredge based fishery-independent surveys had been restricted to the Kayak Island and Cook Inlet areas. Initial surveys were conducted for Kamishak Bay and Kayak Island in 1984 and 1996, respectively (Hammarstrom and Merritt 1985, Bechtol et al. (2003)), and have been conducted biennially since 1996 (Gustafson and Goldman 2012). These surveys have enabled the department to (1) delineate the primary scallop beds; (2) estimate scallop abundance and biomass within these beds; (3) define bed composition through age and shell height data; and (4) estimate bycatch rates of non-target species, particularly Tanner crab. Fishery managers have used the results of these surveys to set guideline harvest limits (GHLs) and manage the commercial scallop fishery in the Cook Inlet and Prince William Sound registration areas. All other management areas in the state are reliant on fishery-dependent data gathered from the statewide scallop observer program to inform management decisions (NPFMC 2015).
 
-In Alaska, dredge based fishery-independent surveys have been restricted to Kayak Island and Cook Inlet areas. Initial surveys were conducted for Kamishak Bay and Kayak Island in 1984 and 1996, respectively [@Hammarstrom1985, @Bechtol2003], and have been conducted biennially since 1996 [@Gustafson2012]. These surveys have enabled the department to (1) delineate the primary scallop beds; (2) estimate scallop abundance and biomass within these beds; (3) define bed composition through age and shell height data; and (4) estimate bycatch rates of non-target species, particularly Tanner crab. Fishery managers have used the results of these surveys to set guideline harvest limits (GHLs) and manage the commercial scallop fishery in the Cook Inlet and Prince William Sound registration areas. All other management areas in the state are reliant on fishery-dependent data gathered from the statewide scallop observer program to inform management decisions [@NPFMC2015].
+In the spring of 2016 a program of expansion of the dredge based fishery-independent surveys was implemented (Smith et al 2016). The spring 2016 survey was scheduled to include the Kayak Island area, portions of the northern Yakutat area, and Shelikof Straight. Due to weather the northern Yakutat portion was not surveyed. In addition the Shelikof survey was truncated due to the planned survey vessel breaking down during the survey in May. A contracted commercial scallop vessel was used to complete the survey in July. Future survey plans included resurveying Shelikof Strait in 2017, and the remainder of Yakutat in 2018. 
+
+# STUDY SITE
+### The Kodiak Shelikof study area
+
+![](../figs/KSH_tows_2016.png)
+
+Figure 1.- Shelikof Survey area showing location of the three beds Shelikof 1 (KSH1), Shelikof 2 (KSH2), and Shelikof 3 (KSH3). Red lines show the tow track of stations sampled in May. Black lines show the tow track of stations sampled in July.
+
+###The Kayak Island study area
+
+The Kayak Island study area is located near the southern end of Kayak Island in the Gulf of Alaska (Figure 2). This area is subject to severe weather conditions and large ocean swells. Coastal currents primarily run westerly as part of a counter-clockwise gyre in the northern Gulf of Alaska, and maximum tidal exchanges are typically less than 5 m (16.5 ft). Bottom substrate in the study area is primarily sand and pebbles with some rock and mud; rocky reefs are present near Cape St. Elias. Mud and glacial flour are common in the nearshore marine waters as outfall from glacial rivers located east of Kayak Island. Depth contours run from southwest to northeast, approximately parallel to the Kayak Island shoreline. Bottom depths in the scallop beds gradually slope from approximately 55 m (30 fathoms) in the northwest to over 110 m (60 fathoms) in the southeast.
+
+
+![](../figs/Kayak_tows_2016.png)
+
+Figure 2.-Kayak Island survey area area showing location of the two beds East Kayak 1 (EK1), and West Kayak 1 (WK1). Red lines show the tow track of stations sampled in May. 
+
 
 #OBJECTIVES  
 Primary:  
@@ -49,15 +66,6 @@ Tertiary:
  2. Special short term projects.
  
  
-# STUDY AREAS  
-
-The Kodiak Shelikof study area...
-
-**TEXT TAKEN FROM @Gustafson2012 Needs cleaned up and not plageurized**
-
-**The Kayak Island study area is located near the southern end of Kayak Island in the Gulf of Alaska (Figure 2). This area is subject to severe weather conditions and large ocean swells. Coastal currents primarily run westerly as part of a counter-clockwise gyre in the northern Gulf of Alaska, and maximum tidal exchanges are typically less than 5 m (16.5 ft). Bottom substrate in the study area is primarily sand and pebbles with some rock and mud; rocky reefs are present near Cape St. Elias. Mud and glacial flour are common in the nearshore marine waters as outfall from glacial rivers located east of Kayak Island. Depth contours run from southwest to northeast, approximately parallel to the Kayak Island shoreline. Bottom depths in the scallop beds gradually slope from approximately 55 m (30 fathoms) in the northwest to over 110 m (60 fathoms) in the southeast.**
-
-
 # METHODS  
 
 ## DREDGE SURVEY
@@ -341,9 +349,8 @@ g %>% kable()
 
 Something something
 
-![Tow paths for KSH beds 1,2, and 3](../figs/KSH_tows_2016.png)
 
-![Tow paths for WK1 and EK1 beds](../figs/Kayak_tows_2016.png)
+
 
 ![Abundance with 95% bootstrap confidence intervals by size class.](../figs/Abundance.png)
 

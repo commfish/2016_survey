@@ -113,6 +113,9 @@ scal.catch %>% dplyr::select(Event, large, small,year,District,Bed,n,ai,area_nm2
 numbers_original <- lapply(scal.catch$dat,f.sum)
 numbers_original <- as.data.frame(do.call(rbind,numbers_original)) 
 
+numbers_original %>% 
+  mutate(sd_N = sqrt(varN)) -> numbers_original
+
 # bootstrap N----
 numbers <- lapply(scal.catch$dat,f.it)
 numbers <- as.data.frame(do.call(rbind,numbers))
@@ -316,7 +319,18 @@ meat.wts %>%
 
 ggsave("./figs/Ratio.png", dpi=300, height=4.5, width=6.5, units="in")
 
+# power analysis to CV of closer to 20%
+library(pwr)
+numbers_original %>% filter(variable == "large") %>% 
+  mutate(mean.20 = (0.20*N), half.mean.20 = mean.20/2) ->large_numbers_original
 
+# number of transects available to sample at each bed?
+
+
+ggplot(large_numbers_original, aes(n, cvN))+geom_point() +geom_smooth()
+                                                                
+
+# d is difference to detect which is the difference / S.D.
 
 
 # Tables ----

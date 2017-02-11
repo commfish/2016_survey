@@ -231,6 +231,22 @@ b %>%
    kable( ,col.names = column_names, caption = "Estimates of large scallop abundance and CV by bed.")
 ```
 
+``````{r, echo=F, message=F, warning=F}
+# totals for KSH beds
+column_names = c('District', 'N (numbers)', 'CV')
+KSH <- c("KSH1", "KSH2", "KSH3")
+a %>%
+  mutate (District = ifelse(Bed == "EK1", "EK1", ifelse(Bed == "WK1", "WK1", ifelse(Bed %in% KSH, "KSH", "NA")))) %>% 
+  group_by(year, District) %>%
+   filter(variable == 'large')%>%
+  summarise(N = sum(N_b), CV = mean(cvN)) %>% 
+  ungroup %>% 
+   dplyr::select(District, N, CV) %>%  
+   mutate_each(funs(prettyNum(., big.mark=","))) %>% 
+   kable( ,col.names = column_names, caption = "Estimates of large scallop abundance and CV by District.")
+```
+
+
 
 ```{r t.N_dbar, echo=F, message=F, warning=F}
 
@@ -336,11 +352,12 @@ kable(weak, caption='Observed scallop meat condition, an indication of "weak mea
 ###Clappers
 **Table 6:** Preliminary estimates of abundance (by weight) and percent clappers by bed. 
 ```{r}
-options(digits=2)
+options(digits=3)
  
 g <- read.csv('../output/clapper.summary.csv')
- 
-g %>% kable()
+column_names = c('Bed', 'Year', '% in numbers', '% in round weight')
+g %>% mutate(id = c(1,3,4,5,2)) %>% 
+	arrange(id) %>% select(Bed, year, percent_clap, percent_clap_wt) %>% kable(col.names = column_names,caption= 'Percent of clappers present in round weight and numbers by bed.')
 ```
 
 

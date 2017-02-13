@@ -8,7 +8,7 @@ author:
   name: Josh Mumm
 date: ''
 output:
-  word_document:
+  html_document:
     toc: yes
   pdf_document:
     keep_tex: yes

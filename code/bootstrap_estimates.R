@@ -113,6 +113,9 @@ scal.catch %>% dplyr::select(Event, large, small,year,District,Bed,n,ai,area_nm2
 numbers_original <- lapply(scal.catch$dat,f.sum)
 numbers_original <- as.data.frame(do.call(rbind,numbers_original)) 
 
+numbers_original %>% 
+  mutate(sd_N = sqrt(varN)) -> numbers_original
+
 # bootstrap N----
 numbers <- lapply(scal.catch$dat,f.it)
 numbers <- as.data.frame(do.call(rbind,numbers))
@@ -130,7 +133,7 @@ numbers %>% group_by(Bed,year,variable) %>%
              cv=sqrt(var_dbar)/dbar_b*100) -> N_summary
 
 # weights ----
-scal.weight <- merge(s.weight,event, all = TRUE) # merge with events - keep NA
+scal.weight <- merge(s.weight,event, all = TRUE) # merge with events - keep NA, weight is in grams here
 scal.weight[is.na(scal.weight)] <- 0 # change NA to 0
 scal.weight %>% dplyr::select(Event, large, small,year,District,Bed,n,ai,area_nm2) %>% 
    mutate(all = large+small) %>% 
@@ -147,11 +150,11 @@ weights_original <- as.data.frame(do.call(rbind,weights_original))
 # bootstrap weight----
 weights <- lapply(scal.weight$dat,f.it)
 weights <- as.data.frame(do.call(rbind,weights))
-weights %>% mutate(W=N*0.00220462) -> weights # change to pounds
+weights %>% mutate(W=N*0.00220462, dbar_lb = dbar*0.00220462) -> weights # change to pounds
 
 weights %>% group_by(District,Bed,year,variable) %>% 
    summarise(llW=quantile(W,0.025),ulW=quantile(W,0.975),Weight=mean(W), 
-             lldbar=quantile(dbar,0.025),uldbar=quantile(dbar,0.975),dbar_lb=mean(dbar),
+             lldbar=quantile(dbar_lb,0.025),uldbar=quantile(dbar_lb,0.975),dbar_lb=mean(dbar_lb),
              varW = 1/((n())-1)*sum((W-Weight)^2),
              cvW=sqrt(varW)/Weight*100) -> weights_summary
 
@@ -238,27 +241,35 @@ meat.wts %>% left_join(weights_summary) %>%
 
 
 # Clappers ----
-catch %>% filter(species==74120, cond==99) %>% 
-   group_by(Event) %>% summarise(weight=sum(sample_wt, na.rm=T)) -> clap.weight
+catch %>% filter(species==74120, cond==52) %>% 
+   group_by(Event) %>% summarise(count = sum(count, na.rm =T), weight=sum(sample_wt, na.rm=T)) -> clappers
 
-clap.weight <- merge(clap.weight,event, all = TRUE) # merge with events - keep NA
-clap.weight[is.na(clap.weight)] <- 0 # change NA to 0
-clap.weight %>% dplyr::select(Event, weight, year,District,Bed,n,ai,area_nm2) %>% 
-   mutate(di= weight/ai, clap_wt = weight) %>% select(-weight) %>% 
+clappers <- merge(clappers,event, all = TRUE) # merge with events - keep NA
+clappers[is.na(clappers)] <- 0 # change NA to 0
+clappers %>% dplyr::select(Event, count, weight, year,District,Bed,n,ai,area_nm2) %>% 
+   mutate(di = count/ai, di_wt= weight/ai, clap_wt = weight) %>% 
    group_by(District,Bed,year) %>% 
    do(dat=(.)) %>% 
    select(dat) %>% 
-   map(identity) -> clap.weight
+   map(identity) -> clap.count.weight
 
-clappers_bed <- lapply(clap.weight$dat,f.clap)
+clappers_bed <- lapply(clap.count.weight$dat,f.clap)
 clappers_bed <- as.data.frame(do.call(rbind,clappers_bed)) 
-clappers_bed %>% mutate(dbar_c_lb = dbar_c*2.2046, W_c_lb = W_c*2.2046) -> clappers_bed
+clappers_bed %>% mutate(dbar_wt_lb = dbar_wt*2.2046, Wt_c_lb = Wt_c*2.2046) -> clappers_bed
 # convert kilograms to lbs.  
 
-#Percentage of clappers per bed.
-weights_summary %>% filter(variable == 'all') %>%  
-   right_join(clappers_bed) %>% select(District, Bed, year, n, variable, Weight,W_c_lb) %>% 
-   mutate(percent_clap = (W_c_lb/ (Weight + W_c_lb)*100))
+#Percentage of clappers per bed by weight
+weights_summary %>% filter(variable == 'large') %>%  
+   right_join(clappers_bed) %>% select(District, Bed, year, n, variable, Weight,Wt_c_lb) %>% 
+   mutate(percent_clap_wt = (Wt_c_lb/ (Weight + Wt_c_lb)*100)) -> clap.weight.percent
+
+#Percentage of clappers per bed by numbers
+N_summary %>% filter(variable == 'large') %>% select (- cv) %>%   
+  right_join(clappers_bed) %>% select(Bed, year, n, variable, N_b,N_c) %>% 
+  mutate(percent_clap = (N_c/ (N_b + N_c)*100)) -> clap.numb.percent
+
+clap.numb.percent %>% right_join(clap.weight.percent) %>% 
+  select(Bed, year, n, percent_clap, percent_clap_wt) -> clapper.summary
 
 # figures ----
 # Numbers
@@ -308,7 +319,18 @@ meat.wts %>%
 
 ggsave("./figs/Ratio.png", dpi=300, height=4.5, width=6.5, units="in")
 
+# power analysis to CV of closer to 20%
+library(pwr)
+numbers_original %>% filter(variable == "large") %>% 
+  mutate(mean.20 = (0.20*N), half.mean.20 = mean.20/2) ->large_numbers_original
 
+# number of transects available to sample at each bed?
+
+
+ggplot(large_numbers_original, aes(n, cvN))+geom_point() +geom_smooth()
+                                                                
+
+# d is difference to detect which is the difference / S.D.
 
 
 # Tables ----
@@ -320,4 +342,5 @@ write_csv(weights_summary, 'output/weights_summary.csv')
 write_csv(meat.wts, 'output/meat.wts.csv')
 write_csv(weight_GHL, 'output/weight_GHL.csv')
 write_csv(number_GHL, 'output/number_GHL.csv')
+write_csv(clapper.summary, 'output/clapper.summary.csv')
 

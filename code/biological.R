@@ -58,7 +58,9 @@ awl %>% left_join(event) %>% filter(Bed=='KSH1', sex!='NA') %>%
 # OTHER SCAL BIOLOGICAL DATA TABLES ----
 
 awl %>% filter(species == 74120, is.na(clapper)) %>% left_join (event) -> bio # join event for Bed and Month
-bio$BedMonth <- paste(bio$Bed,months(bio$date)) # add BedMonth var for gonad table
+bio$Month <- factor(months(bio$date) , levels = c("January","February","March", "April","May","June","July", # Month used by ratio plot
+                                                  "August","September", "October","November","December"))
+bio$BedMonth <- paste(bio$Bed,bio$Month) # add BedMonth var for gonad table
 
 # freq table for each variable by bed. 
 worm <- table(bio$worm, bio$Bed) 
@@ -97,6 +99,12 @@ write_csv(gonad.pn,'./output/gonad.csv')
 write_csv(blist.pn,'./output/blist.csv')
 write_csv(weak.pn,'./output/weak.csv')
 
+# Density plot of meat ratio by month ----
+bio$mr <- bio$meat_wt/bio$weight 
+qplot(mr,  data=bio, geom="density", fill=Month, alpha=I(.5),
+      xlab="Meat Weight/ Round Weight", ylab="Density") -> MR
+MR + scale_fill_manual(values=c( "#f0f0f0",  "#bdbdbd", "#636363")) + theme(legend.position=c(.75, .75))
+ggsave("./figs/RatioByMonth.png", dpi=300, height=4.5, width=6.5, units="in")
 
 
 awl %>% filter(species == 74120, !is.na(clapper)) %>% 

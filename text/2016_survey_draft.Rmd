@@ -376,3 +376,5 @@ Something something
 ![Scallop shell height histograms by bed. Sampled shell heights have been expanded to the total number sampled. Note the differing y-axis.](../figs/Heights.png)
 
 ![Scallop shell height histograms by bed for clappers (empty shells).](../figs/Clappers.png)
+
+![Meat weight to round weight ratio by month.](../figs/RatioByMonth.png)

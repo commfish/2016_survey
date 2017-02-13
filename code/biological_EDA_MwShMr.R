@@ -1,6 +1,8 @@
 # load ----
 library(tidyverse)
-
+theme_set(theme_bw()+ 
+            theme(panel.grid.major = element_blank(),
+                  panel.grid.minor = element_blank()))
 # data ----
 #clean up event data- change names and data types etc.
 events <- read.csv('./data/events_2016_161027.csv')
@@ -58,11 +60,8 @@ abline(mod.july, add = T, col = "blue")
 #Density plot of MRR (MW/WW) by month 
 awl$MR <- awl$meat/awl$weight 
 qplot(MR,  data=awl, geom="density", fill=Month, alpha=I(.5),
-      xlab="Meat Weight/Whole Weight",
+      xlab="Meat Weight/ Round Weight",
       ylab="Density") -> mr
-mr + scale_fill_manual(values=c("lightblue1", "plum2", "lightsalmon1"))
-mr + scale_fill_manual(values=c("#2c7fb8", "#7fcdbb", "#edf8b1"))
-mr + scale_fill_manual(values=c("gray80", "gray70", "gray50"))
-mr + scale_fill_manual(values=c( "#636363", "#bdbdbd", "#f0f0f0"))
-mr + scale_fill_manual(values=c( "#f0f0f0",  "#bdbdbd", "#636363"))
+mr + scale_fill_manual(values=c( "#f0f0f0",  "#bdbdbd", "#636363")) + theme(legend.position=c(.75, .75))
+
 

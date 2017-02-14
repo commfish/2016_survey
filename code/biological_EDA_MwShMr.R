@@ -40,12 +40,12 @@ awl$Month <- factor(months(awl$date), levels = c("January","February","March", "
 awl$WH <- awl$weight/awl$height
 filter(awl, Month == "May", Bed == "KSH1") -> may
 filter(awl, Month == "July", Bed == "KSH1") -> july
-par(mar=c(5.1,4.1,1.1,1.1))
+par(mar=c(3.1,3.1,1.1,1.1), mgp = c(2.1,1,0))
 plot(log(may$weight) ~ log(may$height), col = 'gray80', xlim = c(4.5, 5.4), 
      main = "", xlab = "log(Height (mm))", ylab = "log(Round Weight (g))", type = "n")
 points(log(july$weight) ~ log(july$height), col = 'black', add = T, cex = .8 )
 points(log(may$weight) ~ log(may$height), col = 'gray80', add = T, cex = .8, pch = 2)
-legend(locator(1), c("May","July"), col= c('black','gray80'), cex = c(.8,.8), pch = c(1,2), bty = 'n')
+legend(locator(1), c("May", "July"), col= c('gray80','black'), cex = c(.8,.8), pch = c(2,1), bty = 'n')
 mod.may <- lm(log(may$weight) ~ log(may$height))
 abline(mod.may, add = T, col = "gray80")
 mod.july <- lm(log(july$weight) ~ log(july$height))

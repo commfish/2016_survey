@@ -32,24 +32,25 @@ awl %>% select(Event = EVENT_ID, species=RACE_CODE, weight=WHOLE_WT_GRAMS, SC = 
                sample_type = SAMPLE_TYPE) %>%
   filter (Event %in% event$Event, species == 74120, is.na(clapper), !is.na(weight)) -> awl
 
-##plots KHS1 WW/SH and plots emailed 160203 ----
-#Wholeweight/height relationship, KSH 1, May and July 
+##plot KHS1 WW/SH and MRR by month ----
 #awl %>% filter(SC == 1) -> awl  # larges only for plots emailed. 
 awl %>% left_join(event) -> awl 
 awl$Month <- factor(months(awl$date), levels = c("January","February","March", "April","May","June","July","August","September", "October","November","December"))
 #filter(awl, Month != "April") -> awl
 awl$WH <- awl$weight/awl$height
-filter(awl, Month == "May") -> may
-filter(awl, Month == "July") -> july
-plot(log(may$weight) ~ log(may$height), col = 'red', xlim = c(4.5, 5.4), 
-     main = "Height vs Weight, KSH1", xlab = "log(height)", ylab = "log(weight)", type = "n")
-points(log(july$weight) ~ log(july$height), col = 'blue', add = T, cex = .8 )
-points(log(may$weight) ~ log(may$height), col = 'red', add = T, cex = .8)
-legend(locator(1), c("May","July"), col= c('red','blue'), cex = c(.8,.8), pch = c(1,1))
+filter(awl, Month == "May", Bed == "KSH1") -> may
+filter(awl, Month == "July", Bed == "KSH1") -> july
+par(mar=c(5.1,4.1,1.1,1.1))
+plot(log(may$weight) ~ log(may$height), col = 'gray80', xlim = c(4.5, 5.4), 
+     main = "", xlab = "log(Height (mm))", ylab = "log(Round Weight (g))", type = "n")
+points(log(july$weight) ~ log(july$height), col = 'black', add = T, cex = .8 )
+points(log(may$weight) ~ log(may$height), col = 'gray80', add = T, cex = .8, pch = 2)
+legend(locator(1), c("May","July"), col= c('black','gray80'), cex = c(.8,.8), pch = c(1,2), bty = 'n')
 mod.may <- lm(log(may$weight) ~ log(may$height))
-abline(mod.may, add = T, col = "red")
+abline(mod.may, add = T, col = "gray80")
 mod.july <- lm(log(july$weight) ~ log(july$height))
-abline(mod.july, add = T, col = "blue")
+abline(mod.july, add = T, col = 'black')
+
 
 #densitiy plot weight/height KSH1 
  qplot(WH, data=awl, geom="density", fill=Month, alpha=I(.5),

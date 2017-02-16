@@ -10,6 +10,12 @@ set.seed(15343437)
 library (reshape2)
 library (FSA)
 library(tidyverse)
+library(extrafont)
+loadfonts(device="win")
+windowsFonts(Times=windowsFont("TT Times New Roman"))
+theme_set(theme_bw(base_size=12,base_family='Times New Roman')+ 
+             theme(panel.grid.major = element_blank(),
+                   panel.grid.minor = element_blank()))
 
 awl <- read.csv('./data/awl_2016_161027.csv')
 event <- read.csv('./data/events_2016_161027.csv')
@@ -141,8 +147,12 @@ sum(tot_w[,c("L","S")])
 
 #set the levels for plotting
 dat <- within(dat, Bed <- factor(Bed, levels = c('EK1','WK1','KSH1','KSH2','KSH3')))
+dat %>% group_by(Bed) %>% summarise(n=n()) %>% mutate(x=c(0,0,0,0,0), y=c(25,50,25,5,1)) -> dat.n
 
-ggplot(dat, aes(sh))+geom_histogram(fill=4, alpha=.2, color=1, bins=75)+facet_wrap(~Bed, ncol=1,scale='free_y')+
-   xlab('Shell height (mm)')+ylab('Number') + theme(strip.background = element_blank())
+ggplot(dat,aes(sh))+geom_histogram(fill=4, alpha=.2, color=1, bins=75)+
+   facet_wrap(~Bed, ncol=1,scale='free_y')+
+   xlab('Shell height (mm)')+ylab('Number') + 
+   geom_text(data=dat.n, aes(x, y, label=paste0('n=',n)), size=3) + 
+   theme(strip.background = element_blank())
 
 ggsave("./figs/Heights.png", dpi=300, height=8.5, width=6.5, units="in")

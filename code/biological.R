@@ -105,9 +105,13 @@ write_csv(weak.pn,'./output/weak.csv')
 
 # Density plot of meat ratio by month ----
 bio$mr <- bio$meat_wt/bio$weight 
-qplot(mr,  data=bio, geom="density", fill=Month, alpha=I(.5),
-      xlab="Meat Weight/ Round Weight", ylab="Density") -> MR
-MR + scale_fill_manual(values=c( "#f0f0f0",  "#bdbdbd", "#636363")) + theme(legend.position=c(.75, .75))
+
+bio %>% filter(Bed=='KSH1'|Bed=='KSH2'|Bed=='KSH3') %>% 
+   ggplot(aes(mr, fill=Month))+geom_density(alpha=.5) + 
+   scale_fill_manual(values=c( "#f0f0f0",  "#bdbdbd", "#636363")) + 
+   theme(legend.position=c(.75, .75)) + 
+   xlab("Meat Weight/ Round Weight") + ylab('Density')
+
 ggsave("./figs/RatioByMonth.png", dpi=300, height=4.5, width=6.5, units="in")
 
 

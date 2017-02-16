@@ -1,8 +1,11 @@
 # load ----
 library(tidyverse)
-theme_set(theme_bw(base_size=12)+ 
-            theme(panel.grid.major = element_blank(),
-                  panel.grid.minor = element_blank()))
+library(extrafont)
+loadfonts(device="win")
+windowsFonts(Times=windowsFont("TT Times New Roman"))
+theme_set(theme_bw(base_size=12,base_family='Times New Roman')+ 
+             theme(panel.grid.major = element_blank(),
+                   panel.grid.minor = element_blank()))
 library (xtable)
 library (knitr)
 options (scipen = 999)
@@ -57,7 +60,8 @@ awl %>% left_join(event) %>% filter(Bed=='KSH1', sex!='NA') %>%
 
 # OTHER SCAL BIOLOGICAL DATA TABLES ----
 
-awl %>% filter(species == 74120, is.na(clapper)) %>% left_join (event) -> bio # join event for Bed and Month
+awl %>% filter(species == 74120, is.na(clapper)) %>% left_join (event) %>% 
+   mutate(Month=months(date)) -> bio # join event for Bed and Month
 bio$Month <- factor(months(bio$date) , levels = c("January","February","March", "April","May","June","July", # Month used by ratio plot
                                                   "August","September", "October","November","December"))
 bio$BedMonth <- paste(bio$Bed,bio$Month) # add BedMonth var for gonad table
@@ -107,11 +111,23 @@ MR + scale_fill_manual(values=c( "#f0f0f0",  "#bdbdbd", "#636363")) + theme(lege
 ggsave("./figs/RatioByMonth.png", dpi=300, height=4.5, width=6.5, units="in")
 
 
+
 awl %>% filter(species == 74120, !is.na(clapper)) %>% 
    left_join(event) %>% 
-   ggplot(aes(height))+geom_histogram(fill=4, alpha=.2, color=1,bins=50)+facet_wrap(~Bed, ncol=1,scale='free_y')+
-   xlab('Shell height (mm)')+ylab('Number') + theme(strip.background = element_blank())
+   ggplot(aes(height))+geom_histogram(fill=4, alpha=.2, color=1,bins=50)+
+   facet_wrap(~Bed, ncol=1,scale='free_y')+
+   xlab('Shell height (mm)')+ylab('Number') + 
+   theme(strip.background = element_blank())
 
 ggsave("./figs/Clappers.png", dpi=300, height=8.5, width=6.5, units="in")
 
 
+bio %>% filter(Bed=='KSH1') %>% 
+   ggplot(aes(log(height), log(weight), color=Month))+
+   geom_point(aes(shape=Month)) + xlim(4.5,5.4) + 
+   stat_smooth(method='lm') + scale_color_manual(values=c('black', 'gray'))+ 
+   guides(color=guide_legend(override.aes=list(fill=NA))) + ylab('log Round weight') + 
+   xlab('log Shell height')+ 
+   theme(legend.position=c(.75, .25))
+
+ggsave("./figs/rndwt-shellht.png", dpi=300, height=4.5, width=6.5, units="in")

@@ -282,12 +282,15 @@ numbers %>% filter(variable=='large') %>%
 numbers %>% filter(variable=='small') %>% 
    ggplot(aes(N, fill=Bed))+geom_density() 
 
+N.text = data.frame(Bed='EK1', variable='large', N_b=3.5)
+
 N_summary %>% group_by(Bed,variable) %>%    
    ggplot(aes(Bed,N_b/1000000))+geom_point()+
    geom_errorbar(aes(ymin=llN/1000000,ymax=ulN/1000000), width=0.2)+
    facet_wrap(~variable)+
    scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ 
-   ylab("Abundance (millions)")
+   ylab("Abundance (millions)") + theme(strip.background = element_blank())+
+   geom_text(data=N.text, label='A')
 
 ggsave("./figs/Abundance.png", dpi=300, height=4.5, width=6.5, units="in")
 
@@ -302,11 +305,17 @@ weight %>% filter(variable=='large') %>%
 weight %>% filter(variable=='small') %>% 
    ggplot(aes(N_lb, fill=Bed))+geom_density() + facet_wrap(~Bed)
 
-weights_summary%>% 
+wt.text = data.frame(Bed='EK1', variable='large', Weight=3.5)
+weights_summary %>% 
    group_by(Bed,variable) %>% 
-   ggplot(aes(Bed,Weight/1000000))+geom_point()+geom_errorbar(aes(ymin=llW/1000000,ymax=ulW/1000000), width=0.2)+facet_wrap(~variable)+
-   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ scale_y_continuous(labels = comma) +
-   ylab("Round weight (million lb)") 
+   ggplot(aes(Bed,Weight/1000000))+geom_point()+
+   geom_errorbar(aes(ymin=llW/1000000,ymax=ulW/1000000), width=0.2)+
+   facet_wrap(~variable)+
+   scale_x_discrete(limits=c('EK1','WK1','KSH1','KSH2','KSH3'))+ 
+   scale_y_continuous(labels = comma) +
+   ylab("Round weight (million lb)") + 
+   theme(strip.background = element_blank()) +
+   geom_text(data=wt.text, label='B')
 
 ggsave("./figs/Weight.png", dpi=300, height=4.5, width=6.5, units="in")
 
